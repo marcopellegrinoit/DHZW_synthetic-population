@@ -190,13 +190,10 @@ for(i in 1:nrow(marginal_distributions)){   # for each neighborhood
 # shuffle order
 agents = agents[sample(nrow(agents)),]
 
-setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
-write.csv(agents, "Synthetic_population_neighg-age.csv")
-
 ############################################################################################################################
 ################################ Translating age groups into interger age, based on age stratified dataset #############################
 ############################################################################################################################
-# since the dataset is municipality aggregated, I can only calculate each age proportion and then use it
+# Since the dataset is municipality aggregated, I can only calculate each age proportion and then use it to sample
 
 # create group ages in the stratified dataset
 strat.gender_age$age_group = ""
@@ -208,30 +205,26 @@ strat.gender_age$age_group[strat.gender_age$age %in% 65:105] = "age_over65"
 strat.gender_age = strat.gender_age[order(as.numeric(strat.gender_age$age)),]
 
 # for each individual age, calculate its proportion to the total of each age group
-
 strat.gender_age = strat.gender_age %>%
   group_by(age_group) %>%
   mutate(group_propensity = total/sum(total))
 
-agents$age = ''
-
-new_agents = agents
-new_agents = new_agents[0,]
-
+# for each group age of the synthetic population, sample the age from stratified dataset following the the frequency distribution
+agents$age=''
 for(group_age in group_ages){
-  for (i in which(strat.gender_age$age_group == group_age)){
-    age_row = strat.gender_age[i,]
-    age_to_insert = age_row$age
-    group_propensity = age_row$group_propensity
-    
-    agents_subset = agents[agents$age_group==group_age,] %>%
-      sample_frac(size = age_row$group_propensity, replace = FALSE)%>%
-      mutate(age = age_to_insert)
-    
-    new_agents = rbind(new_agents, agents_subset)
-  }
+  sample <- sample(
+    x = strat.gender_age[strat.gender_age$age_group==group_age,]$age,
+    size = nrow(agents[agents$age_group==group_age,]),
+    replace=TRUE,
+    prob=strat.gender_age[strat.gender_age$age_group==group_age,]$group_propensity
+    ) # sample from age frequency distribution
+  
+  agents[agents$age_group==group_age,]$age = sample # apply to synthetic population dataset
 }
-agents = new_agents
+agents$age = as.numeric(agents$age)
+
+setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
+write.csv(agents, "Synthetic_population_neighg-age.csv")
 
 ############################################ #############################################################################
 ########## First Application of the conditional propensity & neighborhood constraint functions: ############################
@@ -272,9 +265,8 @@ strat_valid = crossvalid(valid_df = strat.gender_age,
                          list_agent_attr = c("male", "female")
                          )
 
-# save first step
-write.csv(agents, "Synthetic_population_v1.csv")
-agents = read.csv("Synthetic_population_v1.csv")
+setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
+write.csv(agents, "Synthetic_population_neighg-age-gender.csv")
 
 ##################################################################
 ################## migration background ##########################
