@@ -1,0 +1,466 @@
+####### Generate an agent dataframe of the population size and assigne a unique ID
+gen_agent_df = function(pop_size){
+  agent_ID = paste("Agent_",1:pop_size, sep="")
+  agent_df = as.data.frame(agent_ID)
+  return(agent_df)
+}
+
+
+####### Calculating the probability/propensity to have a specific value of a variable conditional on other variables.
+
+# @dataframe: stratified dataframe. Those variables are the ones that influence/generate the propensity.
+# @variable: name of the value of the variable (e.g. 'female') I want to calculate the propensity for
+# @total_population: column name of the variable the contains the total n people for the variable (e.g. tot_for_genders = n_male + n_female)
+# @agent_df: synthetic population dataset
+# @list_conditional_var: list of variables to calculate the propensity on. Because maybe not all the ones on the stratified dataset can be used, indeed maybe they are not all in the synthetic population.
+
+# Note: the column names have to be the same in the stratified dataset and the synthetic population.
+
+calc_propens_agents = function(dataframe, variable, total_population, agent_df, list_conditional_var){
+  # initialise the propensity by dividing the n people of such value with the total of such variable
+  if(!missing(total_population)){
+    dataframe[,c(paste("prop_",variable, sep = ""))] = dataframe[,c(variable)]/dataframe[, c(total_population)]
+  }
+  order_agent_df = colnames(agent_df)
+  if(paste("prop_",variable, sep = "") %in% order_agent_df){
+    x = which(order_agent_df == paste("prop_",variable, sep = ""))
+    agent_df = subset(agent_df, select = -c(x))
+  }
+  agent_df = merge(agent_df, dataframe[,c(list_conditional_var, paste("prop_",variable, sep = ""))], all.x = T, all.y= F, by = list_conditional_var)
+  agent_df = agent_df[,c(order_agent_df, paste("prop_",variable, sep = ""))]
+  random_seq = sample(nrow(agent_df))
+  agent_df = agent_df[random_seq,]
+  return(agent_df)
+}
+
+
+
+## this function creates a stratified probability table from single attribute propensities
+
+create_stratified_prob_table = function(nested_cond_attr_list, column_names, orig_df, strat_var, var_for_pred, total_population){
+  ncondVar = length(column_names)
+  attr_length = c()
+  for(i in 1:ncondVar){
+    attr_length = append(attr_length, length(nested_cond_attr_list[[i]]))
+  }
+  new_strat_df = as.data.frame(matrix(nrow = prod(attr_length), ncol = (ncondVar + length(var_for_pred))))
+  for(i in 1:ncondVar){
+    if(i == ncondVar){
+      new_strat_df[,i] = rep(nested_cond_attr_list[[i]], times =  (prod(attr_length)/attr_length[i]))
+    }
+    else{
+      var_comb = c()
+      for(n in 1:attr_length[i]){
+        var_comb = append(var_comb, rep(nested_cond_attr_list[[i]][n], times = prod(attr_length[(i+1):ncondVar])))
+      }
+      new_strat_df[,i] = rep(var_comb, times = prod(attr_length)/prod(attr_length[(i):ncondVar]))
+    }
+    
+  }
+  colnames(new_strat_df) = c(column_names, paste("prop_",var_for_pred, sep = ""))
+  if(missing(total_population)){
+    for(i in 1:nrow(new_strat_df)){
+      for(n in 1:length(var_for_pred)){
+        new_strat_df[i,n+ncondVar] = sum(orig_df[which(orig_df[,c(strat_var)] %in% c(new_strat_df[i,1:ncondVar])),c(var_for_pred[n])])/ncondVar
+      }
+    }
+  }
+  else{
+    for(i in 1:length(var_for_pred)){
+      orig_df[,c(paste("prop_",var_for_pred[i], sep = ""))] = orig_df[,c(var_for_pred[i])]/orig_df[, c(total_population)]
+    }
+    for(i in 1:nrow(new_strat_df)){
+      for(n in 1:length(var_for_pred)){
+        new_strat_df[i,n+ncondVar] = sum(orig_df[which(orig_df[,c(strat_var)] %in% c(new_strat_df[i,1:ncondVar])),c(paste("prop_",var_for_pred[n], sep = ""))])/ncondVar
+      }
+    }
+  }
+  return(new_strat_df)
+}
+
+
+
+
+################################################################################################################
+## Ddistributing attributes across agent population based on conditional probabilities and neighborhood totals #
+################################################################################################################
+
+### EXPLANATION
+# These functions distribute attribute classes in the agent population based on the conditional propensities and the neighborhood statistics
+# agent_df = Dataframe of the unique agents with their attributes
+# neigh_df = Dataframe of aggregate statistical data per neighborhood, specifically the total population 
+# per neighborhood and the counts per variable class.
+# variable = the new variable that we want to add based on the stratified and neighborhood marginal distributions
+# list_var_classes_neigh_df = a list of the column names in the Neighborhood dataset with 
+# the classes of the variable that will be modeled (e.g. c("Men", "Women", "Non-Binary"), which are the classes of sex). 
+# list_agent_propens = A list of the columns in the agent dataset that contain the propensities for the classes of the variable based on the other agents conditional attributes.
+# This list has to be in the same order as the list_var_classes_neigh_df, but can leave out the last propensity as it is 1 minus the other propensities.
+# The list_class_names is optional and contains the values that the new created agent variable should have for the different variable classes.
+# It has to be in the same order and of the same length as the list_var_classes_neigh_df. If left empty, the list_var_classes_neigh_df will become the default values for the classes.
+# agent_exclude = an optional variable containing one or multiple variable names of the agent dataset on which basis agents should be excluded from the attribute assignment
+# if that variable(s) is/are 1, then the agents will be excluded
+
+# @agent_df: synthetic population dataframe
+# @neigh_df: marginal distributions dataframe
+# @neigh_ID: column of neighbourhood codes for both synthetic population and marginal distribution dataframes
+# @variable: name of the new attribute to add
+# @list_var_classes_neigh_df: column names of the two values from the marginal distribution dataframe
+# @list_agent_propens: column name of the previously calculate propensity, from the the synthetic population dataframe
+# @list_class_names: name of the two values to add in the attribute. If missing, it is copied from the column names (@list_var_classes_neigh_dfS) 
+# @agent_exclude: condition to exclude agents (?)
+
+###############################################################
+## distr_bin_attr_strat_n_neigh_stats is for binary attributes
+
+distr_bin_attr_strat_n_neigh_stats = function(agent_df, neigh_df, neigh_ID, variable, list_var_classes_neigh_df, list_agent_propens, list_class_names, agent_exclude){
+  print(Sys.time())
+  agent_df[, c(variable, "random_scores")] = 0
+  if(missing(list_class_names)){
+    list_class_names = list_var_classes_neigh_df
+  }
+  if(!missing(agent_exclude)){
+    agent_df[, c("excluded")] = 0
+    for(i in 1:length(agent_exclude)){
+      agent_df[which(agent_df[, c(agent_exclude[i])] == 1) , c("excluded")] =  1
+    }
+  }
+  for (i in 1:nrow(neigh_df)){
+    if(!missing(agent_exclude)){
+      x = which(agent_df[, c(neigh_ID)] == neigh_df[i, c(neigh_ID)] & agent_df[, c("excluded")] != 1)
+    }
+    else{
+      x = which(agent_df[, c(neigh_ID)] == neigh_df[i, c(neigh_ID)])
+    }
+    tot__var_class_neigh = neigh_df[i, list_var_classes_neigh_df]
+    agent_df[x, c("random_scores")] = sample(x= seq(from= 0, to = 1, by= 0.01), size = length(x), replace = T)
+    fitness = 0
+    if(length(x) != 0){
+      while(fitness == 0){
+        if(length(list_var_classes_neigh_df)== 2){
+          agent_df[x[which(agent_df[x, c(list_agent_propens[1])] >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[1]
+          agent_df[x[which(agent_df[x, c(list_agent_propens[1])] < agent_df[x,c("random_scores")])], c(variable)] = list_class_names[2]
+          if(length(which(agent_df[x, c(variable)] == list_class_names[1])) >= tot__var_class_neigh[1] & length(which(agent_df[x, c(variable)] == list_class_names[2])) >= tot__var_class_neigh[2]){
+            fitness = 1
+          }
+          else if(sum(tot__var_class_neigh) <= length(x)){
+            agent_df[x, c("random_scores")] = sample(x= seq(from= 0, to = 1, by= 0.01), size = length(x), replace = T)
+            agent_df[x[which(agent_df[x, c(list_agent_propens[1])] >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[1]
+            agent_df[x[which(agent_df[x, c(list_agent_propens[1])] < agent_df[x,c("random_scores")])], c(variable)] = list_class_names[2]
+            if(length(which(agent_df[x, c(variable)] == list_class_names[1])) >= tot__var_class_neigh[1] & length(which(agent_df[x, c(variable)] == list_class_names[2])) >= tot__var_class_neigh[2]){
+              fitness = 1
+            }
+            else if(length(which(agent_df[x, c(variable)] == list_class_names[1])) < tot__var_class_neigh[1]){
+              abs_diff = as.integer(as.numeric(tot__var_class_neigh[1]) - length(which(agent_df[x, c(variable)] == list_class_names[1])))
+              if(abs_diff <= 1|is.na(abs_diff)){
+                fitness = 1
+              }
+              else{
+                class = which(agent_df[x, c(variable)] == list_class_names[2])[1:as.numeric(abs_diff)]
+                class = class[!is.na(class)]
+                if(length(class) == 0){
+                  fitness = 1
+                }
+                agent_df[x[class], c(list_agent_propens[1])] = agent_df[x[class], c(list_agent_propens[1])] + 0.5
+              }
+            }
+            else if(length(which(agent_df[x, c(variable)] == list_class_names[2])) < tot__var_class_neigh[2]){
+              abs_diff = as.integer(as.numeric(tot__var_class_neigh[2]) - length(which(agent_df[x, c(variable)] == list_class_names[2])))
+              if(abs_diff <= 1|is.na(abs_diff)){
+                fitness = 1
+              }
+              else{
+                class = which(agent_df[x, c(variable)] == list_class_names[1])[1:as.numeric(abs_diff)]
+                class = class[!is.na(class)]
+                if(length(class) == 0){
+                  fitness = 1
+                }
+                agent_df[x[class], c(list_agent_propens[1])] = agent_df[x[class], c(list_agent_propens[1])] - 0.5
+              }
+            }
+          }
+          else if(length(x) < 10){
+            fitness = 1
+          }
+          else if(sum(tot__var_class_neigh) > length(x)){
+            percent_diff1 = length(which(agent_df[x, c(variable)] == list_class_names[1]))/as.numeric(tot__var_class_neigh[1])
+            percent_diff2 = length(which(agent_df[x, c(variable)] == list_class_names[2]))/as.numeric(tot__var_class_neigh[2])
+            percent_diff_diff = percent_diff1 - percent_diff2
+            if(abs(percent_diff_diff) < 0.02|is.na(percent_diff_diff)){
+              fitness = 1
+            }
+            else{
+              if( percent_diff_diff < 0){
+                abs_diff = as.integer((((as.numeric(abs(percent_diff_diff)))/2) * as.numeric(tot__var_class_neigh[1]))/3)
+                if(abs_diff <= 1|is.na(abs_diff)){
+                  fitness = 1
+                }
+                else{
+                  class = which(agent_df[x, c(variable)] == list_class_names[2])[1:abs_diff]
+                  class = class[!is.na(class)]
+                  if(length(class) == 0){
+                    fitness = 1
+                  }
+                  agent_df[x[class], c(list_agent_propens[1])] = agent_df[x[class], c(list_agent_propens[1])] + 0.3
+                }
+              }
+              else{
+                abs_diff = as.integer((((as.numeric(abs(percent_diff_diff)))/2) * as.numeric(tot__var_class_neigh[2]))/3)
+                if(abs_diff <= 1|is.na(abs_diff)){
+                  fitness = 1
+                }
+                else{
+                  class = which(agent_df[x, c(variable)] == list_class_names[1])[1:abs_diff]
+                  class = class[!is.na(class)]
+                  if(length(class) == 0){
+                    fitness = 1
+                  }
+                  agent_df[x[class], c(list_agent_propens[1])] = agent_df[x[class], c(list_agent_propens[1])] - 0.3
+                }
+              }
+            }
+          }
+        }
+      }
+    } 
+    print(paste("neighborhood:", i))
+  }
+  random_seq = sample(nrow(agent_df))
+  agent_df = agent_df[random_seq,]
+  print(Sys.time())
+  return(agent_df)
+}
+
+###############################################################
+## distr_attr_strat_n_neigh_stats_3plus is for attributes with three or more values
+
+distr_attr_strat_n_neigh_stats_3plus = function(agent_df, neigh_df, neigh_ID, variable, list_var_classes_neigh_df, list_agent_propens, list_class_names, agent_exclude){
+  print(Sys.time())
+  agent_df[, c(variable, "random_scores")] = 0
+  if(missing(list_class_names)){
+    list_class_names = list_var_classes_neigh_df
+  }
+  if(!missing(agent_exclude)){
+    agent_df[, c("excluded")] = 0
+    for(i in 1:length(agent_exclude)){
+      agent_df[which(agent_df[, c(agent_exclude[i])] == 1) , c("excluded")] =  1
+    }
+  }
+  lvar = length(list_var_classes_neigh_df)
+  for (i in 1:nrow(neigh_df)){
+    if(!missing(agent_exclude)){
+      x = which(agent_df[, c(neigh_ID)] == neigh_df[i, c(neigh_ID)] & agent_df[, c("excluded")] != 1)
+    }
+    else{
+      x = which(agent_df[, c(neigh_ID)] == neigh_df[i, c(neigh_ID)])
+    }
+    tot__var_class_neigh = neigh_df[i, list_var_classes_neigh_df]
+    agent_df[x, c("random_scores")] = sample(x= seq(from= 0, to = 1, by= 0.01), size = length(x), replace = T)
+    fitness = 0
+    if(length(x) != 0){
+      while(fitness == 0){
+        if(lvar > 2){
+          agent_df[x[which(agent_df[x, c(list_agent_propens[1])] >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[1]
+          agent_df[x[which(agent_df[x, c(list_agent_propens[1])] < agent_df[x,c("random_scores")] & rowSums(agent_df[x, c(list_agent_propens[1:2])]) >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[2]
+          if(lvar >3){
+            for(n in 3:(lvar -1)){
+              agent_df[x[which(rowSums(agent_df[x, c(list_agent_propens[1:(n-1)])]) < agent_df[x,c("random_scores")] & rowSums(agent_df[x, c(list_agent_propens[1:n])]) >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[n]
+            }
+          }
+          agent_df[x[which(rowSums(agent_df[x, c(list_agent_propens[1:(lvar -1)])]) < agent_df[x,c("random_scores")])], c(variable)] = list_class_names[lvar]
+          if((length(which(agent_df[x, c(variable)] == list_class_names[1])) >= tot__var_class_neigh[1] & length(which(agent_df[x, c(variable)] == list_class_names[2])) >= tot__var_class_neigh[2] & length(which(agent_df[x, c(variable)] == list_class_names[3])) >= tot__var_class_neigh[3]) | sum(tot__var_class_neigh) == 0 | is.na(sum(tot__var_class_neigh))){
+            fitness = 1
+          }
+          else if(sum(tot__var_class_neigh) <= length(x)){
+            agent_df[x, c("random_scores")] = sample(x= seq(from= 0, to = 1, by= 0.01), size = length(x), replace = T)
+            agent_df[x[which(agent_df[x, c(list_agent_propens[1])] >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[1]
+            agent_df[x[which(agent_df[x, c(list_agent_propens[1])] < agent_df[x,c("random_scores")] & rowSums(agent_df[x, c(list_agent_propens[1:2])]) >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[2]
+            if(lvar>3){
+              for(n in 3:(lvar-1)){
+                agent_df[x[which(rowSums(agent_df[x, c(list_agent_propens[1:(n-1)])]) < agent_df[x,c("random_scores")] & rowSums(agent_df[x, c(list_agent_propens[1:n])]) >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[n]
+              }
+            }
+            agent_df[x[which(rowSums(agent_df[x, c(list_agent_propens[1:(lvar -1)])]) < agent_df[x,c("random_scores")])], c(variable)] = list_class_names[lvar]
+            if(length(which(agent_df[x, c(variable)] == list_class_names[1])) >= tot__var_class_neigh[1] & length(which(agent_df[x, c(variable)] == list_class_names[2])) >= tot__var_class_neigh[2] & length(which(agent_df[x, c(variable)] == list_class_names[3])) >= tot__var_class_neigh[3]){
+              fitness = 1
+            }
+            else{
+              underrepresented = c()
+              for(n in 1:(lvar)){
+                if(length(which(agent_df[x, c(variable)] == list_class_names[n])) < tot__var_class_neigh[n]){
+                  underrepresented = append(underrepresented, 1)
+                }
+                else{
+                  underrepresented = append(underrepresented, 0)
+                }
+              }
+              for(n in 1:(lvar)){
+                if(underrepresented[n] == 1){
+                  abs_diff = (tot__var_class_neigh[n] - length(which(agent_df[x, c(variable)] == list_class_names[n])))
+                  class = which(agent_df[x, c(variable)] %in% list_class_names[which(underrepresented == 0)])[1:as.numeric(abs_diff)]
+                  class = class[!is.na(class)]
+                  agent_df[x[class], c(variable)] = list_class_names[n]
+                  agent_df[x[class], c(list_agent_propens[n])] = agent_df[x[class], c(list_agent_propens[n])] + 0.5
+                  agent_df[x[class], c(list_agent_propens[which(underrepresented == 0)])] = agent_df[x[class], c(list_agent_propens[which(underrepresented == 0)])] - (0.5/length(which(underrepresented == 0)))
+                }
+              }
+              if(length(which(agent_df[x, c(variable)] == list_class_names[1])) >= tot__var_class_neigh[1] & length(which(agent_df[x, c(variable)] == list_class_names[2])) >= tot__var_class_neigh[2] & length(which(agent_df[x, c(variable)] == list_class_names[3])) >= tot__var_class_neigh[3]){
+                fitness = 1
+              }
+            }  
+          }
+          else if(sum(tot__var_class_neigh) > length(x)){
+            percent_diff = c()
+            for(n in 1:(lvar)){
+              if(tot__var_class_neigh[n] != 0){
+                percent_diff = append(percent_diff, length(which(agent_df[x, c(variable)] == list_class_names[n]))/as.numeric(tot__var_class_neigh[n]))
+              }
+              else{
+                percent_diff = append(percent_diff, NA)
+              }
+            }
+            print(percent_diff)
+            percent_diff_diff = as.data.frame(matrix(data = NA, nrow = length(list_var_classes_neigh_df), ncol = length(list_var_classes_neigh_df)))
+            for(n in 1:(lvar)){
+              for(k in 1:(lvar)){
+                percent_diff_diff[n, k] = percent_diff[n] - percent_diff[k]
+              }
+            }
+            if(all(abs(na.omit(percent_diff_diff)) < 0.03)){
+              fitness = 1
+            }
+            else{
+              tot_abs_diff = c()
+              for(n in 1:(lvar)){
+                m = which(percent_diff_diff[n,] < (-0.03))
+                if(length(m)> 0){
+                  abs_diff = as.numeric(((sum(as.numeric(abs(percent_diff_diff[n, m])))/length(m)) * as.numeric(tot__var_class_neigh[n])))
+                  tot_abs_diff = append(tot_abs_diff, abs_diff )
+                  for(l in m){
+                    class = which(agent_df[x, c(variable)] %in% list_class_names[l])[1:as.integer((abs_diff/3)*(as.numeric(tot__var_class_neigh[l])/sum(as.numeric(tot__var_class_neigh[m]))))]
+                    class = class[!is.na(class)]
+                    agent_df[x[class], c(variable)] = list_class_names[n]
+                    agent_df[x[class], c(list_agent_propens[n])] = agent_df[x[class], c(list_agent_propens[n])] + 0.3
+                    agent_df[x[class], c(list_agent_propens[m])] = agent_df[x[class], c(list_agent_propens[m])] - (0.3/length(m))
+                  }
+                }
+              }
+              if(all(abs(tot_abs_diff) < 3)){
+                fitness = 1
+              }
+              else{
+                percent_diff = c()
+                for(n in 1:(lvar)){
+                  if(tot__var_class_neigh[n] != 0){
+                    percent_diff = append(percent_diff, length(which(agent_df[x, c(variable)] == list_class_names[n]))/as.numeric(tot__var_class_neigh[n]))
+                  }
+                  else{
+                    percent_diff = append(percent_diff, NA)
+                  }                }
+                print(percent_diff)
+                percent_diff_diff = as.data.frame(matrix(data = NA, nrow = length(list_var_classes_neigh_df), ncol = length(list_var_classes_neigh_df)))
+                for(n in 1:(lvar)){
+                  for(k in 1:(lvar)){
+                    percent_diff_diff[n, k] = percent_diff[n] - percent_diff[k]
+                  }
+                }
+                if(all(abs(na.omit(percent_diff_diff)) < 0.05)){
+                  fitness = 1
+                }
+                # else{
+                #   agent_df[x, c("random_scores")] = sample(x= seq(from= 0, to = 1, by= 0.01), size = length(x), replace = T)
+                # } 
+              }
+            }
+          }
+        }
+        else if(lvar == 2){
+          print("use binary attribute function: distr_bin_attr_strat_n_neigh_stats() ")
+        }
+      }
+    } 
+    print(paste("neighborhood:", i))
+  }
+  random_seq = sample(nrow(agent_df))
+  agent_df = agent_df[random_seq,]
+  print(Sys.time())
+  return(agent_df)
+}
+
+
+#### assigning attributes purely based on conditional probabilities
+
+distr_attr_cond_prop = function(agent_df, variable, list_agent_propens, list_class_names, agent_exclude){
+  print(Sys.time())
+  agent_df[, c(variable, "random_scores")] = 0
+  if(!missing(agent_exclude)){
+    agent_df[, c("excluded")] = 0
+    for(i in 1:length(agent_exclude)){
+      agent_df[which(agent_df[, c(agent_exclude[i])] == 1) , c("excluded")] =  1
+    }
+    x = which(agent_df[, c("excluded")] != 1)
+  }
+  else{
+    x = which(agent_df[, c(variable)] == 0)
+  }
+  lvar = length(list_class_names)
+  agent_df[x, c("random_scores")] = sample(x= seq(from= 0, to = 1, by= 0.01), size = length(x), replace = T)
+  if(lvar == 2){
+    agent_df[x[which(agent_df[x, c(list_agent_propens[1])] >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[1]
+    agent_df[x[which(agent_df[x, c(list_agent_propens[1])] < agent_df[x,c("random_scores")])], c(variable)] = list_class_names[2]
+  }
+  else if(lvar > 2){
+    agent_df[x[which(agent_df[x, c(list_agent_propens[1])] >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[1]
+    agent_df[x[which(agent_df[x, c(list_agent_propens[1])] < agent_df[x,c("random_scores")] & rowSums(agent_df[x, c(list_agent_propens[1:2])]) >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[2]
+    if(lvar >3){
+      for(n in 3:(lvar -1)){
+        agent_df[x[which(rowSums(agent_df[x, c(list_agent_propens[1:(n-1)])]) < agent_df[x,c("random_scores")] & rowSums(agent_df[x, c(list_agent_propens[1:n])]) >= agent_df[x,c("random_scores")])], c(variable)] = list_class_names[n]
+      }
+    }
+    agent_df[x[which(rowSums(agent_df[x, c(list_agent_propens[1:(lvar -1)])]) < agent_df[x,c("random_scores")])], c(variable)] = list_class_names[lvar]
+  }
+  random_seq = sample(nrow(agent_df))
+  agent_df = agent_df[random_seq,]
+  print(Sys.time())
+  return(agent_df)
+}
+
+
+
+
+#### cross validation with the neighborhood and stratified marginal distributions #######################
+
+### EXPLANATION
+# This function generates a table for validation that compares the original marginal distributions to the generated distributions of the agent dataset.
+# valid_df is the dataset that contains the marginal distributions, this can be the neighborhood totals dataset or the stratified dataset
+# agent_df is the agent dataset, which now contains the newly generated variable
+# join_var is the variable or variables on which basis the datasets should be joined/ compared. 
+# For a neighborhood totals dataset this would be the neighborhood code, while for a stratified dataset this would be all the conditional variables.
+# list_valid_var lists the variables in the valid_df that should be compared to the newly generated variable. 
+# (e.g when having generated the variable sex, then the variables we want to compare would be perhaps c("men", "women", "non_binary"))
+# agent_var states the newly generated variable in the agent_df that should be validated
+# list_agent_attr lists the generated attributes of this agent_var (e.g. c("male", "female", "non_binary"))
+# Attention: the order of the list_valid_var and list_agent_attr needs to be equal.
+
+crossvalid = function(valid_df, agent_df, join_var, list_valid_var, agent_var, list_agent_attr ){
+  output = valid_df[,c(join_var, list_valid_var)]
+  for(i in 1:length(list_agent_attr)){
+    output[, c(paste("agent_",list_agent_attr[i], sep = ""))]= NA
+  }
+  if(length(join_var) > 1){
+    valid_df$ID = paste("ID",1:nrow(valid_df), sep="")
+    interm = merge(agent_df[, c(join_var, agent_var)], valid_df[, c(join_var, "ID")], by = join_var, all.x= T, all.y= F)
+  }
+  for(n in 1:nrow(output)){
+    for(i in 1:length(list_agent_attr)){
+      if(length(join_var) == 1){
+        output[n, c(paste("agent_",list_agent_attr[i], sep = ""))]= nrow(agent_df[which(agent_df[, c(join_var)] == valid_df[n, c(join_var)] & agent_df[, c(agent_var)] == list_agent_attr[i]),])
+        output[n, c(paste("diff_",list_agent_attr[i], sep = ""))]= output[n, c(paste("agent_",list_agent_attr[i], sep = ""))] - output[n, c(list_valid_var[i])]
+      }
+      else{
+        output[n, c(paste("agent_",list_agent_attr[i], sep = ""))]= nrow(interm[which(interm[, c("ID")] == valid_df[n, c("ID")] & interm[, c(agent_var)] == list_agent_attr[i]),])
+        output[n, c(paste("diff_",list_agent_attr[i], sep = ""))]= output[n, c(paste("agent_",list_agent_attr[i], sep = ""))] - output[n, c(list_valid_var[i])]
+      }
+    }
+  }
+  return(output)
+}

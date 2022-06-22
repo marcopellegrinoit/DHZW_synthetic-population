@@ -1,0 +1,62 @@
+migration_background_code;migration_background
+1012600;Dutch background
+2012605;With migration background
+2012655;Western migration background
+2012657;Non-Western Migration Background
+T001040;Total
+H008519;Africa
+H008520;America
+H008524;Asia
+H007933;Europe (excl. Dutch background)
+H008531;Oceania
+H007935;European Union (excl. Dutch eight...
+H007936;GIPS countries in the EU
+H007937;Central and Eastern European countries in the EU
+H008533;Afghanistan
+H008544;Aruba
+H008552;Belgium
+H008559;Bosnia and Herzegovina
+H008562;Brazil
+H008567;Bulgaria
+H008575;China
+H008579;Colombia
+H008586;Curacao
+H008592;Germany
+H008594;Egypt
+H008597;Eritrea
+H008599;Ethiopia
+H008603;Philippines
+H008605;France
+H008612;Ghana
+H008615;Greece
+H008627;Hungary
+H008631;India
+H008632;Indonesia
+H008633;Iraq
+H008634;Iran
+H008636;Italy
+H007072;Yugoslavia (old)
+H007069;(former) Yugoslavia
+H008644;Cape Verde
+H008673;Morocco
+H007128;Netherlands Antilles (old)
+H007119;(former) Netherlands Antilles, Aruba
+H008706;Ukraine
+H008710;Pakistan
+H008718;Poland
+H008719;Portugal
+H008723;Romania
+H008724;Russia
+H008747;Somalia
+H007186;Soviet Union (old)
+H007172;(former) Soviet Union
+H008749;Spain
+H008751;Suriname
+H008753;Syria
+H008757;Thailand
+H007204;(former) Czechoslovakia
+H008766;Turkey
+H008776;United Kingdom
+H008778;United States
+H008780;Vietnam
+H008787;South Africa
