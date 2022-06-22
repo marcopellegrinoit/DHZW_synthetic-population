@@ -1,0 +1,30 @@
+Gender - age
+
+https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=03759ned&_theme=267
+
+Note: deselected the marital status
+
+Spatial level: The Hague municipality ('s-Gravenhage)
+Period: 2019
+
+---------------------------------------------------------------------------------------------
+
+Gender - age - migration background
+
+https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=84910NED&_theme=267
+
+Note: Generation set to total
+
+Spatial level: The Hague municipality ('s-Gravenhage)
+Period: 2019
+
+---------------------------------------------------------------------------------------------
+
+Gender - age - education - migration background
+
+https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=71493ned&_theme=335
+
+Spatial level: The Hague municipality ('s-Gravenhage)
+Period: 2019/'20
+
+---------------------------------------------------------------------------------------------

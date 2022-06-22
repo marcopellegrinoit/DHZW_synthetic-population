@@ -1,7 +1,7 @@
 library("this.path")
 library('dplyr')
 setwd(this.path::this.dir())
-source('utils_marco.R')
+source('utils.R')
 source('tabea-functions.R')
 
 ############################################################################################
@@ -76,9 +76,9 @@ codes_migration = read.csv("migration_backgrounds_codes.csv", sep=";")
 codes_education = read.csv("education_codes.csv", sep=";")
 
 ###################################### Gender - age ########################################
-setwd(paste(this.path::this.dir(), "/data/stratified", sep = ""))
+setwd(paste(this.path::this.dir(), "/data/stratified-datasets", sep = ""))
 
-strat.gender_age = read.csv("gender_age_2019_03759NED.csv", sep = ";") # count of people per lifeyear and gender in all of Amsterdam
+strat.gender_age = read.csv("gender_age-03759NED.csv", sep = ";") # count of people per lifeyear and gender in all of Amsterdam
 
 strat.gender_age = strat.gender_age %>%
   select(Geslacht,
@@ -112,32 +112,19 @@ strat.gender_age$age <- as.numeric(strat.gender_age$age)
 
 ############################################################################################
 # Age - gender - migration background
-strat.gender_age_migr = read.csv("gender_age_migration_84910NED.csv", sep=";")
+strat.gender_age_migr = read.csv("gender_age_migration-84910NED.csv", sep=";")
 
 strat.gender_age_migr = strat.gender_age_migr %>%
   select(Geslacht,
          Leeftijd,
          Migratieachtergrond,
-         BevolkingOp1Januari_1,
-         Perioden,
-         Generatie
+         BevolkingOp1Januari_1
   ) %>%
   rename(gender = Geslacht,
          age_code = Leeftijd,
          migration_background_code = Migratieachtergrond,
-         n_people = BevolkingOp1Januari_1,
-         period = Perioden,
-         generation = Generatie
+         n_people = BevolkingOp1Januari_1
   )
-
-
-# Filter total generations
-strat.gender_age_migr = strat.gender_age_migr[strat.gender_age_migr$generation == "T001040",]
-strat.gender_age_migr = subset(strat.gender_age_migr, select=-c(generation))
-
-# 2019 only
-strat.gender_age_migr = strat.gender_age_migr[strat.gender_age_migr$period=='2019JJ00',]
-strat.gender_age_migr = subset(strat.gender_age_migr, select=-c(period))
 
 # Refactor gender, age, migration
 strat.gender_age_migr = refactor_gender(strat.gender_age_migr)
@@ -148,28 +135,21 @@ strat.gender_age_migr = refactor_migration(strat.gender_age_migr, codes_migratio
 
 # Gender - age - migration background - education
 
-strat.gender_age_edu_migr = read.csv("gender_age_education_migration_71493NED.csv", sep=";")
+strat.gender_age_edu_migr = read.csv("gender_age_education_migration-71493NED.csv", sep=";")
 
 strat.gender_age_edu_migr = strat.gender_age_edu_migr %>%
   select(Geslacht,
          Leeftijd,
          Onderwijssoort,
          Migratieachtergrond,
-         Perioden,
          Gediplomeerden_1
   ) %>%
   rename(gender = Geslacht,
          age_code = Leeftijd,
-        education_code = Onderwijssoort,
+         education_code = Onderwijssoort,
          migration_background_code = Migratieachtergrond,
-         period = Perioden,
          n_people = Gediplomeerden_1
   )
-
-
-# 2019 only
-strat.gender_age_edu_migr = strat.gender_age_edu_migr[strat.gender_age_edu_migr$period=='2019SJ00',]
-strat.gender_age_edu_migr = subset(strat.gender_age_edu_migr, select=-c(period))
 
 # Refactor gender, age, migration, education
 strat.gender_age_edu_migr = refactor_gender(strat.gender_age_edu_migr)
