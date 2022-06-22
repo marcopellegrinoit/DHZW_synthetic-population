@@ -170,8 +170,7 @@ group_ages = c('age_0_15', 'age_15_25', 'age_25_45', 'age_45_65', 'age_over65')
 sum(marginal_distributions[group_ages]) # 78655
 sum(marginal_distributions['tot_pop'])  # 78635
 
-population_size = sum(marginal_distributions[group_ages])
-
+population_size = sum(marginal_distributions[group_ages]) # 78655
 agents = gen_agent_df(population_size)
 
 # initialise synthetic population with agegroup and neighbourhood code
@@ -190,6 +189,9 @@ for(i in 1:nrow(marginal_distributions)){   # for each neighborhood
 
 # shuffle order
 agents = agents[sample(nrow(agents)),]
+
+setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
+write.csv(agents, "Synthetic_population_neighg-age.csv")
 
 ############################################################################################################################
 ################################ Translating age groups into interger age, based on age stratified dataset #############################
