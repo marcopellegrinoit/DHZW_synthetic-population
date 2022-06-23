@@ -231,7 +231,7 @@ write.csv(agents, "Synthetic_population_neighg-age.csv")
 ######################################## Variable: Sex ###################################################################
 ##########################################################################################################################
 
-############################### sex (based on sex per neighborhood and sex per age statistics) ######################################################################
+############################### Gender (based on gender per neighborhood and sex per age statistics) ######################################################################
 
 ## Compute conditional Propensities
 agents = calc_propens_agents(strat.gender_age, "female", "total", agents, c("age"))
@@ -253,14 +253,6 @@ neigh_valid = crossvalid(valid_df = marginal_distributions,
                          agent_df = agents,
                          join_var = "neighb_code",
                          list_valid_var = c("gender_male", "gender_female"), 
-                         agent_var = "gender",
-                         list_agent_attr = c("male", "female")
-                         )
-
-strat_valid = crossvalid(valid_df = strat.gender_age,
-                         agent_df = agents,
-                         join_var = "age",
-                         list_valid_var = c("male", "female"), 
                          agent_var = "gender",
                          list_agent_attr = c("male", "female")
                          )
