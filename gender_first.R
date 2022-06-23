@@ -115,7 +115,6 @@ tmp_strat.gender_agegroup = tmp_strat.gender_agegroup %>%
   mutate(n_people = sum(n_people)) %>%
   unique()
 
-
 strat.gender_agegroup = data.frame()
 males = tmp_strat.gender_agegroup[tmp_strat.gender_agegroup$gender=='male',]$n_people
 females = tmp_strat.gender_agegroup[tmp_strat.gender_agegroup$gender=='female',]$n_people
@@ -128,24 +127,6 @@ gender = c('male', 'female')
 strat.gender_agegroup=cbind(strat.gender_agegroup, gender)
 
 remove(tmp_strat.gender_agegroup)
-
-
-# preparation of the table
-#strat.gender_age$n_people = as.numeric(strat.gender_age$n_people)
-#strat.gender_age$age = as.character(strat.gender_age$age)
-
-#males = strat.gender_age[strat.gender_age$gender == "male" ,c("age", "n_people")]
-#colnames(males) = c('age', 'male')
-#females = strat.gender_age[strat.gender_age$gender == "female" ,c("age", "n_people")]           
-#colnames(females) = c('age', 'female')
-#strat.gender_age = merge(females, males, by= "age")
-#remove(males)
-#remove(females)
-#strat.gender_age$total = strat.gender_age$male + strat.gender_age$female
-
-#strat.gender_age <- strat.gender_age[!is.na(as.numeric(as.character(strat.gender_age$age))),]
-#strat.gender_age$age <- as.numeric(strat.gender_age$age)
-
 
 ############################################################################################
 # Age - gender - migration background

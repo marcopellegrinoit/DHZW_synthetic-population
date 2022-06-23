@@ -71,7 +71,7 @@ marginal_distributions = marginal_distributions %>%
 
 ###################################### Conversion codes ####################################
 setwd(paste(this.path::this.dir(), "/data/codes", sep = ""))
-codes_age = read.csv("age_codes.csv")
+codes_age = read.csv("age_codes.csv", sep=",")
 codes_migration = read.csv("migration_backgrounds_codes.csv", sep=";")
 codes_education = read.csv("education_codes.csv", sep=";")
 
@@ -128,8 +128,19 @@ strat.gender_age_migr = strat.gender_age_migr %>%
 
 # Refactor gender, age, migration
 strat.gender_age_migr = refactor_gender(strat.gender_age_migr)
+strat.gender_age_migr = strat.gender_age_migr[!strat.gender_age_migr$gender=='total',]
+
 strat.gender_age_migr = refactor_age(strat.gender_age_migr, codes_age)
+strat.gender_age_migr = strat.gender_age_migr %>%
+  rename(age_group = age)
+strat.gender_age_migr = strat.gender_age_migr[!strat.gender_age_migr$age_group=='total',]
+
+
 strat.gender_age_migr = refactor_migration(strat.gender_age_migr, codes_migration)
+strat.gender_age_migr = strat.gender_age_migr %>%
+  filter(migration_background == 'Dutch background' |
+           migration_background == 'Western migration background' |
+           migration_background == 'Non-Western Migration Background')
 
 ############################################################################################
 
@@ -265,73 +276,68 @@ write.csv(agents, "Synthetic_population_neighg-age-gender.csv")
 ##################################################################
 
 ## Data Preparation
-strat.gender_age_migr = strat.gender_age_migr[, c("age", "Geslacht" , "Migratieachtergrond" ,  "TotaalAantalPersonenInHuishoudens_1" , "ThuiswonendKind_2" , 
-                                "Alleenstaand_3" , "TotaalSamenwonendePersonen_4" ,  "PartnerInNietGehuwdPaarZonderKi_5" ,
-                                "PartnerInGehuwdPaarZonderKinderen_6" , "PartnerInNietGehuwdPaarMetKinderen_7",  "PartnerInGehuwdPaarMetKinderen_8",   
-                                "OuderInEenouderhuishouden_9" )]
 
-migrat_age = rbind(migrat_age, migrat_age)
-migrat_age$sex =""
-migrat_age$sex[0:21] = "female"
-migrat_age$sex[22:42] = "male"
-migrat_age$tot = 0
-migrat_age$Western = 0
-migrat_age$Dutch = 0
-migrat_age$Non_Western = 0
+migration_freq = expand.grid(gender = c('male', 'female'),
+                             age_group_20 = unique(strat.gender_age_migr$age_group))
 
-for(i in 1:nrow(migrat_age)){
-  migrat_age$tot[i] = sum(strat.gender_age_migr$TotaalAantalPersonenInHuishoudens_1[which(strat.gender_age_migr$age == migrat_age$age[i] & strat.gender_age_migr$Geslacht == migrat_age$sex[i])])
-  migrat_age$Western[i] = strat.gender_age_migr$TotaalAantalPersonenInHuishoudens_1[which(strat.gender_age_migr$age == migrat_age$age[i] & strat.gender_age_migr$Geslacht == migrat_age$sex[i] & strat.gender_age_migr$Migratieachtergrond == "\"Westerse migratieachtergrond\"" )]
-  migrat_age$Dutch[i] = strat.gender_age_migr$TotaalAantalPersonenInHuishoudens_1[which(strat.gender_age_migr$age == migrat_age$age[i] & strat.gender_age_migr$Geslacht == migrat_age$sex[i] & strat.gender_age_migr$Migratieachtergrond == "\"Nederlandse achtergrond\"" )]
-  migrat_age$Non_Western[i] = strat.gender_age_migr$TotaalAantalPersonenInHuishoudens_1[which(strat.gender_age_migr$age == migrat_age$age[i] & strat.gender_age_migr$Geslacht == migrat_age$sex[i] & strat.gender_age_migr$Migratieachtergrond == "\"Niet-westerse migratieachtergrond\"")]
+migration_freq$Western = NA
+migration_freq$Dutch = NA
+migration_freq$Non_Western = NA
+
+for(i in 1:nrow(migration_freq)){
+  migration_freq$Dutch[i] = strat.gender_age_migr$n_people[which(strat.gender_age_migr$age_group == migration_freq$age_group_20[i] & strat.gender_age_migr$gender == migration_freq$gender[i] & strat.gender_age_migr$migration_background == "Dutch background")]
+  migration_freq$Western[i] = strat.gender_age_migr$n_people[which(strat.gender_age_migr$age_group == migration_freq$age_group_20[i] & strat.gender_age_migr$gender == migration_freq$gender[i] & strat.gender_age_migr$migration_background == "Western migration background")]
+  migration_freq$Non_Western[i] = strat.gender_age_migr$n_people[which(strat.gender_age_migr$age_group == migration_freq$age_group_20[i] & strat.gender_age_migr$gender == migration_freq$gender[i] & strat.gender_age_migr$migration_background == "Non-Western Migration Background")]
 }
+migration_freq$total = migration_freq$Dutch + migration_freq$Western + migration_freq$Non_Western
 
 
-agents$age_group_20 = "" #classifying ages into age groups to link to migrant dataset
-# "95 jaar of ouder" "0 tot 5 jaar"     "5 tot 10 jaar"    "10 tot 15 jaar"   "15 tot 20 jaar"   "20 tot 25 jaar"   "25 tot 30 jaar"  
-# "30 tot 35 jaar"   "35 tot 40 jaar"   "40 tot 45 jaar"   "45 tot 50 jaar"   "50 tot 55 jaar"   "55 tot 60 jaar"   "60 tot 65 jaar"   "65 tot 70 jaar"  
-# "70 tot 75 jaar"   "75 tot 80 jaar"   "80 tot 85 jaar"   "85 tot 90 jaar"   "90 tot 95 jaar"
-agents$age_group_20[agents$age %in% 0:4] = "0 tot 5 jaar"
-agents$age_group_20[agents$age %in% 5:9] = "5 tot 10 jaar"
-agents$age_group_20[agents$age %in% 10:14] =  "10 tot 15 jaar"
-agents$age_group_20[agents$age %in% 15:19] = "15 tot 20 jaar"
-agents$age_group_20[agents$age %in% 20:24] =  "20 tot 25 jaar" 
-agents$age_group_20[agents$age %in% 25:29] = "25 tot 30 jaar"
-agents$age_group_20[agents$age %in% 30:34] =  "30 tot 35 jaar"
-agents$age_group_20[agents$age %in% 35:39] =  "35 tot 40 jaar" 
-agents$age_group_20[agents$age %in% 40:44] = "40 tot 45 jaar"
-agents$age_group_20[agents$age %in% 45:49] = "45 tot 50 jaar"
-agents$age_group_20[agents$age %in% 50:54] =  "50 tot 55 jaar"
-agents$age_group_20[agents$age %in% 55:59] = "55 tot 60 jaar"
-agents$age_group_20[agents$age %in% 60:64] =  "60 tot 65 jaar" 
-agents$age_group_20[agents$age %in% 65:69] = "65 tot 70 jaar"
-agents$age_group_20[agents$age %in% 70:74] =  "70 tot 75 jaar"
-agents$age_group_20[agents$age %in% 75:79] =  "75 tot 80 jaar" 
-agents$age_group_20[agents$age %in% 80:84] =  "80 tot 85 jaar" 
-agents$age_group_20[agents$age %in% 85:89] = "85 tot 90 jaar"
-agents$age_group_20[agents$age %in% 90:94] =  "90 tot 95 jaar"
-agents$age_group_20[agents$age %in% 95:104] =  "95 jaar of ouder" 
+# Classifying ages into age groups to link to migrant dataset
+agents$age_group_20 = ""
+agents$age_group_20[agents$age %in% 0:4] = "age_0_5"
+agents$age_group_20[agents$age %in% 5:9] = "age_5_10"
+agents$age_group_20[agents$age %in% 10:14] =  "age_10_15"
+agents$age_group_20[agents$age %in% 15:19] = "age_15_20"
+agents$age_group_20[agents$age %in% 20:24] =  "age_20_25" 
+agents$age_group_20[agents$age %in% 25:29] = "age_25_30"
+agents$age_group_20[agents$age %in% 30:34] =  "age_30_35"
+agents$age_group_20[agents$age %in% 35:39] =  "age_35_40" 
+agents$age_group_20[agents$age %in% 40:44] = "age_40_45"
+agents$age_group_20[agents$age %in% 45:49] = "age_45_50"
+agents$age_group_20[agents$age %in% 50:54] =  "age_50_55"
+agents$age_group_20[agents$age %in% 55:59] = "age_55_60"
+agents$age_group_20[agents$age %in% 60:64] =  "age_60_65" 
+agents$age_group_20[agents$age %in% 65:69] = "age_65_70"
+agents$age_group_20[agents$age %in% 70:74] =  "age_70_75"
+agents$age_group_20[agents$age %in% 75:79] =  "age_75_80" 
+agents$age_group_20[agents$age %in% 80:84] =  "age_80_85" 
+agents$age_group_20[agents$age %in% 85:89] = "age_85_90"
+agents$age_group_20[agents$age %in% 90:94] =  "age_90_95"
+agents$age_group_20[agents$age %in% 95:104] =  "age_95_100" 
 
-colnames(migrat_age)[2] = "age_group_20"
-marginal_2020$nr_Dutch = marginal_2020$AantalInwoners_5 - (marginal_2020$WestersTotaal_17 + marginal_2020$NietWestersTotaal_18)
-
+# calculate Dutch migration background for the marginal distribution
+marginal_distributions$migration_Dutch = marginal_distributions$tot_pop - (marginal_distributions$migration_west + marginal_distributions$migration_non_west)
 
 ## Conditional Propensities
-agents = calc_propens_agents(migrat_age, "Dutch", "tot", agents, c("age_group_20", "sex") )
-agents = calc_propens_agents(migrat_age, "Western", "tot", agents, c("age_group_20", "sex") )
-agents = calc_propens_agents(migrat_age, "Non_Western", "tot", agents, c("age_group_20", "sex") )
+agents = calc_propens_agents(migration_freq, "Dutch", "total", agents, c("age_group_20", "gender") )
+agents = calc_propens_agents(migration_freq, "Western", "total", agents, c("age_group_20", "gender") )
+agents = calc_propens_agents(migration_freq, "Non_Western", "total", agents, c("age_group_20", "gender") )
 
 ## assigning attributes to agents
-agents = distr_attr_strat_n_neigh_stats_3plus(agent_df =  agents, neigh_df =  marginal_2020, neigh_ID =  "neighb_code", variable =  "migrationbackground", 
-                                   list_var_classes_neigh_df =  c("nr_Dutch", "WestersTotaal_17", "NietWestersTotaal_18"), 
-                                   list_agent_propens =  c("prop_Dutch", "prop_Western", "prop_Non_Western"), list_class_names =  c("Dutch", "Western", "Non-Western"))
+agents = distr_attr_strat_n_neigh_stats_3plus(agent_df =  agents,
+                                              neigh_df =  marginal_distributions,
+                                              neigh_ID =  "neighb_code",
+                                              variable =  "migration_background",
+                                              list_var_classes_neigh_df =  c("migration_Dutch", "migration_west", "migration_non_west"), 
+                                              list_agent_propens =  c("prop_Dutch", "prop_Western", "prop_Non_Western"),
+                                              list_class_names =  c("Dutch", "Western", "Non_Western"))
 
 ## cross validating with neighborhood and stratified totals
 neigh_valid = crossvalid(valid_df = marginal_2020, agent_df = agents, join_var = "neighb_code", list_valid_var = c("nr_Dutch", "WestersTotaal_17", "NietWestersTotaal_18"), 
-                         agent_var = "migrationbackground", list_agent_attr = c("Dutch", "Western", "Non-Western") )
+                         agent_var = "migrationbackground", list_agent_attr = c("Dutch", "Western", "Non_Western") )
 
 strat_valid = crossvalid(valid_df = migrat_age, agent_df = agents, join_var = c("age_group_20", "sex"), list_valid_var =  c("Dutch", "Western", "Non_Western"), 
-                         agent_var = "migrationbackground", list_agent_attr =  c("Dutch", "Western", "Non-Western") )
+                         agent_var = "migrationbackground", list_agent_attr =  c("Dutch", "Western", "Non_Western") )
 
 
 agents= agents[,c("agent_ID","neighb_code",  "age" , "sex", "age_group" , "age_group_20", "migrationbackground")]

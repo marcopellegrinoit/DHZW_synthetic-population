@@ -1,0 +1,965 @@
+﻿"TableInfos"
+"ID";"Title";"ShortTitle";"Identifier";"Summary";"Modified";"ReasonDelivery";"ExplanatoryText";"Language";"Catalog";"Frequency";"Period";"ShortDescription";"Description";"DefaultPresentation";"DefaultSelection";"GraphTypes";"OutputStatus";"Source";"MetaDataModified";"SearchPriority"
+"0";"Bevolking; geslacht, leeftijd, generatie en migratieachtergrond, 1 januari";"Bevolking; migratieachtergrond";"37325";"Bevolking naar geslacht, leeftijd, burgerlijke staat,
+generatie (eerste respectievelijk tweede) en migratieachtergrond";"2022-05-31T02:00:00";"Actualisering";"";"nl";"CBS";"Perjaar";"1996 - 2022";"
+Bevolking van Nederland op 1 januari naar geslacht, leeftijd, burgerlijke staat, generatie en migratieachtergrond. 
+
+Gegevens beschikbaar vanaf: 1996
+
+Status van de cijfers:
+Alle cijfers in de tabel zijn definitief.
+
+Wijzigingen per 31 mei 2022:
+De cijfers per 1 januari 2022 zijn toegevoegd.
+
+Wanneer komen er nieuwe cijfers?
+In het 2e kwartaal van 2023 worden de cijfers van de bevolking per 1 januari 2023 aan deze publicatie toegevoegd.
+";"INHOUDSOPGAVE
+
+1. Toelichting
+2. Definities en verklaring van symbolen
+3. Koppelingen naar relevante tabellen en artikelen
+4. Bronnen en methoden
+5. Meer informatie 
+
+1. TOELICHTING
+
+Bevolking van Nederland op 1 januari naar geslacht, leeftijd, burgerlijke staat, generatie en migratieachtergrond. 
+
+Gegevens beschikbaar vanaf: 1996
+
+Status van de cijfers:
+Alle cijfers in de tabel zijn definitief.
+
+Wijzigingen per 31 mei 2022:
+De cijfers per 1 januari 2022 zijn toegevoegd.
+
+Wanneer komen er nieuwe cijfers?
+In het 2e kwartaal van 2023 worden de cijfers van de bevolking per 1 januari 2023 aan deze publicatie toegevoegd.
+
+2. DEFINITIES EN VERKLARING VAN SYMBOLEN
+
+Definities:
+
+Bevolking
+De inwoners van Nederland.
+In de bevolkingsaantallen zijn uitsluitend personen begrepen die zijn opgenomen in het bevolkingsregister van een Nederlandse gemeente. In principe wordt iedereen die voor onbepaalde tijd in Nederland woont, opgenomen in het bevolkingsregister van de woongemeente. Personen die tot de bevolking van Nederland behoren, maar voor wie geen vaste woonplaats valt aan te wijzen, zijn opgenomen in het bevolkingsregister van de gemeente 's-Gravenhage. In de bevolkingsregisters zijn niet opgenomen de in Nederland wonende personen waarvoor uitzonderingsregels gelden met betrekking tot opneming in de bevolkingsregisters (bijvoorbeeld diplomaten en NAVO militairen) en personen die niet legaal in Nederland verblijven.
+
+Leeftijd
+Het aantal gehele jaren dat op 1 januari van het jaar van waarneming is verstreken sinds de geboortedatum van de persoon.
+Te berekenen als jaar van waarneming minus één, min het geboortejaar van de persoon.
+
+Burgerlijke staat
+Formele positie van een persoon waarbij wordt verwezen naar het huwelijk en het geregistreerd partnerschap. 
+Per 1 januari 1998 is het geregistreerd partnerschap ingevoerd. Doorgaans worden het geregistreerd partnerschap en het huwelijk op dezelfde wijze behandeld.
+
+Generatie
+Nadere onderscheiding van personen met een migratieachtergrond naar personen met een eerste generatie migratieachtergrond en personen met een tweede generatie migratieachtergrond.
+Persoon met een eerste generatie migratieachtergrond:
+Persoon die in het buitenland is geboren met ten minste één in het buitenland geboren ouder.
+Persoon met een tweede generatie migratieachtergrond:
+Persoon die in Nederland is geboren met ten minste één in het buitenland geboren ouder.
+
+Migratieachtergrond
+Kenmerk dat weergeeft met welk land een persoon verbonden is op basis van het geboorteland van de ouders of van zichzelf.
+Een persoon met een eerste generatie migratieachtergrond heeft als migratieachtergrond het land waar hij of zij is geboren. 
+Een persoon met een tweede generatie migratieachtergrond heeft als migratieachtergrond het geboorteland van de moeder, tenzij dat ook Nederland is. In dat geval is de migratieachtergrond bepaald door het geboorteland van de vader. 
+
+Verklaring van symbolen:
+
+niets (blanco)	: het cijfer kan op logische gronden niet voorkomen
+. 		: het cijfer is onbekend, onvoldoende betrouwbaar of geheim
+*		: voorlopige cijfers
+**		: nader voorlopige cijfers
+
+3. KOPPELINGEN NAAR RELEVANTE TABELLEN EN ARTIKELEN
+
+Relevante tabellen:
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/37713'>Bevolking; leeftijd, migratieachtergrond, geslacht en regio, 1 januari</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/37973'>Personen; positie in het huishouden, migratieachtergrond, per 1 januari</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/70787ned'>Bevolking met migratieachtergrond; geslacht, leeftijd, 1 januari</a>
+<a href='https://opendata.cbs.nl/statline/#/CBS/nl/dataset/70688NED'>Bevolking; niet-westerse derde generatie, 2000-2012</a>, deze tabel is stopgezet.
+
+Relevante artikelen:
+<a href='https://www.cbs.nl/nl-nl/achtergrond/2007/43/schatting-van-het-aantal-voormalig-joegoslaven-naar-huidig-herkomstgebied'>Schatting van het aantal voormalig Joegoslaven naar huidig herkomstgebied (Bevolkingstrends 2007, 3e kwartaal)</a>
+ <a href='https://www.cbs.nl/nl-nl/achtergrond/2008/51/herkomst-en-kenmerken-van-immigranten-uit-de-voormalige-sovjet-unie'>Herkomst en kenmerken van immigranten uit de voormalige Sovjet-Unie(Bevolkingstrends 2008, 4e kwartaal)</a>
+
+Algemene informatie over de bevolking is te vinden op de themapagina <a href='https://www.cbs.nl/nl-nl/maatschappij/bevolking'>Bevolking</a>.
+
+4. BRONNEN EN METHODEN
+
+Trendbreuk migratieachtergrond
+Personen worden in principe gerekend bij actueel bestaande landen. Voor personen met een migratieachtergrond in landen die inmiddels uiteen zijn gevallen gebeurde dit nog niet, omdat in het bevolkingsregister alleen het actuele land ten tijde van de geboorte geregistreerd is. Het gaat dan om onder andere personen met een migratieachtergrond in de voormalige Sovjet-Unie, voormalig Joegoslavië, voormalig Tsjechoslowakije en de voormalige Nederlandse Antillen en Aruba. 
+Vanaf 2021 worden ook deze personen op basis van geboorteplaatsinformatie ingedeeld bij de nieuwe landen die uit deze landen zijn ontstaan. 
+
+Trendbreuk
+Vanaf 2010 is een kleine verschuiving tussen de verschillende burgerlijke staten opgetreden (minder ongehuwd en meer gescheiden en verweduwd). Dit komt omdat in de periode 1998 tot 2010 niet alle burgerlijke staten beschikbaar zijn in de bronbestanden die het CBS gebruikt. De burgerlijke staten 'verweduwd na partnerschap' en 'gescheiden na partnerschap' worden daardoor binnen deze statistiek binnen deze periode genegeerd. Voor deze statistiek betekent dit dat de burgerlijke staat van vóór het partnerschap is gebruikt wat in de meeste gevallen ongehuwd was. Vanaf 2010 zijn alle burgerlijke staten beschikbaar.
+
+De gegevens in de tabel zijn vanaf 2014 samengesteld met behulp van het <a href='https://www.cbs.nl/nl-nl/onze-diensten/methoden/onderzoeksomschrijvingen/korte-onderzoeksbeschrijvingen/stelsel-van-sociaal-statistische-bestanden--ssb--'>Stelsel van Sociaal-statistische Bestanden (SSB)</a>. 
+
+De beschrijving van het onderzoek is te vinden bij de korte onderzoeksbeschrijving <a href='https://www.cbs.nl/nl-nl/onze-diensten/methoden/onderzoeksomschrijvingen/korte-onderzoeksbeschrijvingen/bevolkingsstatistiek'>Bevolkingsstatistiek</a>.
+
+5. MEER INFORMATIE
+
+<a href='https://www.cbs.nl/nl-nl/over-ons/contact/infoservice'>Infoservice</a>
+
+Copyright (c) Centraal Bureau voor de Statistiek, Den Haag/Heerlen 
+Verveelvoudiging is toegestaan, mits het CBS als bron wordt vermeld.";"ts=1653290074601&graphtype=Table&r=Migratieachtergrond&k=Topics,Generatie&t=Geslacht,Leeftijd,BurgerlijkeStaat,Perioden";"$filter=((Geslacht eq 'T001038')) and ((Leeftijd eq '10000')) and ((BurgerlijkeStaat eq 'T001019')) and ((Generatie eq '1012600') or (Generatie eq '2012605') or (Generatie eq '2013356') or (Generatie eq '2013357') or (Generatie eq 'T001040')) and ((Migratieachtergrond eq '1012600') or (Migratieachtergrond eq '2012605') or (Migratieachtergrond eq '2012655') or (Migratieachtergrond eq '2012657') or (Migratieachtergrond eq 'T001040') or (Migratieachtergrond eq 'H008519') or (Migratieachtergrond eq 'H008520') or (Migratieachtergrond eq 'H008524') or (Migratieachtergrond eq 'H007933') or (Migratieachtergrond eq 'H008531') or (Migratieachtergrond eq 'H007935') or (Migratieachtergrond eq 'H007936') or (Migratieachtergrond eq 'H007937') or (Migratieachtergrond eq 'H008794') or (Migratieachtergrond eq 'H008632') or (Migratieachtergrond eq 'H008673') or (Migratieachtergrond eq 'H008751') or (Migratieachtergrond eq 'H008766')) and ((Perioden eq '2022JJ00'))";"Table,Bar,Line";"Regulier";"CBS.";"2022-05-31T02:00:00";"3"
+"DataProperties"
+ID;Position;ParentID;Type;Key;Title;Description;ReleasePolicy;Datatype;Unit;Decimals;Default
+"0";"0";;"Dimension";"Geslacht";"Geslacht";;;;;;
+"1";"1";;"Dimension";"Leeftijd";"Leeftijd";;;;;;
+"2";"2";;"Dimension";"BurgerlijkeStaat";"Burgerlijke staat";;;;;;
+"3";"3";;"Dimension";"Generatie";"Generatie";"";;;;;
+"4";"4";;"Dimension";"Migratieachtergrond";"Migratieachtergrond";"";;;;;
+"5";"5";;"TimeDimension";"Perioden";"Perioden";"";"true";;;;
+"6";"6";;"Topic";"Bevolking_1";"Bevolking";"De inwoners van Nederland.
+
+In de bevolkingsaantallen zijn uitsluitend personen begrepen die zijn opgenomen in het bevolkingsregister van een Nederlandse gemeente. In principe wordt iedereen die voor onbepaalde tijd in Nederland woont, opgenomen in het bevolkingsregister van de woongemeente. Personen die tot de bevolking van Nederland behoren, maar voor wie geen vaste woonplaats valt aan te wijzen, zijn opgenomen in het bevolkingsregister van de gemeente 's-Gravenhage. In de bevolkingsregisters zijn niet opgenomen de in Nederland wonende personen waarvoor uitzonderingsregels gelden met betrekking tot opneming in de bevolkingsregisters (bijvoorbeeld diplomaten en NAVO militairen) en personen die niet legaal in Nederland verblijven.";;"Long";"aantal";"0";"Impossible"
+"Geslacht"
+Key;Title;Description
+"T001038";"Totaal mannen en vrouwen";""
+"3000   ";"Mannen";""
+"4000   ";"Vrouwen";""
+"Leeftijd"
+Key;Title;Description
+"10000";"Totaal";""
+"10010";"0 jaar";""
+"10100";"1 jaar";""
+"10200";"2 jaar";""
+"10300";"3 jaar";""
+"10400";"4 jaar";""
+"10500";"5 jaar";""
+"10600";"6 jaar";""
+"10700";"7 jaar";""
+"10800";"8 jaar";""
+"10900";"9 jaar";""
+"11000";"10 jaar";""
+"11100";"11 jaar";""
+"11200";"12 jaar";""
+"11300";"13 jaar";""
+"11400";"14 jaar";""
+"11500";"15 jaar";""
+"11600";"16 jaar";""
+"11700";"17 jaar";""
+"11800";"18 jaar";""
+"11900";"19 jaar";""
+"12000";"20 jaar";""
+"12100";"21 jaar";""
+"12200";"22 jaar";""
+"12300";"23 jaar";""
+"12400";"24 jaar";""
+"12500";"25 jaar";""
+"12600";"26 jaar";""
+"12700";"27 jaar";""
+"12800";"28 jaar";""
+"12900";"29 jaar";""
+"13000";"30 jaar";""
+"13100";"31 jaar";""
+"13200";"32 jaar";""
+"13300";"33 jaar";""
+"13400";"34 jaar";""
+"13500";"35 jaar";""
+"13600";"36 jaar";""
+"13700";"37 jaar";""
+"13800";"38 jaar";""
+"13900";"39 jaar";""
+"14000";"40 jaar";""
+"14100";"41 jaar";""
+"14200";"42 jaar";""
+"14300";"43 jaar";""
+"14400";"44 jaar";""
+"14500";"45 jaar";""
+"14600";"46 jaar";""
+"14700";"47 jaar";""
+"14800";"48 jaar";""
+"14900";"49 jaar";""
+"15000";"50 jaar";""
+"15100";"51 jaar";""
+"15200";"52 jaar";""
+"15300";"53 jaar";""
+"15400";"54 jaar";""
+"15500";"55 jaar";""
+"15600";"56 jaar";""
+"15700";"57 jaar";""
+"15800";"58 jaar";""
+"15900";"59 jaar";""
+"16000";"60 jaar";""
+"16100";"61 jaar";""
+"16200";"62 jaar";""
+"16300";"63 jaar";""
+"16400";"64 jaar";""
+"16500";"65 jaar";""
+"16600";"66 jaar";""
+"16700";"67 jaar";""
+"16800";"68 jaar";""
+"16900";"69 jaar";""
+"17000";"70 jaar";""
+"17100";"71 jaar";""
+"17200";"72 jaar";""
+"17300";"73 jaar";""
+"17400";"74 jaar";""
+"17500";"75 jaar";""
+"17600";"76 jaar";""
+"17700";"77 jaar";""
+"17800";"78 jaar";""
+"17900";"79 jaar";""
+"18000";"80 jaar";""
+"18100";"81 jaar";""
+"18200";"82 jaar";""
+"18300";"83 jaar";""
+"18400";"84 jaar";""
+"18500";"85 jaar";""
+"18600";"86 jaar";""
+"18700";"87 jaar";""
+"18800";"88 jaar";""
+"18900";"89 jaar";""
+"19000";"90 jaar";""
+"19100";"91 jaar";""
+"19200";"92 jaar";""
+"19300";"93 jaar";""
+"19400";"94 jaar";""
+"19500";"95 jaar";""
+"19600";"96 jaar";""
+"19700";"97 jaar";""
+"19800";"98 jaar";""
+"19900";"99 jaar";""
+"19901";"100 jaar";""
+"19902";"101 jaar";""
+"19903";"102 jaar";""
+"19904";"103 jaar";""
+"19905";"104 jaar";""
+"22200";"100 jaar of ouder";
+"22300";"105 jaar of ouder";""
+"70100";"0 tot 5 jaar";""
+"70200";"5 tot 10 jaar";""
+"70300";"10 tot 15 jaar";""
+"70400";"15 tot 20 jaar";""
+"70500";"20 tot 25 jaar";""
+"70600";"25 tot 30 jaar";""
+"70700";"30 tot 35 jaar";""
+"70800";"35 tot 40 jaar";""
+"70900";"40 tot 45 jaar";""
+"71000";"45 tot 50 jaar";""
+"71100";"50 tot 55 jaar";""
+"71200";"55 tot 60 jaar";""
+"71300";"60 tot 65 jaar";""
+"71400";"65 tot 70 jaar";""
+"71500";"70 tot 75 jaar";""
+"71600";"75 tot 80 jaar";""
+"71700";"80 tot 85 jaar";""
+"71800";"85 tot 90 jaar";""
+"71900";"90 tot 95 jaar";""
+"72000";"95 tot 100 jaar";""
+"BurgerlijkeStaat"
+Key;Title;Description
+"T001019";"Totaal burgerlijke staat";"Trendbreuk burgerlijke staat
+Vanaf 2010 is een kleine verschuiving tussen de verschillende burgerlijke staten opgetreden (minder ongehuwd en meer gescheiden en verweduwd). Dit komt omdat in de periode 1998 tot 2010 niet alle burgerlijke staten beschikbaar zijn in de bronbestanden die het CBS gebruikt. De burgerlijke staten 'verweduwd na partnerschap' en 'gescheiden na partnerschap' worden daardoor binnen deze statistiek binnen deze periode genegeerd. Voor deze statistiek betekent dit dat de burgerlijke staat van vóór het partnerschap is gebruikt, welke in de meeste gevallen ongehuwd was. Vanaf 2010 zijn alle burgerlijke staten beschikbaar.
+
+Burgerlijke staat: 
+Formele positie van een persoon waarbij wordt verwezen naar het huwelijk en het geregistreerd partnerschap. 
+
+Huwelijk: 
+Wettelijke verbintenis tot het samenleven van twee personen. Sinds april 2001 staat het huwelijk ook open voor personen van hetzelfde geslacht. 
+
+Geregistreerd partnerschap: 
+Een op het huwelijk lijkende relatie tussen twee personen van gelijk of van verschillend geslacht, vastgelegd in een akte van de Burgerlijke Stand. Per 1 januari 1998 is in Nederland het geregistreerd partnerschap ingevoerd."
+"1010   ";"Ongehuwd";"Vanaf 2010: burgerlijke staat die aangeeft dat een persoon nog nooit een huwelijk heeft gesloten of een geregistreerd partnerschap is aangegaan.  
+1998 tot 2010: burgerlijke staat die aangeeft dat een persoon nog nooit een huwelijk heeft gesloten.
+Omdat in de periode 1998 tot 2010 niet alle burgerlijke staten beschikbaar zijn in de bronbestanden die het CBS gebruikt is partnerschap in deze statistiek binnen deze periode genegeerd. Voor deze statistiek betekent dit dat 'partnerschap na ongehuwd' is meegeteld en dat voor de burgerlijke staten 'verweduwd na partnerschap' en 'gescheiden na partnerschap' de burgerlijke staat van vóór het partnerschap is gebruikt. Dat was meestal ongehuwd.
+Tot 1998: burgerlijke staat die aangeeft dat een persoon nog nooit een huwelijk heeft gesloten.
+
+Trendbreuk burgerlijke staat
+Vanaf 2010 is een kleine verschuiving tussen de verschillende burgerlijke staten opgetreden (minder ongehuwd en meer gescheiden en verweduwd). Dit komt omdat in de periode 1998 tot 2010 niet alle burgerlijke staten beschikbaar zijn in de bronbestanden die het CBS gebruikt. De burgerlijke staten 'verweduwd na partnerschap' en 'gescheiden na partnerschap' worden daardoor binnen deze statistiek binnen deze periode genegeerd. Voor deze statistiek betekent dit dat de burgerlijke staat van vóór het partnerschap is gebruikt, welke in de meeste gevallen ongehuwd was. Vanaf 2010 zijn alle burgerlijke staten beschikbaar."
+"1020   ";"Gehuwd";"Wettig gehuwd plus partnerschap.
+
+Trendbreuk burgerlijke staat
+Vanaf 2010 is een kleine verschuiving tussen de verschillende burgerlijke staten opgetreden (minder ongehuwd en meer gescheiden en verweduwd). Dit komt omdat in de periode 1998 tot 2010 niet alle burgerlijke staten beschikbaar zijn in de bronbestanden die het CBS gebruikt. De burgerlijke staten 'verweduwd na partnerschap' en 'gescheiden na partnerschap' worden daardoor binnen deze statistiek binnen deze periode genegeerd. Voor deze statistiek betekent dit dat de burgerlijke staat van vóór het partnerschap is gebruikt, welke in de meeste gevallen ongehuwd was. Vanaf 2010 zijn alle burgerlijke staten beschikbaar.
+
+Wettig gehuwd:
+Burgerlijke staat die ontstaat na sluiting van een huwelijk. Inclusief personen die zijn gescheiden van tafel en bed, want zij blijven formeel gehuwd.
+
+Partnerschap:
+Burgerlijke staat die ontstaat na het aangaan van een geregistreerd partnerschap.
+
+Huwelijk:
+Wettelijke verbintenis tot het samenleven van twee personen.
+Sinds april 2001 staat het huwelijk ook open voor personen van hetzelfde geslacht.
+
+Geregistreerd partnerschap:
+Een op het huwelijk lijkende relatie tussen twee personen van gelijk of van verschillend geslacht, vastgelegd in een akte van de Burgerlijke Stand. Per 1 januari 1998 is in Nederland het geregistreerd partnerschap ingevoerd."
+"1050   ";"Verweduwd";"Verweduwd na wettig huwelijk plus verweduwd na partnerschap.
+
+Trendbreuk burgerlijke staat
+Vanaf 2010 is een kleine verschuiving tussen de verschillende burgerlijke staten opgetreden (minder ongehuwd en meer gescheiden en verweduwd). Dit komt omdat in de periode 1998 tot 2010 niet alle burgerlijke staten beschikbaar zijn in de bronbestanden die het CBS gebruikt. De burgerlijke staten 'verweduwd na partnerschap' en 'gescheiden na partnerschap' worden daardoor binnen deze statistiek binnen deze periode genegeerd. Voor deze statistiek betekent dit dat de burgerlijke staat van vóór het partnerschap is gebruikt, welke in de meeste gevallen ongehuwd was. Vanaf 2010 zijn alle burgerlijke staten beschikbaar.
+
+Verweduwd na wettig huwelijk:
+Burgerlijke staat die ontstaat na ontbinding van een wettig huwelijk door overlijden van de partner.
+
+Verweduwd na partnerschap:
+Burgerlijke staat die ontstaat na ontbinding van een geregistreerd partnerschap door overlijden van de partner.
+
+Huwelijk:
+Wettelijke verbintenis tot het samenleven van twee personen.
+Sinds april 2001 staat het huwelijk ook open voor personen van hetzelfde geslacht.
+
+Geregistreerd partnerschap:
+Een op het huwelijk lijkende relatie tussen twee personen van gelijk of van verschillend geslacht, vastgelegd in een akte van de Burgerlijke Stand. Per 1 januari 1998 is in Nederland het geregistreerd partnerschap ingevoerd."
+"1080   ";"Gescheiden";"Gescheiden na wettig huwelijk plus gescheiden na partnerschap.
+
+Trendbreuk burgerlijke staat
+Vanaf 2010 is een kleine verschuiving tussen de verschillende burgerlijke staten opgetreden (minder ongehuwd en meer gescheiden en verweduwd). Dit komt omdat in de periode 1998 tot 2010 niet alle burgerlijke staten beschikbaar zijn in de bronbestanden die het CBS gebruikt. De burgerlijke staten 'verweduwd na partnerschap' en 'gescheiden na partnerschap' worden daardoor binnen deze statistiek binnen deze periode genegeerd. Voor deze statistiek betekent dit dat de burgerlijke staat van vóór het partnerschap is gebruikt, welke in de meeste gevallen ongehuwd was. Vanaf 2010 zijn alle burgerlijke staten beschikbaar.
+
+Gescheiden na wettig huwelijk:
+Burgerlijke staat die ontstaat na ontbinding van een wettig huwelijk door echtscheiding. Exclusief personen die zijn gescheiden van tafel en bed, want zij blijven formeel gehuwd.
+
+Gescheiden na partnerschap:
+Burgerlijke staat die ontstaat na ontbinding van een geregistreerd partnerschap anders dan door het overlijden van de partner.
+
+Huwelijk:
+Wettelijke verbintenis tot het samenleven van twee personen. Sinds april 2001 staat het huwelijk ook open voor personen van hetzelfde
+geslacht.
+
+Geregistreerd partnerschap:
+Een op het huwelijk lijkende relatie tussen twee personen van gelijk of van verschillend geslacht, vastgelegd in een akte van de Burgerlijke Stand. Per 1 januari 1998 is in Nederland het geregistreerd partnerschap ingevoerd."
+"Generatie"
+Key;Title;Description
+"1012600";"Nederlandse achtergrond";"Persoon met een Nederlandse achtergrond
+
+Persoon van wie de beide ouders in Nederland zijn geboren."
+"2012605";"Met migratieachtergrond";"Persoon met een migratieachtergrond
+
+Persoon van wie ten minste één ouder in het buitenland is geboren."
+"2013356";"1e generatie migratieachtergrond";"Persoon met een eerste generatie migratieachtergrond
+
+Persoon die in het buitenland is geboren met ten minste één in het buitenland geboren ouder."
+"2013357";"2e generatie migratieachtergrond";"Persoon met een tweede generatie migratieachtergrond
+
+Persoon die in Nederland is geboren met ten minste één in het buitenland geboren ouder."
+"2013362";"2e gen migratieachtergrond, 1 ouder...";"Persoon met een tweede generatie migratieachtergrond met 1 in het buitenland geboren ouder
+
+Persoon die in Nederland is geboren met één in het buitenland geboren ouder."
+"2013363";"2e gen migratieachtergrond, 2 ouder...";"Persoon met een tweede generatie migratieachtergrond met twee in het buitenland geboren ouders
+
+Persoon die in Nederland is geboren met twee in het buitenland geboren ouders."
+"T001040";"Totaal";""
+"Migratieachtergrond"
+Key;Title;Description
+"1012600";"Nederlandse achtergrond";"Persoon met een Nederlandse achtergrond 
+ 
+Persoon van wie de beide ouders in Nederland zijn geboren."
+"2012605";"Met migratieachtergrond";"Persoon met een migratieachtergrond 
+ 
+Persoon van wie ten minste één ouder in het buitenland is geboren."
+"2012655";"Westerse migratieachtergrond";"Persoon met een westerse migratieachtergrond 
+ 
+Persoon met als migratieachtergrond een van de landen in Europa (exclusief Turkije), Noord-Amerika en Oceanië, en Indonesië en Japan. 
+Op grond van hun sociaal- economische en sociaal-culturele positie worden personen met een migratieachtergrond uit Indonesië en Japan tot de westerse migratieachtergrond gerekend. Het gaat vooral om mensen die in het voormalig Nederlands-Indië zijn geboren en werknemers van Japanse bedrijven met hun gezin."
+"2012657";"Niet-westerse migratieachtergrond";"Persoon met een niet-westerse migratieachtergrond 
+ 
+Persoon met als migratieachtergrond een van de landen in Afrika, Latijns-Amerika en Azië (exclusief Indonesië en Japan) of Turkije. Op grond van hun sociaal-economische en sociaal-culturele positie worden personen met een migratieachtergrond uit Indonesië en Japan tot de westerse migratieachtergrond gerekend. Het gaat vooral om mensen die in het voormalig Nederlands-Indië zijn geboren en werknemers van Japanse bedrijven met hun gezin."
+"2012659";"Onbekende migratieachtergrond";"Onbekend, Internationaal gebied."
+"T001040";"Totaal";""
+"H008519";"Afrika";""
+"H008520";"Amerika";""
+"H008524";"Azië";""
+"H007933";"Europa (excl. Nederlandse achtergrond)";"Europa (exclusief personen met een Nederlandse achtergrond) 
+ 
+Persoon met een Nederlandse achtergrond: 
+Persoon van wie de beide ouders in Nederland zijn geboren."
+"H008531";"Oceanië";""
+"H007935";"Europese Unie (excl. Nederlandse acht...";"Europese Unie (exclusief personen met een Nederlandse achtergrond) 
+
+Europese Unie:
+Samenwerkingsverband van Europese staten, onder deze naam opgericht in 1993 door het Verdrag van Maastricht, maar met voorlopers in de jaren /""//""/50 van de vorige eeuw, gericht op het bereiken van gemeenschappelijke doelen op het politieke, economische en juridische vlak. Een belangrijk doel is het vrije verkeer van personen, goederen, diensten en kapitaal binnen het samenwerkingsverband. Op veel terreinen hebben de lidstaten bevoegdheden overgedragen aan het samenwerkingsverband, daarnaast zijn er terreinen waarbij het zelfbeschikkingsrecht van de lidstaten is gehandhaafd en besluiten alleen bij eenstemmigheid kunnen worden genomen.
+
+De Europese Unie bestaat uit de volgende landen: 
+Vanaf 1-1-1958: België, Bondsrepubliek Duitsland, Frankrijk, Italië, Luxemburg en Nederland. 
+Toegetreden op 1-1-1973: Denemarken, Ierland en Verenigd Koninkrijk. 
+Toegetreden op 1-1-1981: Griekenland. 
+Toegetreden op 1-1-1986: Portugal en Spanje. 
+Toegetreden op 1-1-1995: Oostenrijk, Finland en Zweden. 
+Toegetreden op 1-5-2004: Cyprus, Estland, Hongarije, Letland, Litouwen, Malta, Polen, Slowakije, Slovenië en Tsjechië. 
+Toegetreden op 1-1-2007: Bulgarije, Roemenië. 
+Toegetreden op 1-7-2013 Kroatië.
+Verlaten op 31 januari 2020: Verenigd Koninkrijk.
+
+Persoon met een Nederlandse achtergrond:
+Persoon van wie de beide ouders in Nederland zijn geboren."
+"H007936";"GIPS landen in de EU";"Landen rond de Middellandse zee die zijn toegetreden tot de Europese Unie. 
+Toegetreden per 1 januari 1958: Italië. 
+Toegetreden per 1 januari 1981: Griekenland. 
+Toegetreden per 1 januari 1986: Portugal en Spanje. 
+ 
+Europese Unie: 
+Samenwerkingsverband van Europese staten, onder deze naam opgericht in 1993 door het Verdrag van Maastricht, maar met voorlopers in de jaren /""//""/50 van de vorige eeuw, gericht op het bereiken van gemeenschappelijke doelen op het politieke, economische en juridische vlak. Een belangrijk doel is het vrije verkeer van personen, goederen, diensten en kapitaal binnen het samenwerkingsverband. Op veel terreinen hebben de lidstaten bevoegdheden overgedragen aan het samenwerkingsverband, daarnaast zijn er terreinen waarbij het zelfbeschikkingsrecht van de lidstaten is gehandhaafd en besluiten alleen bij eenstemmigheid kunnen worden genomen."
+"H007937";"Midden- en Oost-Europese landen in de EU";"Landen in Midden- en Oost-Europa die zijn toegetreden tot de Europese Unie. 
+Toegetreden per 1 mei 2004: Estland, Hongarije, Letland, Litouwen, Polen, Slovenië, Slowakije en Tsjechië. 
+Toegetreden per 1 januari 2007: Bulgarije en Roemenië. 
+Toegetreden per 1 juli 2013: Kroatië. 
+ 
+Europese Unie: 
+Samenwerkingsverband van Europese staten, onder deze naam opgericht in 1993 door het Verdrag van Maastricht, maar met voorlopers in de jaren /""//""/50 van de vorige eeuw, gericht op het bereiken van gemeenschappelijke doelen op het politieke, economische en juridische vlak. Een belangrijk doel is het vrije verkeer van personen, goederen, diensten en kapitaal binnen het samenwerkingsverband. Op veel terreinen hebben de lidstaten bevoegdheden overgedragen aan het samenwerkingsverband, daarnaast zijn er terreinen waarbij het zelfbeschikkingsrecht van de lidstaten is gehandhaafd en besluiten alleen bij eenstemmigheid kunnen worden genomen."
+"H008533";"Afghanistan";""
+"H008534";"Albanië";""
+"H008535";"Algerije";""
+"H008536";"Amerikaans-Samoa";""
+"H008537";"Amerikaanse Maagdeneilanden";""
+"H008538";"Andorra";""
+"H008539";"Angola";"Angola, Cabinda, Portugees-Afrika, Portugees West-Afrika."
+"H008540";"Anguilla";""
+"H008532";"Antarctica";""
+"H008541";"Antigua en Barbuda";"Antigua en Barbuda, Antigua."
+"H008542";"Argentinië";""
+"H008543";"Armenië";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008544";"Aruba";"Nieuw land ontstaan door afscheiding van de Nederlandse Antillen op 1 januari 1986. 
+Sinds die datum is Aruba een nieuw land binnen het Koninkrijk der Nederlanden. Met een 'Status aparte' binnen het Koninkrijk is Aruba een autonoom land. Aruba heeft een zelfstandig bestuur en is niet meer afhankelijk van Nederland. 
+In de registers die het CBS gebruikt wordt dit land pas sinds de afscheiding apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de afscheiding zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de afscheiding zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Nederlandse Antillen tot deze migratieachtergrond gerekend als hun geboorteplaats op dat eiland ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de afscheiding zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de afscheiding zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Nederlandse Antillen tot deze migratieachtergrond gerekend als hun geboorteplaats op dat eiland ligt."
+"H008545";"Australië";"Australië, Christmaseiland, Cocoseilanden, Tasmanië."
+"H008546";"Azerbeidzjan";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend.In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008547";"Bahama's";""
+"H008548";"Bahrein";""
+"H008549";"Bangladesh";""
+"H008550";"Barbados";""
+"H008552";"België";""
+"H008553";"Belize";"Belize, Brits Honduras."
+"H008554";"Benin";"Benin, Dahomey."
+"H008555";"Bermuda";""
+"H006997";"Bhutan";""
+"H008557";"Bolivia";""
+"H008559";"Bosnië-Herzegovina";"Nieuw land ontstaan uit de opsplitsing van Joegoslavië in 1992. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008560";"Botswana";"Botswana, Bechuanaland."
+"H008562";"Brazilië";""
+"H008564";"Brits Territorium in de Indische Oceaan";""
+"H008565";"Britse Maagdeneilanden";""
+"H008566";"Brunei";""
+"H008567";"Bulgarije";""
+"H008568";"Burkina Faso";"Burkina Faso, Bovenvolta."
+"H008569";"Burundi";"Burundi, Duits Oost-Afrika, Urundi, Ruanda-Urundi."
+"H008570";"Cambodja";""
+"H008571";"Canada";"Canada, Newfoundland."
+"H008794";"Caribisch Nederland";"Nieuw land ontstaan uit de opsplitsing van de Nederlandse Antillen per 10 oktober 2010. Caribisch Nederland bestaat uit de openbare lichamen Bonaire, Sint Eustatius en Saba. Zij hebben een diepe band met Nederland en functioneren als bijzondere gemeente van Nederland. 
+Voor de statistieken die het CBS over Nederland maakt wordt Caribisch Nederland als afzonderlijk land onderscheiden. In de registers die het CBS gebruikt wordt Caribisch Nederland pas sinds de ontbinding apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de ontbinding zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de ontbinding zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Nederlandse Antillen tot deze migratieachtergrond gerekend als hun geboorteplaats op een van deze eilanden ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de ontbinding zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de ontbinding zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Nederlandse Antillen tot deze migratieachtergrond gerekend als hun geboorteplaats op een van deze eilanden ligt."
+"H008572";"Caymaneilanden";""
+"H008573";"Centraal-Afrikaanse Republiek";""
+"H008574";"Chili";""
+"H008575";"China";"China, Tibet."
+"H008579";"Colombia";""
+"H008580";"Comoren";""
+"H008581";"Congo";"Frans-Congo, Congo, Congo Brazaville."
+"H008582";"Congo (Democratische Republiek)";"Belgisch-Congo, Democratische Republiek Congo, Congo-Kinshasa, Zaïre."
+"H008583";"Cookeilanden";""
+"H008584";"Costa Rica";""
+"H008585";"Cuba";""
+"H008586";"Curaçao";"Nieuw land ontstaan na de ontbinding van de Nederlandse Antillen per 10 oktober 2010. Sinds die datum is Curaçao een nieuw land binnen het Koninkrijk der Nederlanden. Met een /""/Status aparte' binnen het Koninkrijk is Curaçao een autonoom land. Curaçao heeft een zelfstandig bestuur en is niet meer afhankelijk van Nederland. 
+In de registers die het CBS gebruikt wordt Curaçao pas sinds de ontbinding apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de ontbinding zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de ontbinding zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Nederlandse Antillen tot deze migratieachtergrond gerekend als hun geboorteplaats op dat eiland ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de ontbinding zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de ontbinding zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Nederlandse Antillen tot deze migratieachtergrond gerekend als hun geboorteplaats op dat eiland ligt."
+"H008587";"Cyprus";""
+"H008588";"Denemarken";""
+"H008589";"Djibouti";"Djibouti, Frans-Somaliland, Frans Territ. Afars en Issa's."
+"H008590";"Dominica";""
+"H008591";"Dominicaanse Republiek";""
+"H008592";"Duitsland";"Bondsrepubliek Duitsland, Duitse Democratische Republiek, Duitsland (oud), Saarland."
+"H008593";"Ecuador";""
+"H008594";"Egypte";"Egypte, Verenigde Arabische Republiek."
+"H008595";"El Salvador";""
+"H008596";"Equatoriaal-Guinea";"Equatoriaal-Guinea, Spaans-Guinee."
+"H008597";"Eritrea";""
+"H008598";"Estland";"Onafhankelijk land van 1918-1940, viel na de Tweede Wereldoorlog tot 1991 onder de Sovjet-Unie en werd in 1991, na de opsplitsing van de Sovjet-Unie, opnieuw onafhankelijk. 
+In de registers die het CBS gebruikt wordt dit land alleen tijdens de onafhankelijkheid (1918-1940 en sinds 1991) apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die tijdens de onafhankelijkheid zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die tijdens de onafhankelijkheid zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die die tijdens de onafhankelijkheid zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die tijdens de onafhankelijkheid zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008830";"Eswatini";"Nieuw land ontstaan na de naamswijziging van Swaziland per 19 april 2018.
+Eswatini, Swaziland.
+
+De wijziging is per 1 januari 2020 doorgevoerd in deze tabel."
+"H008599";"Ethiopië";"Ethiopië, Abessinië."
+"H008600";"Faeröer-eilanden";""
+"H008601";"Falklandeilanden";""
+"H007071";"Federale Republiek Joegoslavië";"Nieuw land ontstaan uit de opsplitsing van Joegoslavië in 1991/'92 en opgehouden te bestaan na de naamswijziging in 2003. 
+Nieuwe naam: Servië en Montenegro. 
+ In de registers die het CBS gebruikt wordt dit land pas sinds de opsplitsing en tot de naamswijziging apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing en tot de naamswijziging zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing en tot de naamswijziging zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing en tot de naamswijziging zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing en tot de naamswijziging zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt."
+"H008602";"Fiji";""
+"H008603";"Filippijnen";""
+"H008604";"Finland";""
+"H008605";"Frankrijk";""
+"H008606";"Frans-Guyana";""
+"H008608";"Frans-Polynesië";""
+"H008609";"Gabon";""
+"H008610";"Gambia";""
+"H008828";"Gazastrook en Westelijke Jordaanoever";"Gazastrook en Westelijke Jordaanoever met inbegrip van Oost-Jeruzalem. 
+In de registers die het CBS gebruikt wordt dit gebied vanaf juli 2019 apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Vanaf 2021: In de definitieve cijfers worden personen die in het voormalige Palestina of in Israël zijn geboren tot deze migratieachtergrond gerekend als hun geboorteplaats daar ligt.
+Voor bevolkingsontwikkeling geldt:
+Vanaf 2021: In de definitieve cijfers worden personen die in het voormalige Palestina of in Israël zijn geboren tot deze migratieachtergrond gerekend als hun geboorteplaats daar ligt."
+"H008611";"Georgië";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008612";"Ghana";"Ghana, Goudkust."
+"H008613";"Gibraltar";""
+"H008614";"Grenada";""
+"H008615";"Griekenland";""
+"H008616";"Groenland";""
+"H008617";"Guadeloupe";""
+"H008618";"Guam";""
+"H008619";"Guatemala";""
+"H008621";"Guinee";""
+"H008622";"Guinee-Bissau";"Guinee-Bissau, Portugees-Guinee."
+"H008623";"Guyana";"Guyana, Brits-Guyana."
+"H008624";"Haïti";""
+"H008626";"Honduras";""
+"H008627";"Hongarije";""
+"H008628";"Hongkong";""
+"H008629";"Ierland";""
+"H008630";"IJsland";""
+"H008631";"India";"India, Brits-Indië, Frans-Indië, Goa, Kashmir, Portugees-Indië, Sikkim."
+"H008632";"Indonesië";"Tot en met 20 mei 2002: Indonesië, Nederlands-Indië, Nederlands Nieuw-Guinea en Portugees-Timor. 
+Vanaf 20 mei 2002: Indonesië, Nederlands-Indië, Nederlands Nieuw-Guinea. 
+Portugees-Timor bestaat per 20 mei 2002 als zelfstandig land onder de naam Timor Leste."
+"H008633";"Irak";""
+"H008634";"Iran";""
+"H008635";"Israël";"Israël, Palestina.
+In de registers die het CBS gebruikt wordt Israël vanaf 1948 als land onderscheiden.
+Voor bevolkingscijfers geldt:
+Vanaf 2021: In de definitieve cijfers worden personen geboren in Israël of Palestina op basis van geboorteplaatsinformatie ofwel tot migratieachtergrond Israël ofwel tot migratieachtergrond Gazastrook en Westelijke Jordaanoever gerekend.
+Voor bevolkingsontwikkeling geldt:
+Vanaf 2020: In de definitieve cijfers worden personen geboren in Israël of Palestina op basis van geboorteplaatsinformatie ofwel tot migratieachtergrond Israël ofwel tot migratieachtergrond Gazastrook en Westelijke Jordaanoever gerekend."
+"H008636";"Italië";""
+"H008637";"Ivoorkust";""
+"H008638";"Jamaica";"Jamaica, Britse Antillen, Brits Westindië, Windwardeilanden."
+"H008639";"Japan";"Japan, Ryukyueilanden."
+"H008640";"Jemen";"Jemen, Aden, Noord-Jemen, Zuidarabische Federatie, Zuid-Jemen."
+"H007072";"Joegoslavië (oud)";"Betreft het Joegoslavië van vóór de opsplitsing in 1991/'92. 
+In de registers die het CBS gebruikt kwam dit land alleen tot de opsplitsing als actueel land voor. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die voor de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die voor de opsplitsing zijn geboren tot migratieachtergrond gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die voor de opsplitsing zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die voor de opsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt."
+"H007069";"(voormalig) Joegoslavië";"Betreft een samentelling van de landen die tot het grondgebied van het Joegoslavië van vóór 1991/92 behoorden. 
+ 
+In 1991/'92 is Joegoslavië opgesplitst in de landen Bosnië-Herzegovina, Federale Republiek Joegoslavië, Kroatië, Macedonië en Slovenië. 
+In 2003 is de naam 'Federale Republiek Joegoslavië' gewijzigd in 'Servië en Montenegro'. 
+In 2006 is 'Servië en Montenegro' opgesplitst in 'Servië' respectievelijk 'Montenegro'. 
+In 2008 heeft Kosovo zich afgesplitst van Servië.
+In 2019 naamswijziging van Macedonië in Republiek Noord-Macedonië."
+"H008643";"Jordanië";"Jordanië, Transjordanië."
+"H008644";"Kaapverdië";"Kaapverdië, Kaapverdische Eilanden."
+"H008645";"Kameroen";"Kameroen, Brits-Kameroen, Frans-Kameroen."
+"H008646";"Kanaaleilanden";""
+"H008647";"Katar";""
+"H008648";"Kazachstan";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008649";"Kenia";"Kenia, Brits Oost-Afrika."
+"H008650";"Kirgizië";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008651";"Kiribati";"Kiribati, Canton en Enderbury, Gilberteilanden, Gilbert en Elice-Eilanden, Phoenixeilanden."
+"H008652";"Koeweit";""
+"H008653";"Kosovo";"Nieuw land ontstaan door afsplitsing van Servië in 2008. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze afsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de afsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de afsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië, de Federale Republiek Joegoslavië, Servië en Montenegro en Servië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de afsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de afsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië, de Federale Republiek Joegoslavië, Servië en Montenegro en Servië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008654";"Kroatië";"Nieuw land ontstaan uit de opsplitsing van Joegoslavië in 1991/'92. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008655";"Laos";""
+"H008656";"Lesotho";"Lesotho, Basutoland."
+"H008657";"Letland";"Onafhankelijk land van 1918-1940, viel na de Tweede Wereldoorlog tot 1991 onder de Sovjet-Unie en werd in 1991, na de opsplitsing van de Sovjet-Unie, opnieuw onafhankelijk. 
+ In de registers die het CBS gebruikt wordt dit land alleen tijdens de onafhankelijkheid (1918-1940 en sinds 1991) apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die tijdens de onafhankelijkheid zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die tijdens de onafhankelijkheid zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die die tijdens de onafhankelijkheid zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die tijdens de onafhankelijkheid zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008658";"Libanon";""
+"H008659";"Liberia";""
+"H008660";"Libië";""
+"H008661";"Liechtenstein";""
+"H008662";"Litouwen";"Onafhankelijk land van 1918-1940, viel na de Tweede Wereldoorlog tot 1991 onder de Sovjet-Unie en werd in 1991, na de opsplitsing van de Sovjet-Unie, opnieuw onafhankelijk. 
+In de registers die het CBS gebruikt wordt dit land alleen tijdens de onafhankelijkheid (1918-1940 en sinds 1991) apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die tijdens de onafhankelijkheid zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die tijdens de onafhankelijkheid zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die die tijdens de onafhankelijkheid zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die tijdens de onafhankelijkheid zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008663";"Luxemburg";""
+"H008664";"Macau";""
+"H008665";"Macedonië";"Nieuw land ontstaan uit de opsplitsing van Joegoslavië in 1991/'92 en opgehouden te bestaan na de naamswijziging naar Republiek Noord-Macedonië per 12 februari 2019. 
+In de registers die het CBS gebruikt wordt dit land alleen sinds deze opsplitsing en tot de naamswijziging apart onderscheiden. Daarom werden tot 2019 alleen personen die in die periode zijn geboren tot deze migratieachtergrond gerekend. Vanaf 2019 worden zij tot de Republiek Noord-Macedonië gerekend."
+"H008666";"Madagaskar";""
+"H008667";"Malawi";"Malawi, Brits-Afrika, Nyasaland."
+"H008668";"Maldiven";""
+"H008669";"Maleisië";"Maleisië, Brits-Borneo, Brits Noord-Borneo, Brits Westborneo, Johore, Kedah, Kelantan, Labuan, Malakka, Negri Sembilan, Pahang, Perak, Perlis, Sabah, Sarawak, Selangor, Straits Settlements, Trengganu."
+"H008670";"Mali";""
+"H008671";"Malta";""
+"H008672";"Man";""
+"H008673";"Marokko";"Marokko, Ifni, Spaanse Sahara, Westelijke Sahara."
+"H008675";"Marshall-eilanden";""
+"H008676";"Martinique";""
+"H008677";"Mauritanië";""
+"H008678";"Mauritius";""
+"H008679";"Mayotte";""
+"H008680";"Mexico";""
+"H008681";"Micronesië";"Pacific-eilanden, Micronesia."
+"H008682";"Moldavië";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008683";"Monaco";""
+"H008684";"Mongolië";""
+"H008685";"Montenegro";"Nieuw land ontstaan uit de opsplitsing van Servië en Montenegro in 2006. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië, de Federale Republiek Joegoslavië en Servië en Montenegro tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië, de Federale Republiek Joegoslavië en Servië en Montenegro tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008686";"Montserrat";"Montserrat, Leeuwardeilanden."
+"H008687";"Mozambique";"Mozambique, Portugees Oost-Afrika."
+"H008688";"Myanmar";"Myanmar, Burma."
+"H008689";"Namibië";"Namibië, Duits Zuidwest-Afrika, Zuidwest Afrika."
+"H008690";"Nauru";""
+"H007128";"Nederlandse Antillen (oud)";"Betreft de Nederlandse Antillen van vóór 10 oktober 2010. 
+Het gaat om de eilanden Bonaire, Curaçao, Saba, Sint Eustatius en Sint Maarten. Vanaf 10 oktober 2010 zijn de Nederlandse Antillen ontbonden. Het Koninkrijk der Nederlanden bestaat dan uit vier landen: Nederland, Aruba, Curaçao en Sint Maarten. Alle eilanden hebben een nieuwe status. 
+Curaçao en Sint Maarten zijn nieuwe landen binnen het Koninkrijk. Met een 'Status aparte' binnen het Koninkrijk zijn Curaçao en Sint Maarten autonome landen. De landen hebben een zelfstandig bestuur en zijn niet meer afhankelijk van Nederland. De openbare lichamen Bonaire, Sint Eustatius en Saba, ook wel Caribisch Nederland, hebben een diepere band met Nederland en functioneren als bijzondere gemeente van Nederland. Op 1 januari 1986 werd Aruba afgescheiden van de Nederlandse Antillen. Sinds die datum is Aruba een autonoom land binnen het Koninkrijk der Nederlanden.
+Is eveneens geteld in het aantal van '(voormalige) Nederlandse Antillen en Aruba'.
+In de registers die het CBS gebruikt kwam dit land alleen tot de ontbinding als actueel land voor. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die voor de ontbinding zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die voor de ontbinding zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het eiland waarop hun geboorteplaats ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die voor de ontbinding zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die voor de ontbinding zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het eiland waarop hun geboorteplaats ligt."
+"H007119";"(voormalige) Nederlandse Antillen, Aruba";"Betreft een samentelling van de eilanden die tot het grondgebied van de Nederlandse Antillen en Aruba van vóór 10 oktober 2010 behoorden. Het gaat om de eilanden Bonaire, Curaçao, Saba, Sint-Eustatius, Sint-Maarten en Aruba. 
+ 
+Vanaf 10 oktober 2010 zijn de Nederlandse Antillen ontbonden. Het Koninkrijk der Nederlanden bestaat dan uit vier landen: Nederland, Aruba, Curaçao en Sint Maarten. Alle eilanden hebben een nieuwe status. 
+Curaçao en Sint Maarten zijn nieuwe landen binnen het Koninkrijk. Met een 'Status aparte' binnen het Koninkrijk zijn Curaçao en Sint Maarten autonome landen. De landen hebben een zelfstandig bestuur en zijn niet meer afhankelijk van Nederland. De openbare lichamen Bonaire, Sint Eustatius en Saba, ook wel Caribisch Nederland, hebben een diepere band met Nederland en functioneren als bijzondere gemeente van Nederland. 
+ 
+Op 1 januari 1986 werd Aruba afgescheiden van de Nederlandse Antillen. Sinds die datum is Aruba een nieuw land binnen het Koninkrijk der Nederlanden. Met een 'Status aparte' binnen het Koninkrijk is Aruba een autonoom land. Aruba heeft een zelfstandig bestuur en is niet meer afhankelijk van Nederland."
+"H008694";"Nepal";""
+"H008695";"Nicaragua";""
+"H008696";"Nieuw-Caledonië";""
+"H008697";"Nieuw-Zeeland";""
+"H008698";"Niger";""
+"H008699";"Nigeria";""
+"H008700";"Niue";""
+"H008702";"Noordelijke Marianen";""
+"H008703";"Noord-Korea";""
+"H008704";"Noorwegen";"Noorwegen, Spitsbergen, de Svalbardeilanden."
+"H008705";"Norfolk";""
+"H008706";"Oekraïne";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008707";"Oezbekistan";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008708";"Oman";"Oman, Muscat en Oman."
+"H008709";"Oostenrijk";"Oostenrijk, Oostenrijk-Hongarije."
+"H008710";"Pakistan";""
+"H008711";"Palau";"Republiek van Palau, Belau."
+"H008713";"Panama";"Panama, Panama Kanaalzone."
+"H008714";"Papoea-Nieuw-Guinea";"Papoea-Nieuw-Guinea, Australisch Nieuw-Guinea, Australische Salomonseilanden, Keizer Wilhelmsland."
+"H008715";"Paraguay";""
+"H008716";"Peru";""
+"H008717";"Pitcairneilanden";""
+"H008718";"Polen";"Polen en Dantzig."
+"H008719";"Portugal";"Portugal, Azoren, Madeira-eilanden."
+"H008720";"Puerto Rico";""
+"H008825";"Republiek Noord-Macedonië";"Nieuw land ontstaan na de naamswijziging van Macedonië per 12 februari 2019. Macedonië ontstond na de opsplitsing van Joegoslavië in 1991/'92. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze naamswijziging apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de naamswijziging zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de naamswijziging zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Macedonië en het voormalige Joegoslavië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na naamswijziging zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de naamswijziging zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Macedonië en het voormalige Joegoslavië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008722";"Réunion";""
+"H008723";"Roemenië";""
+"H008724";"Rusland";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. Niet te verwarren met het oude Rusland dat een ander grondgebied bestrijkt. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008725";"Rusland (oud)";"Tot november 1917 de benaming van het grondgebied van de voormalige Sovjet-Unie. 
+In de registers die het CBS gebruikt wordt dit land alleen tot 1917 apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die voor de naamswijziging zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die voor de naamswijziging zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die voor de naamswijziging zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die voor de naamswijziging zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt."
+"H008726";"Rwanda";""
+"H008727";"Saint Kitts en Nevis";"Saint Kitts-Nevis, Saint Kitts-Nevis-Anguilla."
+"H008728";"Saint Pierre en Miquelon";""
+"H008729";"Sint Vincent en de Grenadines";"Sint Vincent en de Grenadines, Sint Vincent."
+"H008730";"Salomonseilanden";"Salomoneilanden, Britse Salomonseilanden."
+"H008731";"Samoa";"West-Samoa, Samoa."
+"H008732";"San Marino";""
+"H008733";"Sao Tomé en Principe";""
+"H008734";"Saoedi-Arabië";""
+"H008735";"Senegal";"Senegal, Frans West-Afrika."
+"H008736";"Servië";"Nieuw land ontstaan uit de opsplitsing van Servië en Montenegro in 2006. 
+In 2008 heeft Kosovo zich afgesplitst van Servië. 
+In de registers die het CBS gebruikt wordt dit land pas sinds de opsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië, de Federale Republiek Joegoslavië en Servië en Montenegro tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië, de Federale Republiek Joegoslavië en Servië en Montenegro tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008737";"Servië en Montenegro";"Nieuw land ontstaan door naamswijziging in 2003 (oude naam: Federale Republiek Joegoslavië) en opgehouden te bestaan na opsplitsing in 'Servië' respectievelijk 'Montenegro' in 2006. 
+De cijfers zijn inclusief Federale Republiek Joegoslavië. 
+ In de registers die het CBS gebruikt wordt dit land pas sinds deze naamswijziging en tot de opsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de naamswijziging en tot de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de naamswijziging en tot de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond waarin hun geboorteplaats volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de naamswijziging en tot de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de naamswijziging en tot de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond waarin hun geboorteplaats volgens de huidige landgrenzen ligt."
+"H008738";"Seychellen";"Seychellen, Seychellen en Amiranten."
+"H008739";"Sierra Leone";""
+"H008740";"Singapore";""
+"H008741";"Sint-Helena";"Ascension, Sint-Helena, Tristan Da Cunha."
+"H008742";"Sint Lucia";""
+"H008743";"Sint Maarten (Nederlands deel)";"Nieuw land ontstaan na de ontbinding van de Nederlandse Antillen per 10 oktober 2010. Sinds die datum is Sint Maarten een nieuw land binnen het Koninkrijk der Nederlanden. Met een 'Status aparte' binnen het Koninkrijk is Sint Maarten een autonoom land. Sint Maarten heeft een zelfstandig bestuur en is niet meer afhankelijk van Nederland. In de registers die het CBS gebruikt wordt Curaçao pas sinds de ontbinding apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de ontbinding zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de ontbinding zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Nederlandse Antillen tot deze migratieachtergrond gerekend als hun geboorteplaats op d1t eiland ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de ontbinding zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de ontbinding zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Nederlandse Antillen tot deze migratieachtergrond gerekend als hun geboorteplaats op d1t eiland ligt."
+"H008744";"Slovenië";"Nieuw land ontstaan uit de opsplitsing van Joegoslavië in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Joegoslavië tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008745";"Slowakije";"Nieuw land ontstaan uit de opsplitsing van Tsjecho-Slowakije in 1993. 
+ In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Tsjecho-Slowakije tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Tsjecho-Slowakije tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008746";"Soedan";"Per 9 juli 2011 heeft Zuid-Soedan zich afgesplitst van Soedan."
+"H008747";"Somalië";"Somalië, Brits-Somaliland, Italiaans-Somaliland."
+"H007186";"Sovjet-Unie (oud)";"Betreft de Sovjet-Unie van vóór de opsplitsing in 1991. 
+In de registers die het CBS gebruikt kwam dit land alleen tot de opsplitsing als actueel land voor. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die voor de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die voor de opsplitsing zijn geboren tot migratieachtergrond gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die voor de opsplitsing zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die voor de opsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt."
+"H007172";"(voormalige) Sovjet-Unie";"Betreft een samentelling van de landen die tot het grondgebied van de Sovjet-Unie van vóór 1991 behoorden. 
+ 
+In november 1917 is de naam van Rusland (oud) veranderd in Sovjet-Unie. 
+In 1991 is de Sovjet-Unie opgesplitst in de landen Armenië, Azerbeidzjan, Estland, Georgië, Kazachstan, Kirgizië, Letland, Litouwen, Moldavië, Oekraïne, Oezbekistan, Rusland, Tadzjikistan, Turkmenistan en Wit-Rusland."
+"H008749";"Spanje";"Spanje, Canarische eilanden, Spaans Noord-Afrika."
+"H008750";"Sri Lanka";"Sri Lanka, Ceylon."
+"H008751";"Suriname";""
+"H008752";"Swaziland";"Opgehouden te bestaan na de naamswijziging naar Eswatini per 19 april 2018."
+"H008753";"Syrië";""
+"H008754";"Tadzjikistan";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008755";"Taiwan";""
+"H008756";"Tanzania";"Tanzania, Tanganyika, Zanzibar."
+"H008757";"Thailand";"Thailand, Siam."
+"H008758";"Timor Leste";"Timor Leste, Portugees-Timor. 
+Timor Leste is per 20 mei 2002 als zelfstandig land ontstaan uit Portugees-Timor."
+"H008759";"Togo";""
+"H008760";"Tokelau";""
+"H008761";"Tonga";""
+"H008762";"Trinidad en Tobago";""
+"H008763";"Tsjaad";"Tsjaad, Frans Equatoriaal-Afrika."
+"H008764";"Tsjechië";"Nieuw land ontstaan uit de opsplitsing van Tsjecho-Slowakije in 1993. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Tsjecho-Slowakije tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden ook personen geboren in het voormalige Tsjecho-Slowakije tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H007207";"Tsjecho-Slowakije (oud)";"Betreft het Tsjecho-Slowakije van vóór de opsplitsing in 1993. 
+In de registers die het CBS gebruikt kwam dit land alleen tot de opsplitsing als actueel land voor. 
+Voor bevolkingscijfers geldt:
+Tot en met 2020: alleen personen die voor de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die voor de opsplitsing zijn geboren tot migratieachtergrond gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die voor de opsplitsing zijn geboren worden tot dit geboorteland gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die voor de opsplitsing zijn geboren tot dit geboorteland gerekend. In de definitieve cijfers worden deze personen gerekend tot de migratieachtergrond die correspondeert met het land waar hun geboorteplaats volgens de huidige landgrenzen ligt."
+"H007204";"(voormalig) Tsjecho-Slowakije";"Betreft een samentelling van de landen die tot het grondgebied van Tsjecho-Slowakije van vóór 1993 behoorden. 
+ 
+In 1993 is Tsjecho-Slowakije opgesplitst in de landenTsjechië en Slowakije."
+"H008765";"Tunesië";""
+"H008766";"Turkije";""
+"H008767";"Turkmenistan";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008768";"Turks- en Caicoseilanden";"Turks- en Caicoseilanden, Caicoseilanden, Turkseilanden."
+"H008769";"Tuvalu";""
+"H008770";"Uganda";""
+"H008771";"Uruguay";""
+"H008772";"Vanuatu";"Vanuatu, Nieuwe Hebriden."
+"H008773";"Vaticaanstad";""
+"H008774";"Venezuela";""
+"H008776";"Verenigd Koninkrijk";"Groot-Brittannië."
+"H008777";"Verenigde Arabische Emiraten";"Verenigde Arabische Emiraten, Ajman, Abu Dhabi, Dubai, Fujairah, Ras al-Khaimah, Umm Al-Qaiwain, Sharjah, Trucial Oman."
+"H008778";"Verenigde Staten van Amerika";"Verenigde Staten van Amerika, Hawaii-eilanden."
+"H008779";"Verre eilanden van de VS";"Verre eilanden van de Verenigde Staten van Amerika: Johnston, Midway, Wake."
+"H008780";"Vietnam";"Vietnam, Frans Indochina, Indochina, Noord-Vietnam, Zuid-Vietnam."
+"H008782";"Wallis en Futuna";""
+"H008783";"Belarus";"Nieuw land ontstaan uit de opsplitsing van de Sovjet-Unie in 1991. 
+In de registers die het CBS gebruikt wordt dit land pas sinds deze opsplitsing apart onderscheiden.
+Voor bevolkingscijfers geldt: 
+Tot en met 2020: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2021: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt.
+Voor bevolkingsontwikkeling geldt:
+Tot en met 2019: alleen personen die na de opsplitsing zijn geboren worden tot deze migratieachtergrond gerekend.
+Vanaf 2020: in de voorlopige cijfers worden alleen personen die na de opsplitsing zijn geboren tot deze migratieachtergrond gerekend. In de definitieve cijfers worden ook personen geboren in de voormalige Sovjet-Unie tot deze migratieachtergrond gerekend als hun geboorteplaats daar volgens de huidige landgrenzen ligt."
+"H008784";"Zambia";"Zambia, Noord-Rhodesië."
+"H008785";"Zimbabwe";"Zimbabwe, Rhodesië, Zuid-Rhodesië."
+"H008787";"Zuid-Afrika";""
+"H008789";"Zuid-Korea";"Zuid-Korea, Korea."
+"H008786";"Zuid-Soedan";"Nieuw land ontstaan na afsplitsing van Soedan per 9 juli 2011."
+"H008790";"Zweden";""
+"H008791";"Zwitserland";""
+"Perioden"
+Key;Title;Description;Status
+"1996JJ00";"1996";;"Definitief"
+"1997JJ00";"1997";;"Definitief"
+"1998JJ00";"1998";;"Definitief"
+"1999JJ00";"1999";;"Definitief"
+"2000JJ00";"2000";;"Definitief"
+"2001JJ00";"2001";;"Definitief"
+"2002JJ00";"2002";;"Definitief"
+"2003JJ00";"2003";;"Definitief"
+"2004JJ00";"2004";;"Definitief"
+"2005JJ00";"2005";;"Definitief"
+"2006JJ00";"2006";;"Definitief"
+"2007JJ00";"2007";;"Definitief"
+"2008JJ00";"2008";;"Definitief"
+"2009JJ00";"2009";;"Definitief"
+"2010JJ00";"2010";;"Definitief"
+"2011JJ00";"2011";;"Definitief"
+"2012JJ00";"2012";;"Definitief"
+"2013JJ00";"2013";;"Definitief"
+"2014JJ00";"2014";;"Definitief"
+"2015JJ00";"2015";;"Definitief"
+"2016JJ00";"2016";;"Definitief"
+"2017JJ00";"2017";;"Definitief"
+"2018JJ00";"2018";;"Definitief"
+"2019JJ00";"2019";;"Definitief"
+"2020JJ00";"2020";;"Definitief"
+"2021JJ00";"2021";;"Definitief"
+"2022JJ00";"2022";;"Definitief"
