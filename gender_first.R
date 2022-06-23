@@ -197,11 +197,11 @@ strat.gender_age_edu_migr = refactor_education(strat.gender_age_edu_migr, codes_
 
 #####################################################################################################
 ######################## Start with a spatial reference and initial variable:  ######################
-################################ agegroup within neighborhood #######################################
+################################ gender within neighborhood #######################################
 
 # create empty synthetic population dataframe with number of agents
 # Note: CBS must have made a mistake, probably with the age grouping, because the total is larger than the general population.
-# So, I initialise the synthetic population size with the sum of group ages, otherwise the script cannot work.
+# So, I initialise the synthetic population size with the sum of genders, otherwise the script cannot work.
 
 sum(sum(marginal_distributions['gender_male']), sum(marginal_distributions['gender_female'])) # 78615
 sum(marginal_distributions['tot_pop'])  # 78635
@@ -210,10 +210,11 @@ population_size = sum(sum(marginal_distributions['gender_male']), sum(marginal_d
 
 agents = gen_agent_df(population_size)
 
-# initialise synthetic population with agegroup and neighbourhood code
+# initialise synthetic population with gender and neighbourhood code
 agents$gender = ""
 agents$neighb_code = ""
 
+# reformat column names
 gender_neigh_frequencies = marginal_distributions %>%
   select(neighb_code,
          gender_male,
@@ -221,8 +222,8 @@ gender_neigh_frequencies = marginal_distributions %>%
   rename(male = gender_male,
          female = gender_female)
 
+# distribute genders on the synthetic population
 genders = c('male', 'female')
-
 n = 0 # to accumulate how many people have been added already
 for(i in 1:nrow(gender_neigh_frequencies)){   # for each neighborhood
   for(gender in genders) {            # for each group age
@@ -233,20 +234,24 @@ for(i in 1:nrow(gender_neigh_frequencies)){   # for each neighborhood
   }
 }
 remove(gender_neigh_frequencies)
+remove(genders)
 
 # shuffle order
 agents = agents[sample(nrow(agents)),]
 
-########################################################################################
-# age
+############################################ #############################################################################
+########## First Application of the conditional propensity & neighborhood constraint functions: ##########################
+######################################## Variable: age_group #############################################################
+##########################################################################################################################
 
 group_ages = c('age_0_15', 'age_15_25', 'age_25_45', 'age_45_65', 'age_over65')
 
-
+# calculate propensities for each age group, based on gender
 for (group_age in unique(group_ages)) {
   agents = calc_propens_agents(strat.gender_agegroup, group_age, 'total', agents, c("gender"))
 }
 
+# distribute age groups on the synthetic population
 agents = distr_attr_strat_n_neigh_stats_3plus(agent_df =  agents,
                                               neigh_df =  marginal_distributions,
                                               neigh_ID =  "neighb_code",
@@ -260,17 +265,29 @@ agents = distr_attr_strat_n_neigh_stats_3plus(agent_df =  agents,
                                               list_class_names =  group_ages
                                               )
 
+# remove useless columns
 agents = subset(agents, select=-c(random_scores,
                                   prop_age_0_15,
                                   prop_age_15_25,
                                   prop_age_25_45,
                                   prop_age_45_65,
-                                  prop_age_over65))
+                                  prop_age_over65)
+                )
 
+# cross-validation of group ages
+neigh_valid = crossvalid(valid_df = marginal_distributions,
+                         agent_df = agents,
+                         join_var = "neighb_code",
+                         list_valid_var = group_ages, 
+                         agent_var = "group_age",
+                         list_agent_attr = group_ages
+)
 
-######################################
+############################################################################################################################
+################################ Translating age groups into interger age, based on age stratified dataset #############################
+############################################################################################################################
 
-# preparation of the table
+# preparation of the frequency table
 strat.gender_age$n_people = as.numeric(strat.gender_age$n_people)
 strat.gender_age$age = as.character(strat.gender_age$age)
 
@@ -312,13 +329,3 @@ for(group_age in group_ages){
   agents[agents$group_age==group_age,]$age = sample # apply to synthetic population dataset
 }
 agents$age = as.numeric(agents$age)
-
-##############################################################
-
-neigh_valid = crossvalid(valid_df = marginal_distributions,
-                         agent_df = agents,
-                         join_var = "neighb_code",
-                         list_valid_var = group_ages, 
-                         agent_var = "group_age",
-                         list_agent_attr = group_ages
-)
