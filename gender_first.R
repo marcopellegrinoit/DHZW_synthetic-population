@@ -255,14 +255,26 @@ agents = subset(agents, select=-c(random_scores,
                                   prop_age_over65)
                 )
 
-# cross-validation of group ages
-neigh_valid = crossvalid(valid_df = marginal_distributions,
-                         agent_df = agents,
-                         join_var = "neighb_code",
-                         list_valid_var = group_ages, 
-                         agent_var = "group_age",
-                         list_agent_attr = group_ages
+###################################################################################
+# Validation and analysis
+
+# calculate cross-validation neighb_code - group_ages, with neighborhood totals
+neigh_groupage_valid = validation(df_real_distr = marginal_distributions,
+                                df_synt_pop = agents,
+                                join_var = "neighb_code",
+                                list_real_df_var = group_ages, 
+                                var_pred_df = "group_age",
+                                list_values = group_ages
 )
+
+# plot accuracy heatmap
+plot_heatmap(df = neigh_groupage_valid,
+             join_var = 'neighb_code',
+             var = 'group_age')
+
+# calculate total R2 score
+neigh_groupage_valid = R_squared(neigh_groupage_valid$real, neigh_groupage_valid$pred)
+
 
 ############################################################################################################################
 ################################ Translating age groups into interger age, based on age stratified dataset #############################

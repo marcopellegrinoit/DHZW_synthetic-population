@@ -258,16 +258,27 @@ agents = distr_bin_attr_strat_n_neigh_stats(agent_df = agents,
                                             )
 agents = subset(agents, select=-c(prop_female, random_scores))
 
+###################################################################################
+# Validation and analysis
 
-## cross validating with neighborhood and stratified totals
-neigh_valid = crossvalid(valid_df = marginal_distributions,
-                         agent_df = agents,
+# calculate cross-validation neighb_code - gender, with neighborhood totals
+neigh_gender_valid = validation(df_real_distr = marginal_distributions,
+                         df_synt_pop = agents,
                          join_var = "neighb_code",
-                         list_valid_var = c("gender_male", "gender_female"), 
-                         agent_var = "gender",
-                         list_agent_attr = c("male", "female")
+                         list_real_df_var = c("gender_male", "gender_female"), 
+                         var_pred_df = "gender",
+                         list_values = c("male", "female")
                          )
 
+# plot accuracy heatmap
+plot_heatmap(df = neigh_gender_valid,
+             join_var = 'neighb_code',
+             var = 'gender')
+
+# calculate total R2 score
+neigh_gender_valid.R2 = R_squared(neigh_gender_valid$real, neigh_gender_valid$pred)
+
+# save current synthetic population
 setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
 write.csv(agents, "Synthetic_population_neighg-age-gender.csv")
 
@@ -323,6 +334,8 @@ agents = calc_propens_agents(migration_freq, "Dutch", "total", agents, c("age_gr
 agents = calc_propens_agents(migration_freq, "Western", "total", agents, c("age_group_20", "gender") )
 agents = calc_propens_agents(migration_freq, "Non_Western", "total", agents, c("age_group_20", "gender") )
 
+setwd(this.path::this.dir())
+source('tabea-functions.R')
 ## assigning attributes to agents
 agents = distr_attr_strat_n_neigh_stats_3plus(agent_df =  agents,
                                               neigh_df =  marginal_distributions,
@@ -331,17 +344,18 @@ agents = distr_attr_strat_n_neigh_stats_3plus(agent_df =  agents,
                                               list_var_classes_neigh_df =  c("migration_Dutch", "migration_west", "migration_non_west"), 
                                               list_agent_propens =  c("prop_Dutch", "prop_Western", "prop_Non_Western"),
                                               list_class_names =  c("Dutch", "Western", "Non_Western"))
+agents = subset(agents, select=-c(prop_Dutch, prop_Western, prop_Non_Western, random_scores))
 
 ## cross validating with neighborhood and stratified totals
-neigh_valid = crossvalid(valid_df = marginal_2020, agent_df = agents, join_var = "neighb_code", list_valid_var = c("nr_Dutch", "WestersTotaal_17", "NietWestersTotaal_18"), 
-                         agent_var = "migrationbackground", list_agent_attr = c("Dutch", "Western", "Non_Western") )
+neigh_valid = crossvalid(valid_df = marginal_distributions,
+                         agent_df = agents,
+                         join_var = "neighb_code",
+                         list_valid_var = c("migration_Dutch", "migration_west", "migration_non_west"), 
+                         agent_var = "migration_background",
+                         list_agent_attr = c("Dutch", "Western", "Non_Western") )
 
-strat_valid = crossvalid(valid_df = migrat_age, agent_df = agents, join_var = c("age_group_20", "sex"), list_valid_var =  c("Dutch", "Western", "Non_Western"), 
-                         agent_var = "migrationbackground", list_agent_attr =  c("Dutch", "Western", "Non_Western") )
-
-
-agents= agents[,c("agent_ID","neighb_code",  "age" , "sex", "age_group" , "age_group_20", "migrationbackground")]
-write.csv(agents, "Agent_pop.csv")
+setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
+write.csv(agents, "Synthetic_population_neighg-age-gender-migration.csv")
 
 ######################################################################
 ################### household composition ############################
