@@ -89,3 +89,44 @@ plot_heatmap = function(df, join_var, var) {
          y = var)+
     scale_fill_continuous(name = "Accuracy")
 }
+
+## Density and histogram plot of the synthetic population
+plot_syth_pop_age_density = function(df_synt_pop) {
+  ggplot(df_synt_pop, aes(x=age)) + 
+    stat_bin(aes(y=..density..), colour="black", fill="white", bins=length(unique(df_synt_pop$age)))+
+    geom_density(alpha=.2, fill="#FF6666")+
+    labs(x = 'Age',
+         y = 'Age frequencies')
+}
+
+# Plot densities of both the synthetic population and the stratified dataset
+plot_syth_strat_age_density = function(df_synt_pop, df_stratified_age) {
+  # Count how many agents per age
+  df_synt_pop = df_synt_pop %>%
+    group_by(age) %>%
+    count()
+  
+  # Combine datasets and rename attributes
+  df = merge(df_synt_pop[c('age', 'n')], df_stratified_age[c('age', 'total')])
+  df = df %>%
+    rename(
+      synthetic_population = n,
+      stratified = total
+    )
+  
+  # Normalise data
+  df <- transform(df, synthetic_population =
+                    (synthetic_population - min(synthetic_population))
+                  / (max(synthetic_population) - min(synthetic_population)))
+  df <- transform(df, stratified = (stratified - min(stratified)) / (max(stratified) - min(stratified)))
+  
+  # Format for plot
+  df = df %>% 
+    pivot_longer(!age, names_to = "dataset", values_to = "normalised_frequencies")
+  
+  # Plot
+  ggplot(df, aes(x=age, y=normalised_frequencies ,col=dataset))+
+    geom_line()+
+    labs(x = 'Age',
+         y = 'Normalised age frequencies')
+}
