@@ -8,7 +8,7 @@ source('tabea-functions.R')
 ######################## Data Preparation and Application ######################
 ################################################################################
 
-flag_validation_plots = FALSE
+flag_validation_plots = TRUE
 
 # Neighborhood codes of DHZW
 DHZW_neighborhood_codes <- c('BU05183284',
@@ -135,18 +135,11 @@ strat.gender_age = refactor_age(strat.gender_age, codes_age)
 strat.gender_age$n_people = as.numeric(strat.gender_age$n_people)
 strat.gender_age$age = as.character(strat.gender_age$age)
 
-males = strat.gender_age[strat.gender_age$gender == "male" ,c("age", "n_people")]
-colnames(males) = c('age', 'male')
-females = strat.gender_age[strat.gender_age$gender == "female" ,c("age", "n_people")]           
-colnames(females) = c('age', 'female')
-strat.gender_age = merge(females, males, by= "age")
-remove(males)
-remove(females)
-strat.gender_age$total = strat.gender_age$male + strat.gender_age$female
-
+# Reformat stratified dataset, transforming the gender column into a column for each value
+strat.gender_age = strat.gender_age %>% 
+  pivot_wider(names_from = "gender", values_from = "n_people")
 strat.gender_age <- strat.gender_age[!is.na(as.numeric(as.character(strat.gender_age$age))),]
 strat.gender_age$age <- as.numeric(strat.gender_age$age)
-
 
 # create group ages in the stratified dataset
 strat.gender_age$age_group = ""
