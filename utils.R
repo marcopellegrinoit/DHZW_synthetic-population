@@ -15,6 +15,12 @@ refactor_age = function(df, df_codes){
   return(df)
 }
 
+refactor_age_group_20 = function(df, df_codes){
+  df = merge(df, df_codes, by='age_group_20_code')
+  df = subset(df, select=-c(age_group_20_code))
+  return(df)
+}
+
 refactor_migration = function(df, df_codes){
   df = merge(df, df_codes, by='migration_background_code')
   df = subset(df, select=-c(migration_background_code))
