@@ -28,12 +28,19 @@ DHZW_neighborhood_codes <- c('BU05183284',
                              'BU05183399'
 )
 
+########################## Conversion codes ####################################
+
+setwd(paste(this.path::this.dir(), "/data/codes", sep = ""))
+codes_age = read.csv("age_codes.csv", sep=",")
+agegroup20_codes = read.csv("agegroup20_codes.csv", fileEncoding="UTF-8-BOM")
+
 ############################################################################################
 ################################ Marginal distribution #####################################
 ############################################################################################
 
 ## Load neighborhood dataset: n people per age group and neighbourhood 
 
+setwd(paste(this.path::this.dir(), "/data", sep = ""))
 pop_marginal_distributions = read.csv("marginal_distributions_TheHague_2019_84583NED.csv", sep = ";")
 marginal_distributions = pop_marginal_distributions[which(pop_marginal_distributions$SoortRegio_2 == "Buurt     "),] # select neighborhood data only
 remove(pop_marginal_distributions)
@@ -68,12 +75,6 @@ marginal_distributions = marginal_distributions %>%
 ############################################################################################
 ################################# Stratified datasets ######################################
 ############################################################################################
-
-###################################### Conversion codes ####################################
-setwd(paste(this.path::this.dir(), "/data/codes", sep = ""))
-codes_age = read.csv("age_codes.csv")
-codes_migration = read.csv("migration_backgrounds_codes.csv", sep=";")
-codes_education = read.csv("education_codes.csv", sep=";")
 
 ###################################### Gender - age ########################################
 setwd(paste(this.path::this.dir(), "/data/stratified-datasets", sep = ""))
@@ -128,52 +129,6 @@ strat.gender_agegroup=cbind(strat.gender_agegroup, gender)
 
 remove(tmp_strat.gender_agegroup)
 
-############################################################################################
-# Age - gender - migration background
-strat.gender_age_migr = read.csv("gender_age_migration-84910NED.csv", sep=";")
-
-strat.gender_age_migr = strat.gender_age_migr %>%
-  select(Geslacht,
-         Leeftijd,
-         Migratieachtergrond,
-         BevolkingOp1Januari_1
-  ) %>%
-  rename(gender = Geslacht,
-         age_code = Leeftijd,
-         migration_background_code = Migratieachtergrond,
-         n_people = BevolkingOp1Januari_1
-  )
-
-# Refactor gender, age, migration
-strat.gender_age_migr = refactor_gender(strat.gender_age_migr)
-strat.gender_age_migr = refactor_age(strat.gender_age_migr, codes_age)
-strat.gender_age_migr = refactor_migration(strat.gender_age_migr, codes_migration)
-
-############################################################################################
-
-# Gender - age - migration background - education
-
-strat.gender_age_edu_migr = read.csv("gender_age_education_migration-71493NED.csv", sep=";")
-
-strat.gender_age_edu_migr = strat.gender_age_edu_migr %>%
-  select(Geslacht,
-         Leeftijd,
-         Onderwijssoort,
-         Migratieachtergrond,
-         Gediplomeerden_1
-  ) %>%
-  rename(gender = Geslacht,
-         age_code = Leeftijd,
-         education_code = Onderwijssoort,
-         migration_background_code = Migratieachtergrond,
-         n_people = Gediplomeerden_1
-  )
-
-# Refactor gender, age, migration, education
-strat.gender_age_edu_migr = refactor_gender(strat.gender_age_edu_migr)
-strat.gender_age_edu_migr = refactor_age(strat.gender_age_edu_migr, codes_age)
-strat.gender_age_edu_migr = refactor_migration(strat.gender_age_edu_migr, codes_migration)
-strat.gender_age_edu_migr = refactor_education(strat.gender_age_edu_migr, codes_education)
 
 
 #####################################################################################################
@@ -322,3 +277,105 @@ for(group_age in group_ages){
   agents[agents$group_age==group_age,]$age = sample # apply to synthetic population dataset
 }
 agents$age = as.numeric(agents$age)
+
+
+# Load stratified dataset
+setwd(paste(this.path::this.dir(), "/data/stratified-datasets", sep = ""))
+strat.gender_age_migr = read.csv("gender_age_migration-84910NED.csv", sep = ";")
+
+# Select interesting attributes
+strat.gender_age_migr = strat.gender_age_migr %>%
+  select(Geslacht,
+         Leeftijd,
+         Migratieachtergrond,
+         BevolkingOp1Januari_1
+  ) %>%
+  rename(gender = Geslacht,
+         age_group_20_code = Leeftijd,
+         migration_background = Migratieachtergrond,
+         n_people = BevolkingOp1Januari_1
+  )
+
+# Refactor group age and gender
+strat.gender_age_migr = refactor_age_group_20(strat.gender_age_migr, agegroup20_codes)
+strat.gender_age_migr = refactor_gender(strat.gender_age_migr)
+
+# Refactor and subselect interesting migration backgrounds
+strat.gender_age_migr$migration_background = gsub("1012600", "Dutch", strat.gender_age_migr$migration_background)
+strat.gender_age_migr$migration_background = gsub("2012655", "Western", strat.gender_age_migr$migration_background)
+strat.gender_age_migr$migration_background = gsub("2012657", "Non_Western", strat.gender_age_migr$migration_background)
+strat.gender_age_migr= strat.gender_age_migr[which(strat.gender_age_migr$migration_background == "Western" | strat.gender_age_migr$migration_background == "Non_Western"  | strat.gender_age_migr$migration_background == "Dutch"),]
+
+################################################################################
+
+# Reformat stratified dataset, transforming the migration background column into a column for each value
+strat.gender_age_migr = strat.gender_age_migr %>% 
+  pivot_wider(names_from = "migration_background", values_from = "n_people")
+# Calculate total
+strat.gender_age_migr$total = strat.gender_age_migr$Dutch + strat.gender_age_migr$Western + strat.gender_age_migr$Non_Western
+
+# Classifying ages into age groups to link to the stratified dataset
+agents$age_group_20 = ""
+agents$age_group_20[agents$age %in% 0:4] = "age_0_5"
+agents$age_group_20[agents$age %in% 5:9] = "age_5_10"
+agents$age_group_20[agents$age %in% 10:14] =  "age_10_15"
+agents$age_group_20[agents$age %in% 15:19] = "age_15_20"
+agents$age_group_20[agents$age %in% 20:24] =  "age_20_25" 
+agents$age_group_20[agents$age %in% 25:29] = "age_25_30"
+agents$age_group_20[agents$age %in% 30:34] =  "age_30_35"
+agents$age_group_20[agents$age %in% 35:39] =  "age_35_40" 
+agents$age_group_20[agents$age %in% 40:44] = "age_40_45"
+agents$age_group_20[agents$age %in% 45:49] = "age_45_50"
+agents$age_group_20[agents$age %in% 50:54] =  "age_50_55"
+agents$age_group_20[agents$age %in% 55:59] = "age_55_60"
+agents$age_group_20[agents$age %in% 60:64] =  "age_60_65" 
+agents$age_group_20[agents$age %in% 65:69] = "age_65_70"
+agents$age_group_20[agents$age %in% 70:74] =  "age_70_75"
+agents$age_group_20[agents$age %in% 75:79] =  "age_75_80" 
+agents$age_group_20[agents$age %in% 80:84] =  "age_80_85" 
+agents$age_group_20[agents$age %in% 85:89] = "age_85_90"
+agents$age_group_20[agents$age %in% 90:94] =  "age_90_95"
+agents$age_group_20[agents$age %in% 95:104] =  "age_over_95" 
+
+# Calculate the missing Dutch migration background in the overall marginal distribution
+marginal_distributions$migration_Dutch = marginal_distributions$tot_pop - (marginal_distributions$migration_west + marginal_distributions$migration_non_west)
+
+## Conditional Propensities
+agents = calc_propens_agents(strat.gender_age_migr, "Dutch", "total", agents, c("age_group_20", "gender") )
+agents = calc_propens_agents(strat.gender_age_migr, "Western", "total", agents, c("age_group_20", "gender") )
+agents = calc_propens_agents(strat.gender_age_migr, "Non_Western", "total", agents, c("age_group_20", "gender") )
+
+# Distribute values
+agents = distr_attr_strat_n_neigh_stats_3plus(agent_df =  agents,
+                                              neigh_df =  marginal_distributions,
+                                              neigh_ID =  "neighb_code",
+                                              variable =  "migration_background", 
+                                              list_var_classes_neigh_df =  c("migration_Dutch", "migration_west", "migration_non_west"), 
+                                              list_agent_propens =  c("prop_Dutch", "prop_Western", "prop_Non_Western"),
+                                              list_class_names =  c("Dutch", "Western", "Non-Western"))
+# Remove extra columns
+agents = subset(agents, select=-c(prop_Dutch, prop_Western, prop_Non_Western, random_scores, age_group_20))
+
+# save current synthetic population
+#setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
+#write.csv(agents, "Synthetic_population_neighg-age-gender-migration.csv")
+
+################################################################################
+## Validation and analysis
+
+# calculate cross-validation neighb_code - gender, with neighborhood totals
+validation_neigh_migration = validation(df_real_distr = marginal_distributions,
+                                        df_synt_pop = agents,
+                                        join_var = "neighb_code",
+                                        list_real_df_var = c("migration_Dutch", "migration_west", "migration_non_west"), 
+                                        var_pred_df = "migration_background",
+                                        list_values = c("Dutch", "Western", "Non-Western")
+)
+
+# plot accuracy heatmap
+plot_heatmap(df = validation_neigh_migration,
+             join_var = 'neighb_code',
+             var = 'migration_background')
+
+# calculate total R2 score
+validation_neigh_migration.R2 = R_squared(validation_neigh_migration$real, validation_neigh_migration$pred) 

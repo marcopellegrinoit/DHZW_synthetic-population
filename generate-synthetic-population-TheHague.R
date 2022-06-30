@@ -8,6 +8,8 @@ source('tabea-functions.R')
 ######################## Data Preparation and Application ######################
 ################################################################################
 
+flag_validation_plots = FALSE
+
 # Neighborhood codes of DHZW
 DHZW_neighborhood_codes <- c('BU05183284',
                              'BU05183536',
@@ -174,8 +176,6 @@ for(group_age in group_ages){
 }
 agents$age = as.numeric(agents$age)
 
-plot(density(agents$age))
-
 
 #setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
 #write.csv(agents, "Synthetic_population_neighg-age.csv")
@@ -201,9 +201,9 @@ agents = subset(agents, select=-c(prop_female, random_scores))
 ################################################################################
 ## Validation and analysis
 
-if (F) {
+if (flag_validation_plots) {
   # calculate cross-validation neighb_code - gender, with neighborhood totals
-  neigh_gender_valid = validation(df_real_distr = marginal_distributions,
+  validation_neigh_gender = validation(df_real_distr = marginal_distributions,
                                   df_synt_pop = agents,
                                   join_var = "neighb_code",
                                   list_real_df_var = c("gender_male", "gender_female"), 
@@ -212,7 +212,7 @@ if (F) {
   )
   
   # plot accuracy heatmap
-  plot_heatmap(df = neigh_gender_valid,
+  plot_heatmap(df = validation_neigh_gender,
                join_var = 'neighb_code',
                var = 'gender')
   
@@ -221,7 +221,7 @@ if (F) {
   plot_syth_strat_age_density(agents, strat.gender_age)
   
   # calculate total R2 score
-  neigh_gender_valid.R2 = R_squared(neigh_gender_valid$real, neigh_gender_valid$pred) 
+  validation_neigh_gender.R2 = R_squared(validation_neigh_gender$real, validation_neigh_gender$pred) 
 }
 
 # save current synthetic population
@@ -314,3 +314,25 @@ agents = subset(agents, select=-c(prop_Dutch, prop_Western, prop_Non_Western, ra
 # save current synthetic population
 #setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
 #write.csv(agents, "Synthetic_population_neighg-age-gender-migration.csv")
+
+################################################################################
+## Validation and analysis
+
+if (flag_validation_plots) {
+  # calculate cross-validation neighb_code - gender, with neighborhood totals
+  validation_neigh_migration = validation(df_real_distr = marginal_distributions,
+                                  df_synt_pop = agents,
+                                  join_var = "neighb_code",
+                                  list_real_df_var = c("migration_Dutch", "migration_west", "migration_non_west"), 
+                                  var_pred_df = "migration_background",
+                                  list_values = c("Dutch", "Western", "Non-Western")
+  )
+  
+  # plot accuracy heatmap
+  plot_heatmap(df = validation_neigh_migration,
+               join_var = 'neighb_code',
+               var = 'migration_background')
+  
+  # calculate total R2 score
+  validation_neigh_migration.R2 = R_squared(validation_neigh_migration$real, validation_neigh_migration$pred) 
+}
