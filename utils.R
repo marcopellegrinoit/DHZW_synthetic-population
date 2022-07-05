@@ -6,32 +6,87 @@ refactor_gender = function(df){
   df[df$gender == '3000',]$gender = 'male'
   df[df$gender == '4000',]$gender = 'female'
   df[df$gender == 'T001038',]$gender = 'total'
+  
+  df = df[df$gender != 'total',]
+  
   return(df)
 }
 
 refactor_age = function(df, df_codes){
   df = merge(df, df_codes, by='age_code')
   df = subset(df, select=-c(age_code))
+  
+  df = df[df$age != 'total',]
+  
   return(df)
 }
 
 refactor_age_group_20 = function(df, df_codes){
   df = merge(df, df_codes, by='age_group_20_code')
   df = subset(df, select=-c(age_group_20_code))
+  
+  df = df[df$age_group_20 != 'total',]
+  
   return(df)
 }
 
-refactor_migration = function(df, df_codes){
-  df = merge(df, df_codes, by='migration_background_code')
-  df = subset(df, select=-c(migration_background_code))
+refactor_ages_education = function(df, df_codes){
+  df = merge(df, df_codes, by='age_code')
+  df = subset(df, select=-c(age_code))
   return(df)
 }
 
 refactor_education = function(df, df_codes){
   df = merge(df, df_codes, by='education_code')
   df = subset(df, select=-c(education_code))
+  
+  edu_high = c('HBO associate degree',
+               'HBO Bachelor',
+               'HBO master/further education',
+               'MBO entrance course',
+               'MBO level 2',
+               'MBO level 3',
+               'MBO level 4a',
+               'MBO level 4b',
+               'Total MBO (incl. extranei)',
+               'university bachelor',
+               'university degree',
+               'Wo further education',
+               'Wo master')
+  
+  edu_middle = c('Havo',
+               'pre-university education',
+               'Sphere total',
+               'Total secondary education (secondary education)',
+               'Vavo',
+               'VMBO-b/k',
+               'VMBO g/t')
+  
+  edu_low = c('Bbl total',
+              'extranei')
+  
+  df$education_group = NA
+  df[df$education %in% edu_high,]$education_group='high'
+  df[df$education %in% edu_middle,]$education_group='middle'
+  df[df$education %in% edu_low,]$education_group='low'
+  
+  df =df %>% 
+    group_by(gender, age_group_education, migration_background, education_group) %>% 
+    summarise(n_people = sum(n_people))
+  
   return(df)
 }
+
+refactor_migration = function(df){
+  df$migration_background=''
+  df[df$migration_background_code=="1012600",]$migration_background = "Dutch"
+  df[df$migration_background_code=="2012655",]$migration_background = "Western"
+  df[df$migration_background_code=="2012657",]$migration_background = "Non_Western"
+  df = subset(df, select=-c(migration_background_code))
+  df = df[which(df$migration_background == "Western" | df$migration_background == "Non_Western"  | df$migration_background == "Dutch"),]
+  return(df)
+}
+
 
 
 # @df_real_distr: marginal distribution dataset
