@@ -33,6 +33,9 @@ refactor_age_group_20 = function(df, df_codes){
 refactor_ages_education = function(df, df_codes){
   df = merge(df, df_codes, by='age_code')
   df = subset(df, select=-c(age_code))
+  
+  df = df[df$age_group_education != 'total',]
+  
   return(df)
 }
 

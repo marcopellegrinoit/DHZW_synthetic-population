@@ -58,7 +58,10 @@ marginal_distributions = marginal_distributions %>%
          k_45Tot65Jaar_11,
          k_65JaarOfOuder_12,
          WestersTotaal_17,
-         NietWestersTotaal_18
+         NietWestersTotaal_18,
+         OpleidingsniveauLaag_64,
+         OpleidingsniveauMiddelbaar_65,
+         OpleidingsniveauHoog_66
   )%>%
   rename(neighb_code = Codering_3,
          tot_pop = AantalInwoners_5,
@@ -70,8 +73,17 @@ marginal_distributions = marginal_distributions %>%
          age_45_65 = k_45Tot65Jaar_11,
          age_over65 = k_65JaarOfOuder_12,
          migration_west = WestersTotaal_17,
-         migration_non_west = NietWestersTotaal_18
+         migration_non_west = NietWestersTotaal_18,
+         education_absolved_low = OpleidingsniveauLaag_64,
+         education_absolved_middle = OpleidingsniveauMiddelbaar_65,
+         education_absolved_high = OpleidingsniveauHoog_66
   )
+marginal_distributions[marginal_distributions$education_absolved_low=='       .',]$education_absolved_low=0
+marginal_distributions[marginal_distributions$education_absolved_middle=='       .',]$education_absolved_middle=0
+marginal_distributions[marginal_distributions$education_absolved_high=='       .',]$education_absolved_high=0
+marginal_distributions$education_absolved_low=as.numeric(marginal_distributions$education_absolved_low)
+marginal_distributions$education_absolved_middle=as.numeric(marginal_distributions$education_absolved_middle)
+marginal_distributions$education_absolved_high=as.numeric(marginal_distributions$education_absolved_high)
 
 ################################################################################
 ## Initialise synthetic population with age groups withing neigbhbourhoods
@@ -226,7 +238,7 @@ strat.gender_age_migr = refactor_age_group_20(strat.gender_age_migr, codes_agegr
 strat.gender_age_migr = refactor_gender(strat.gender_age_migr)
 strat.gender_age_migr = refactor_migration(strat.gender_age_migr)
 
-# Reformat stratified dataset, transforming the gender column into a column for each value
+# Reformat stratified dataset, transforming the migration background column into a column for each value
 strat.gender_age_migr = restructure_one_var_marginal(df = strat.gender_age_migr,
                                                      variable = 'migration_background',
                                                      countsname = 'n_people')
@@ -297,17 +309,16 @@ if (flag_validation_plots) {
 }
 
 ################################################################################
-## Generate education level
+## Generate education based on group age, gender and migration
 ################################################################################
-
-## Data Preparation
 
 # Load stratified dataset
 setwd(paste(this.path::this.dir(), "/data/stratified-datasets", sep = ""))
-strat.gender_age_migr_edu = read.csv("absolved_edu-gender-age-migration-71493NED.csv", sep = ";")
+strat.edu_absolved = read.csv("edu_absolved-71493NED.csv", sep = ";")
+strat.edu_current = read.csv("edu_current-71450NED.csv", sep = ";")
 
 # Select interesting attributes
-strat.gender_age_migr_edu = strat.gender_age_migr_edu %>%
+strat.edu_absolved = strat.edu_absolved %>%
   select(Geslacht,
          Leeftijd,
          Migratieachtergrond,
@@ -320,43 +331,93 @@ strat.gender_age_migr_edu = strat.gender_age_migr_edu %>%
          education_code = Onderwijssoort,
          n_people = Gediplomeerden_1
   )
+strat.edu_current = strat.edu_current %>%
+  select(Geslacht,
+         Leeftijd,
+         Migratieachtergrond,
+         Onderwijssoort,
+         LeerlingenDeelnemersStudenten_1
+         
+  ) %>%
+  rename(gender = Geslacht,
+         age_code = Leeftijd,
+         migration_background_code = Migratieachtergrond,
+         education_code = Onderwijssoort,
+         n_people = LeerlingenDeelnemersStudenten_1
+  )
 
-strat.gender_age_migr_edu = refactor_gender(strat.gender_age_migr_edu)
-strat.gender_age_migr_edu = refactor_ages_education(strat.gender_age_migr_edu, codes_ages_education)
-strat.gender_age_migr_edu = refactor_migration(strat.gender_age_migr_edu)
-strat.gender_age_migr_edu = refactor_education(strat.gender_age_migr_edu, codes_education)
+strat.edu_absolved = refactor_gender(strat.edu_absolved)
+strat.edu_absolved = refactor_ages_education(strat.edu_absolved, codes_ages_education)
+strat.edu_absolved = refactor_migration(strat.edu_absolved)
+strat.edu_absolved = refactor_education(strat.edu_absolved, codes_education)
 
-# Reformat stratified dataset, transforming the gender column into a column for each value
-strat.gender_age_migr_edu = strat.gender_age_migr_edu %>% 
-  pivot_wider(names_from = "education_group", values_from = "n_people")
+strat.edu_current = refactor_gender(strat.edu_current)
+strat.edu_current = refactor_ages_education(strat.edu_current, codes_ages_education)
+strat.edu_current = refactor_migration(strat.edu_current)
+strat.edu_current = refactor_education(strat.edu_current, codes_education)
+strat.edu_current$n_people = as.numeric(strat.edu_current$n_people)
 
-strat.gender_age_migr_edu = strat.gender_age_migr_edu[strat.gender_age_migr_edu$gender!='total',]
-strat.gender_age_migr_edu = strat.gender_age_migr_edu[strat.gender_age_migr_edu$age_group_education!='total',]
+# Reformat stratified dataset, transforming the education column into a column for each value
+strat.edu_current = pivot_wider(strat.edu_current,
+                                names_from = 'education_group',
+                                values_from = 'n_people')
+strat.edu_current$total = strat.edu_current$low + strat.edu_current$middle + strat.edu_current$high
 
+strat.edu_absolved = pivot_wider(strat.edu_absolved,
+                                names_from = 'education_group',
+                                values_from = 'n_people')
+strat.edu_absolved$total = strat.edu_absolved$low + strat.edu_absolved$middle + strat.edu_absolved$high
 
-strat.gender_age_migr_edu$total = strat.gender_age_migr_edu$low + strat.gender_age_migr_edu$middle  + strat.gender_age_migr_edu$high
-
-agents$age_group_education = as.character(agents$age)
-agents$age_group_education[agents$age %in% 30:34] = "age_30_35"
-agents$age_group_education[agents$age %in% 35:39] = "age_35_40"
-agents$age_group_education[agents$age %in% 40:44] = "age_40_45" 
-agents$age_group_education[agents$age %in% 45:49] = "age_45_50" 
-agents$age_group_education[agents$age >= 50] = "age_over_50"  
-
+# Create new group ages in the synthetic population
+agent_df$age_group_education = as.character(agent_df$age)
+agent_df$age_group_education[agent_df$age %in% 30:34] = "age_30_35"
+agent_df$age_group_education[agent_df$age %in% 35:39] = "age_35_40"
+agent_df$age_group_education[agent_df$age %in% 40:44] = "age_40_45" 
+agent_df$age_group_education[agent_df$age %in% 45:49] = "age_45_50" 
+agent_df$age_group_education[agent_df$age >= 50] = "age_over_50"  
 
 ## Conditional Propensities
-agents = calc_propens_agents(strat.gender_age_migr_edu, "low", "total", agents, c("age_group_education", "gender", "migration_background") )
-agents = calc_propens_agents(strat.gender_age_migr_edu, "middle", "total", agents, c("age_group_education", "gender", "migration_background"))
-agents = calc_propens_agents(strat.gender_age_migr_edu, "high", "total", agents, c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(strat.edu_current, "low", "total", agent_df, c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(strat.edu_current, "middle", "total", agent_df, c("age_group_education", "gender", "migration_background"))
+agent_df = calc_propens_agents(strat.edu_current, "high", "total", agent_df, c("age_group_education", "gender", "migration_background") )
 
+## assigning attributes to agents
+agent_df$current_edu_exclude = 0
+agent_df$current_edu_exclude[which(is.na(agent_df$prop_high))] = 1
 
+agent_df = distr_attr_cond_prop(agent_df = agent_df,
+                                variable=  "education_current",
+                                list_agent_propens =  c("prop_low",  "prop_middle", "prop_high"),
+                                list_class_names = c("low", "middle", "high"),
+                                agent_exclude = "current_edu_exclude")
+# Remove extra columns
+agent_df = subset(agent_df, select=-c(prop_low, prop_middle, prop_high, random_scores, current_edu_exclude, excluded))
 
-agents$absolved_education[which(agents$age < 15 & agents$age > 5) ] = "low"
-agents$absolved_education[which( agents$age <= 5) ] = "no_current_edu"
+agent_df$education_current[which(agent_df$age < 15 & agent_df$age > 5) ] = "low"
+agent_df$education_current[which(agent_df$age <= 5) ] = "no_current_edu"
 
-agents$absolved = ""
-agents$absolved[agents$current_education == "middle"] = "low"
-agents$absolved[agents$current_education == "high" & agents$age <= 22] = "middle"
-agents$absolved[agents$current_education == "high" & agents$age > 22] = "high"
-agents$diplm_exclude = 0
-agents$diplm_exclude[which(is.na(agents$prop_high)| agents$age < 15 | agents$absolved != "") ] = 1
+agent_df$education_absolved = ""
+agent_df$education_absolved[agent_df$education_current == "middle"] = "low"
+agent_df$education_absolved[agent_df$education_current == "high" & agent_df$age <= 22] = "middle"
+agent_df$education_absolved[agent_df$education_current == "high" & agent_df$age > 22] = "high"
+
+## ?????
+
+## Conditional Propensities
+agent_df = calc_propens_agents(strat.edu_absolved, "low", "total", agent_df, c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(strat.edu_absolved, "middle", "total", agent_df, c("age_group_education", "gender", "migration_background"))
+agent_df = calc_propens_agents(strat.edu_absolved, "high", "total", agent_df, c("age_group_education", "gender", "migration_background") )
+
+agent_df$diplm_exclude = 0
+agent_df$diplm_exclude[which(is.na(agent_df$prop_high)| agent_df$age < 15 | agent_df$education_absolved != "") ] = 1
+
+agent_df = distr_attr_strat_neigh_stats_3plus(agent_df = agent_df,
+                                              neigh_df = marginal_distributions,
+                                              neigh_ID = "neighb_code",
+                                              variable=  "education_absolved", 
+                                              list_var_classes_neigh_df = c("education_absolved_low" , "education_absolved_middle" ,"education_absolved_high"), 
+                                              list_agent_propens =  c("prop_low",  "prop_middle", "prop_high"), 
+                                              list_class_names = c("low", "middle", "high"),
+                                              agent_exclude = c("diplm_exclude"))
+
+agent_df = subset(agent_df, select=-c(prop_low, prop_middle, prop_high, random_scores, diplm_exclude, excluded))
