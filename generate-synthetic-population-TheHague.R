@@ -13,7 +13,7 @@ setwd(paste(this.path::this.dir(), "/data/codes", sep = ""))
 codes_age = read.csv("codes_age.csv", sep=",")
 codes_agegroup20 = read.csv("codes_agegroup20.csv", fileEncoding="UTF-8-BOM")
 codes_ages_education = read.csv("codes_ages_education.csv", fileEncoding="UTF-8-BOM", sep=";")
-codes_education = read.csv("codes_education.csv", fileEncoding="UTF-8-BOM", sep=";")
+codes_education = read.csv("codes_education.csv", fileEncoding="UTF-8-BOM")
 
 # Neighborhood codes of DHZW
 DHZW_neighborhood_codes <- c('BU05183284',
@@ -355,18 +355,6 @@ strat.edu_current = refactor_gender(strat.edu_current)
 strat.edu_current = refactor_ages_education(strat.edu_current, codes_ages_education)
 strat.edu_current = refactor_migration(strat.edu_current)
 strat.edu_current = refactor_education(strat.edu_current, codes_education)
-strat.edu_current$n_people = as.numeric(strat.edu_current$n_people)
-
-# Reformat stratified dataset, transforming the education column into a column for each value
-strat.edu_current = pivot_wider(strat.edu_current,
-                                names_from = 'education_group',
-                                values_from = 'n_people')
-strat.edu_current$total = strat.edu_current$low + strat.edu_current$middle + strat.edu_current$high
-
-strat.edu_absolved = pivot_wider(strat.edu_absolved,
-                                names_from = 'education_group',
-                                values_from = 'n_people')
-strat.edu_absolved$total = strat.edu_absolved$low + strat.edu_absolved$middle + strat.edu_absolved$high
 
 # Create new group ages in the synthetic population
 agent_df$age_group_education = as.character(agent_df$age)
@@ -376,48 +364,79 @@ agent_df$age_group_education[agent_df$age %in% 40:44] = "age_40_45"
 agent_df$age_group_education[agent_df$age %in% 45:49] = "age_45_50" 
 agent_df$age_group_education[agent_df$age >= 50] = "age_over_50"  
 
-## Conditional Propensities
-agent_df = calc_propens_agents(strat.edu_current, "low", "total", agent_df, c("age_group_education", "gender", "migration_background") )
-agent_df = calc_propens_agents(strat.edu_current, "middle", "total", agent_df, c("age_group_education", "gender", "migration_background"))
-agent_df = calc_propens_agents(strat.edu_current, "high", "total", agent_df, c("age_group_education", "gender", "migration_background") )
+edu_stats = unique(strat.edu_absolved[, c("age_group_education" ,  "gender"  , "migration_background")])
+for(n in 1:nrow(edu_stats)){
+  edu_stats$absolved_high[n] = sum(strat.edu_absolved$n_people[which(strat.edu_absolved$age_group_education == edu_stats$age_group_education[n] & strat.edu_absolved$gender == edu_stats$gender[n] & strat.edu_absolved$migration_background == edu_stats$migration_background[n] & strat.edu_absolved$education_level == "high")])
+  edu_stats$absolved_middle[n] = sum(strat.edu_absolved$n_people[which(strat.edu_absolved$age_group_education == edu_stats$age_group_education[n] & strat.edu_absolved$gender == edu_stats$gender[n] & strat.edu_absolved$migration_background == edu_stats$migration_background[n] & strat.edu_absolved$education_level == "middle")])
+  edu_stats$absolved_low[n] = sum(strat.edu_absolved$n_people[which(strat.edu_absolved$age_group_education == edu_stats$age_group_education[n] & strat.edu_absolved$gender == edu_stats$gender[n] & strat.edu_absolved$migration_background == edu_stats$migration_background[n] & strat.edu_absolved$education_level == "low")])
+  edu_stats$absolved_tot[n] = sum(strat.edu_absolved$n_people[which(strat.edu_absolved$age_group_education == edu_stats$age_group_education[n] & strat.edu_absolved$gender == edu_stats$gender[n] & strat.edu_absolved$migration_background == edu_stats$migration_background[n] & strat.edu_absolved$education_level != "")])
+  
+  edu_stats$current_high[n] = sum(strat.edu_current$n_people[which(strat.edu_current$age_group_education == edu_stats$age_group_education[n] & strat.edu_current$gender == edu_stats$gender[n] & strat.edu_current$migration_background == edu_stats$migration_background[n] & strat.edu_current$education_level == "high")])
+  edu_stats$current_middle[n] = sum(strat.edu_current$n_people[which(strat.edu_current$age_group_education == edu_stats$age_group_education[n] & strat.edu_current$gender == edu_stats$gender[n] & strat.edu_current$migration_background == edu_stats$migration_background[n] & strat.edu_current$education_level == "middle")])
+  edu_stats$current_low[n] = sum(strat.edu_current$n_people[which(strat.edu_current$age_group_education == edu_stats$age_group_education[n] & strat.edu_current$gender == edu_stats$gender[n] & strat.edu_current$migration_background == edu_stats$migration_background[n] & strat.edu_current$education_level == "low")])
+  
+  edu_stats$current_total[n] = sum(strat.edu_current$n_people[which(strat.edu_current$age_group_education==edu_stats$age_group_education[n] & strat.edu_current$gender == edu_stats$gender[n] & strat.edu_current$migration_background == edu_stats$migration_background[n])])
+  edu_stats$current_no_edu[n] = (edu_stats$current_total[n] - sum(edu_stats$current_low[n], edu_stats$current_middle[n], edu_stats$current_high[n]))
+}
+
+agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "absolved_high", total_population =  "absolved_tot", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "absolved_middle", total_population =  "absolved_tot", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "absolved_low", total_population =  "absolved_tot", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "current_high", total_population =  "current_total", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "current_middle", total_population =  "current_total", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "current_low", total_population =  "current_total", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "current_no_edu", total_population =  "current_total", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
 
 ## assigning attributes to agents
 agent_df$current_edu_exclude = 0
-agent_df$current_edu_exclude[which(is.na(agent_df$prop_high))] = 1
+agent_df$current_edu_exclude[which(is.na(agent_df$prop_current_high))] = 1
 
 agent_df = distr_attr_cond_prop(agent_df = agent_df,
-                                variable=  "education_current",
-                                list_agent_propens =  c("prop_low",  "prop_middle", "prop_high"),
-                                list_class_names = c("low", "middle", "high"),
+                                variable=  "current_education",
+                                list_agent_propens =  c("prop_current_low",  "prop_current_middle", "prop_current_high", "prop_current_no_edu"),
+                                list_class_names = c("low", "middle", "high", "no_current_edu"),
                                 agent_exclude = "current_edu_exclude")
-# Remove extra columns
-agent_df = subset(agent_df, select=-c(prop_low, prop_middle, prop_high, random_scores, current_edu_exclude, excluded))
 
-agent_df$education_current[which(agent_df$age < 15 & agent_df$age > 5) ] = "low"
-agent_df$education_current[which(agent_df$age <= 5) ] = "no_current_edu"
+agent_df$current_education[which(agent_df$age > 5 & agent_df$age < 15) ] = "low"
+agent_df$current_education[which(agent_df$age <= 5) ] = "no_current_edu"
 
-agent_df$education_absolved = ""
-agent_df$education_absolved[agent_df$education_current == "middle"] = "low"
-agent_df$education_absolved[agent_df$education_current == "high" & agent_df$age <= 22] = "middle"
-agent_df$education_absolved[agent_df$education_current == "high" & agent_df$age > 22] = "high"
+agent_df$absolved = ""
+agent_df$absolved[agent_df$current_education == "middle"] = "low"
+agent_df$absolved[agent_df$current_education == "high" & agent_df$age <= 22] = "middle"
+agent_df$absolved[agent_df$current_education == "high" & agent_df$age > 22] = "high"
 
-## ?????
+marginal_distributions$LowerEdu = 0
+marginal_distributions$MiddleEdu = 0
+marginal_distributions$HigherEdu = 0
 
-## Conditional Propensities
-agent_df = calc_propens_agents(strat.edu_absolved, "low", "total", agent_df, c("age_group_education", "gender", "migration_background") )
-agent_df = calc_propens_agents(strat.edu_absolved, "middle", "total", agent_df, c("age_group_education", "gender", "migration_background"))
-agent_df = calc_propens_agents(strat.edu_absolved, "high", "total", agent_df, c("age_group_education", "gender", "migration_background") )
+for(i in 1:nrow(marginal_distributions)){
+  marginal_distributions[i,c("LowerEdu")] = marginal_distributions[i,c("education_absolved_low")] - nrow(agent_df[agent_df$absolved == "low" & agent_df$neighb_code == marginal_distributions$neighb_code[i] & agent_df$age >= 15,])
+  marginal_distributions[i,c("MiddleEdu" )] = marginal_distributions[i,c("education_absolved_middle" )]- nrow(agent_df[agent_df$absolved == "middle" & agent_df$neighb_code == marginal_distributions$neighb_code[i] & agent_df$age >= 15,])
+  marginal_distributions[i,c("HigherEdu")] = marginal_distributions[i,c("education_absolved_high")] - nrow(agent_df[agent_df$absolved == "high" & agent_df$neighb_code == marginal_distributions$neighb_code[i] & agent_df$age >= 15,])
+}
+marginal_distributions$LowerEdu[marginal_distributions$LowerEdu < 0] = 0
+marginal_distributions$MiddleEdu[marginal_distributions$MiddleEdu < 0] = 0
+marginal_distributions$HigherEdu[marginal_distributions$HigherEdu < 0] = 0
 
 agent_df$diplm_exclude = 0
-agent_df$diplm_exclude[which(is.na(agent_df$prop_high)| agent_df$age < 15 | agent_df$education_absolved != "") ] = 1
+agent_df$diplm_exclude[which(is.na(agent_df$prop_absolved_high)| agent_df$age < 15 | agent_df$absolved != "") ] = 1
 
 agent_df = distr_attr_strat_neigh_stats_3plus(agent_df = agent_df,
                                               neigh_df = marginal_distributions,
                                               neigh_ID = "neighb_code",
-                                              variable=  "education_absolved", 
-                                              list_var_classes_neigh_df = c("education_absolved_low" , "education_absolved_middle" ,"education_absolved_high"), 
-                                              list_agent_propens =  c("prop_low",  "prop_middle", "prop_high"), 
+                                              variable=  "absolved_education", 
+                                              list_var_classes_neigh_df = c("LowerEdu" , "MiddleEdu" ,"HigherEdu"), 
+                                              list_agent_propens =  c("prop_absolved_low",  "prop_absolved_middle", "prop_absolved_high" ), 
                                               list_class_names = c("low", "middle", "high"),
                                               agent_exclude = c("diplm_exclude"))
 
-agent_df = subset(agent_df, select=-c(prop_low, prop_middle, prop_high, random_scores, diplm_exclude, excluded))
+agent_df$absolved_education[agent_df$absolved != ""] = agent_df$absolved[agent_df$absolved != ""]
+agent_df[agent_df$absolved_education == 0,]$absolved_education = 'no_absolved_edu'
+
+
+neigh_valid = crossvalid(valid_df=marginal_distributions,
+                         agent_df = agent_df,
+                         join_var = "neighb_code",
+                         list_valid_var = c("education_absolved_low" , "education_absolved_middle" ,"education_absolved_high"), 
+                         agent_var = "absolved_education",
+                         list_agent_attr = c("low", "middle", "high") )

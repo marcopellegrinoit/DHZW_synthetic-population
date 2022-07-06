@@ -41,41 +41,12 @@ refactor_ages_education = function(df, df_codes){
 
 refactor_education = function(df, df_codes){
   df = merge(df, df_codes, by='education_code')
-  df = subset(df, select=-c(education_code))
-  
-  edu_high = c('HBO associate degree',
-               'HBO Bachelor',
-               'HBO master/further education',
-               'MBO entrance course',
-               'MBO level 2',
-               'MBO level 3',
-               'MBO level 4a',
-               'MBO level 4b',
-               'Total MBO (incl. extranei)',
-               'university bachelor',
-               'university degree',
-               'Wo further education',
-               'Wo master')
-  
-  edu_middle = c('Havo',
-               'pre-university education',
-               'Sphere total',
-               'Total secondary education (secondary education)',
-               'Vavo',
-               'VMBO-b/k',
-               'VMBO g/t')
-  
-  edu_low = c('Bbl total',
-              'extranei')
-  
-  df$education_group = NA
-  df[df$education %in% edu_high,]$education_group='high'
-  df[df$education %in% edu_middle,]$education_group='middle'
-  df[df$education %in% edu_low,]$education_group='low'
-  
-  df =df %>% 
-    group_by(gender, age_group_education, migration_background, education_group) %>% 
-    summarise(n_people = sum(n_people))
+  df = subset(df, select=-c(education_code, education_title))
+  #df = df[df$education_level!='',]
+
+  #df=df %>% 
+  #  group_by(gender, age_group_education, migration_background, education_level) %>% 
+  #  summarise(n_people = sum(n_people))
   
   return(df)
 }
