@@ -39,15 +39,15 @@ setwd(paste(this.path::this.dir(), "/data", sep = ""))
 
 ## Load The Hague neighborhood dataset: n people per age group and neighbourhood 
 setwd(paste(this.path::this.dir(), "/data", sep = ""))
-pop_marginal_distributions = read.csv("marginal_distributions_TheHague_2019_84583NED.csv", sep = ";")
-marginal_distributions = pop_marginal_distributions[which(pop_marginal_distributions$SoortRegio_2 == "Buurt     "),] # select neighborhood data only
-remove(pop_marginal_distributions)
+pop_df_MarginalDistr = read.csv("marginal_distributions_TheHague_2019_84583NED.csv", sep = ";")
+df_MarginalDistr = pop_df_MarginalDistr[which(pop_df_MarginalDistr$SoortRegio_2 == "Buurt     "),] # select neighborhood data only
+remove(pop_df_MarginalDistr)
 
 # filter DHZW area
-marginal_distributions = marginal_distributions[marginal_distributions$WijkenEnBuurten %in% DHZW_neighborhood_codes,]
+df_MarginalDistr = df_MarginalDistr[df_MarginalDistr$WijkenEnBuurten %in% DHZW_neighborhood_codes,]
 
 # filter and rename only useful attributes
-marginal_distributions = marginal_distributions %>%
+df_MarginalDistr = df_MarginalDistr %>%
   select(Codering_3,
          AantalInwoners_5,
          Mannen_6,
@@ -78,12 +78,12 @@ marginal_distributions = marginal_distributions %>%
          education_absolved_middle = OpleidingsniveauMiddelbaar_65,
          education_absolved_high = OpleidingsniveauHoog_66
   )
-marginal_distributions[marginal_distributions$education_absolved_low=='       .',]$education_absolved_low=0
-marginal_distributions[marginal_distributions$education_absolved_middle=='       .',]$education_absolved_middle=0
-marginal_distributions[marginal_distributions$education_absolved_high=='       .',]$education_absolved_high=0
-marginal_distributions$education_absolved_low=as.numeric(marginal_distributions$education_absolved_low)
-marginal_distributions$education_absolved_middle=as.numeric(marginal_distributions$education_absolved_middle)
-marginal_distributions$education_absolved_high=as.numeric(marginal_distributions$education_absolved_high)
+df_MarginalDistr[df_MarginalDistr$education_absolved_low=='       .',]$education_absolved_low=0
+df_MarginalDistr[df_MarginalDistr$education_absolved_middle=='       .',]$education_absolved_middle=0
+df_MarginalDistr[df_MarginalDistr$education_absolved_high=='       .',]$education_absolved_high=0
+df_MarginalDistr$education_absolved_low=as.numeric(df_MarginalDistr$education_absolved_low)
+df_MarginalDistr$education_absolved_middle=as.numeric(df_MarginalDistr$education_absolved_middle)
+df_MarginalDistr$education_absolved_high=as.numeric(df_MarginalDistr$education_absolved_high)
 
 ################################################################################
 ## Initialise synthetic population with age groups withing neigbhbourhoods
@@ -94,12 +94,12 @@ marginal_distributions$education_absolved_high=as.numeric(marginal_distributions
 # So, I initialise the synthetic population size with the sum of group ages, otherwise the script cannot work.
 
 group_ages = c('age_0_15', 'age_15_25', 'age_25_45', 'age_45_65', 'age_over65')
-population_size = sum(marginal_distributions[group_ages]) # 78655
-agent_df = gen_agent_df(population_size)
+population_size = sum(df_MarginalDistr[group_ages]) # 78655
+df_SynthPop = gen_agent_df(population_size)
 
 # Distribute the agents across the age groups and neighborhoods
-agent_df = distr_agent_neigh_age_group(neigh_df = marginal_distributions,
-                                       agent_df = agent_df,
+df_SynthPop = distr_agent_neigh_age_group(neigh_df = df_MarginalDistr,
+                                       agent_df = df_SynthPop,
                                        neigh_id = "neighb_code",
                                        age_colnames = group_ages)
 
@@ -111,10 +111,10 @@ agent_df = distr_agent_neigh_age_group(neigh_df = marginal_distributions,
 
 # Load dataset
 setwd(paste(this.path::this.dir(), "/data/stratified-datasets", sep = ""))
-strat.gender_age = read.csv("gender_age-03759NED.csv", sep = ";") # count of people per lifeyear and gender in all of Amsterdam
+df_StratGender = read.csv("gender_age-03759NED.csv", sep = ";") # count of people per lifeyear and gender in all of Amsterdam
 
 # Select and translate useful attributes
-strat.gender_age = strat.gender_age %>%
+df_StratGender = df_StratGender %>%
   select(Geslacht,
          Leeftijd,
          BevolkingOp1Januari_1
@@ -124,58 +124,58 @@ strat.gender_age = strat.gender_age %>%
          n_people = BevolkingOp1Januari_1)
 
 # Refactor gender, age
-strat.gender_age = refactor_gender(strat.gender_age)
-strat.gender_age = refactor_age(strat.gender_age, codes_age)
-strat.gender_age = strat.gender_age %>% filter(!is.na(as.numeric(age))) # filter only numeric ages. Anyway, the highest age is already 104
-strat.gender_age$age = as.numeric(strat.gender_age$age)
+df_StratGender = refactor_gender(df_StratGender)
+df_StratGender = refactor_age(df_StratGender, codes_age)
+df_StratGender = df_StratGender %>% filter(!is.na(as.numeric(age))) # filter only numeric ages. Anyway, the highest age is already 104
+df_StratGender$age = as.numeric(df_StratGender$age)
 
 # Reformat stratified dataset, transforming the gender column into a column for each value
-strat.gender_age = restructure_one_var_marginal(df = strat.gender_age,
+df_StratGender = restructure_one_var_marginal(df = df_StratGender,
                                                 variable = 'gender',
                                                 countsname = 'n_people')
 
 # create group ages in the stratified dataset
-strat.gender_age$age_group = "age_over65" # default for non-numeric
-strat.gender_age$age_group[strat.gender_age$age %in% 0:14] = "age_0_15"
-strat.gender_age$age_group[strat.gender_age$age %in% 15:24] = "age_15_25"
-strat.gender_age$age_group[strat.gender_age$age %in% 25:44] = "age_25_45"
-strat.gender_age$age_group[strat.gender_age$age %in% 45:64] = "age_45_65"
-strat.gender_age$age_group[strat.gender_age$age %in% 65:105] = "age_over65"
+df_StratGender$age_group = "age_over65" # default for non-numeric
+df_StratGender$age_group[df_StratGender$age %in% 0:14] = "age_0_15"
+df_StratGender$age_group[df_StratGender$age %in% 15:24] = "age_15_25"
+df_StratGender$age_group[df_StratGender$age %in% 25:44] = "age_25_45"
+df_StratGender$age_group[df_StratGender$age %in% 45:64] = "age_45_65"
+df_StratGender$age_group[df_StratGender$age %in% 65:105] = "age_over65"
 
 # for each individual age, calculate its proportion to the total of each age group
-strat.gender_age = strat.gender_age %>%
+df_StratGender = df_StratGender %>%
   group_by(age_group) %>%
   mutate(group_propensity = total/sum(total))
 
 # for each group age of the synthetic population, sample the age from stratified dataset following the the frequency distribution
-agent_df$age=''
+df_SynthPop$age=''
 for(group_age in group_ages){
   sample <- sample(
-    x = strat.gender_age[strat.gender_age$age_group==group_age,]$age,
-    size = nrow(agent_df[agent_df$age_group==group_age,]),
+    x = df_StratGender[df_StratGender$age_group==group_age,]$age,
+    size = nrow(df_SynthPop[df_SynthPop$age_group==group_age,]),
     replace=TRUE,
-    prob=strat.gender_age[strat.gender_age$age_group==group_age,]$group_propensity
+    prob=df_StratGender[df_StratGender$age_group==group_age,]$group_propensity
   ) # sample from age frequency distribution
   
-  agent_df[agent_df$age_group==group_age,]$age = sample # apply to synthetic population dataset
+  df_SynthPop[df_SynthPop$age_group==group_age,]$age = sample # apply to synthetic population dataset
 }
-agent_df$age = as.numeric(agent_df$age)
+df_SynthPop$age = as.numeric(df_SynthPop$age)
 
 ################################################################################
 ## Gender generation based on age
 ################################################################################
 
 # Compute conditional propensities
-agent_df = calc_propens_agents(dataframe = strat.gender_age,
+df_SynthPop = calc_propens_agents(dataframe = df_StratGender,
                                variable = "female",
                                total_population = "total",
-                               agent_df = agent_df,
+                               agent_df = df_SynthPop,
                                list_conditional_var = c("age")
 )
 
 # Distribute attributes
-agent_df = distr_attr_strat_neigh_stats_binary(agent_df = agent_df,
-                                               neigh_df = marginal_distributions,
+df_SynthPop = distr_attr_strat_neigh_stats_binary(agent_df = df_SynthPop,
+                                               neigh_df = df_MarginalDistr,
                                                neigh_ID = "neighb_code",
                                                variable=  "gender",
                                                list_var_classes_neigh_df = c("gender_male", "gender_female"),
@@ -184,15 +184,15 @@ agent_df = distr_attr_strat_neigh_stats_binary(agent_df = agent_df,
 )
 
 # Remove extra columns
-agent_df = subset(agent_df, select=-c(prop_female, random_scores))
+df_SynthPop = subset(df_SynthPop, select=-c(prop_female, random_scores))
 
 ################################################################################
 ## Validation and analysis
 
 if (flag_validation_plots) {
   # calculate cross-validation neighb_code - gender, with neighborhood totals
-  validation_neigh_gender = validation(df_real_distr = marginal_distributions,
-                                       df_synt_pop = agent_df,
+  df_ValidationGender = validation(df_real_distr = df_MarginalDistr,
+                                       df_synt_pop = df_SynthPop,
                                        join_var = "neighb_code",
                                        list_real_df_var = c("gender_male", "gender_female"), 
                                        var_pred_df = "gender",
@@ -200,16 +200,16 @@ if (flag_validation_plots) {
   )
   
   # plot accuracy heatmap
-  plot_heatmap(df = validation_neigh_gender,
+  plot_heatmap(df = df_ValidationGender,
                join_var = 'neighb_code',
                var = 'gender')
   
-  plot_syth_pop_age_density(agent_df)
+  plot_syth_pop_age_density(df_SynthPop)
   
-  plot_syth_strat_age_density(agent_df, strat.gender_age)
+  plot_syth_strat_age_density(df_SynthPop, df_StratGender)
   
   # calculate total R2 score
-  validation_neigh_gender.R2 = R_squared(validation_neigh_gender$real, validation_neigh_gender$pred) 
+  df_ValidationGender.R2 = R_squared(df_ValidationGender$real, df_ValidationGender$pred) 
 }
 
 ################################################################################
@@ -218,10 +218,10 @@ if (flag_validation_plots) {
 
 # Load stratified dataset
 setwd(paste(this.path::this.dir(), "/data/stratified-datasets", sep = ""))
-strat.gender_age_migr = read.csv("gender_age_migration-84910NED.csv", sep = ";")
+df_StratMigration = read.csv("gender_age_migration-84910NED.csv", sep = ";")
 
 # Select interesting attributes
-strat.gender_age_migr = strat.gender_age_migr %>%
+df_StratMigration = df_StratMigration %>%
   select(Geslacht,
          Leeftijd,
          Migratieachtergrond,
@@ -234,49 +234,49 @@ strat.gender_age_migr = strat.gender_age_migr %>%
   )
 
 # Refactor group age, gender and migration background
-strat.gender_age_migr = refactor_age_group_20(strat.gender_age_migr, codes_agegroup20)
-strat.gender_age_migr = refactor_gender(strat.gender_age_migr)
-strat.gender_age_migr = refactor_migration(strat.gender_age_migr)
+df_StratMigration = refactor_age_group_20(df_StratMigration, codes_agegroup20)
+df_StratMigration = refactor_gender(df_StratMigration)
+df_StratMigration = refactor_migration(df_StratMigration)
 
 # Reformat stratified dataset, transforming the migration background column into a column for each value
-strat.gender_age_migr = restructure_one_var_marginal(df = strat.gender_age_migr,
+df_StratMigration = restructure_one_var_marginal(df = df_StratMigration,
                                                      variable = 'migration_background',
                                                      countsname = 'n_people')
 
 # Classify synthetic population ages into age groups to link to the stratified dataset
-agent_df$age_group_20 = ""
-agent_df$age_group_20[agent_df$age %in% 0:4] = "age_0_5"
-agent_df$age_group_20[agent_df$age %in% 5:9] = "age_5_10"
-agent_df$age_group_20[agent_df$age %in% 10:14] =  "age_10_15"
-agent_df$age_group_20[agent_df$age %in% 15:19] = "age_15_20"
-agent_df$age_group_20[agent_df$age %in% 20:24] =  "age_20_25" 
-agent_df$age_group_20[agent_df$age %in% 25:29] = "age_25_30"
-agent_df$age_group_20[agent_df$age %in% 30:34] =  "age_30_35"
-agent_df$age_group_20[agent_df$age %in% 35:39] =  "age_35_40" 
-agent_df$age_group_20[agent_df$age %in% 40:44] = "age_40_45"
-agent_df$age_group_20[agent_df$age %in% 45:49] = "age_45_50"
-agent_df$age_group_20[agent_df$age %in% 50:54] =  "age_50_55"
-agent_df$age_group_20[agent_df$age %in% 55:59] = "age_55_60"
-agent_df$age_group_20[agent_df$age %in% 60:64] =  "age_60_65" 
-agent_df$age_group_20[agent_df$age %in% 65:69] = "age_65_70"
-agent_df$age_group_20[agent_df$age %in% 70:74] =  "age_70_75"
-agent_df$age_group_20[agent_df$age %in% 75:79] =  "age_75_80" 
-agent_df$age_group_20[agent_df$age %in% 80:84] =  "age_80_85" 
-agent_df$age_group_20[agent_df$age %in% 85:89] = "age_85_90"
-agent_df$age_group_20[agent_df$age %in% 90:94] =  "age_90_95"
-agent_df$age_group_20[agent_df$age %in% 95:104] =  "age_over_95"
+df_SynthPop$age_group_20 = ""
+df_SynthPop$age_group_20[df_SynthPop$age %in% 0:4] = "age_0_5"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 5:9] = "age_5_10"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 10:14] =  "age_10_15"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 15:19] = "age_15_20"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 20:24] =  "age_20_25" 
+df_SynthPop$age_group_20[df_SynthPop$age %in% 25:29] = "age_25_30"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 30:34] =  "age_30_35"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 35:39] =  "age_35_40" 
+df_SynthPop$age_group_20[df_SynthPop$age %in% 40:44] = "age_40_45"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 45:49] = "age_45_50"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 50:54] =  "age_50_55"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 55:59] = "age_55_60"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 60:64] =  "age_60_65" 
+df_SynthPop$age_group_20[df_SynthPop$age %in% 65:69] = "age_65_70"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 70:74] =  "age_70_75"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 75:79] =  "age_75_80" 
+df_SynthPop$age_group_20[df_SynthPop$age %in% 80:84] =  "age_80_85" 
+df_SynthPop$age_group_20[df_SynthPop$age %in% 85:89] = "age_85_90"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 90:94] =  "age_90_95"
+df_SynthPop$age_group_20[df_SynthPop$age %in% 95:104] =  "age_over_95"
 
 # Calculate the missing Dutch migration background in the overall marginal distribution
-marginal_distributions$migration_Dutch = marginal_distributions$tot_pop - (marginal_distributions$migration_west + marginal_distributions$migration_non_west)
+df_MarginalDistr$migration_Dutch = df_MarginalDistr$tot_pop - (df_MarginalDistr$migration_west + df_MarginalDistr$migration_non_west)
 
 ## Conditional Propensities
-agent_df = calc_propens_agents(strat.gender_age_migr, "Dutch", "total", agent_df, c("age_group_20", "gender") )
-agent_df = calc_propens_agents(strat.gender_age_migr, "Western", "total", agent_df, c("age_group_20", "gender") )
-agent_df = calc_propens_agents(strat.gender_age_migr, "Non_Western", "total", agent_df, c("age_group_20", "gender") )
+df_SynthPop = calc_propens_agents(df_StratMigration, "Dutch", "total", df_SynthPop, c("age_group_20", "gender") )
+df_SynthPop = calc_propens_agents(df_StratMigration, "Western", "total", df_SynthPop, c("age_group_20", "gender") )
+df_SynthPop = calc_propens_agents(df_StratMigration, "Non_Western", "total", df_SynthPop, c("age_group_20", "gender") )
 
 # Distribute values
-agent_df = distr_attr_strat_neigh_stats_3plus(agent_df =  agent_df,
-                                              neigh_df =  marginal_distributions,
+df_SynthPop = distr_attr_strat_neigh_stats_3plus(agent_df =  df_SynthPop,
+                                              neigh_df =  df_MarginalDistr,
                                               neigh_ID =  "neighb_code",
                                               variable =  "migration_background", 
                                               list_var_classes_neigh_df =  c("migration_Dutch", "migration_west", "migration_non_west"), 
@@ -284,15 +284,15 @@ agent_df = distr_attr_strat_neigh_stats_3plus(agent_df =  agent_df,
                                               list_class_names =  c("Dutch", "Western", "Non_Western"))
 
 # Remove extra columns
-agent_df = subset(agent_df, select=-c(prop_Dutch, prop_Western, prop_Non_Western, random_scores, age_group_20))
+df_SynthPop = subset(df_SynthPop, select=-c(prop_Dutch, prop_Western, prop_Non_Western, random_scores, age_group_20))
 
 ################################################################################
 ## Validation and analysis
 
 if (flag_validation_plots) {
   # calculate cross-validation neighb_code - gender, with neighborhood totals
-  validation_neigh_migration = validation(df_real_distr = marginal_distributions,
-                                          df_synt_pop = agent_df,
+  df_ValidationMigration = validation(df_real_distr = df_MarginalDistr,
+                                          df_synt_pop = df_SynthPop,
                                           join_var = "neighb_code",
                                           list_real_df_var = c("migration_Dutch", "migration_west", "migration_non_west"), 
                                           var_pred_df = "migration_background",
@@ -300,12 +300,12 @@ if (flag_validation_plots) {
   )
   
   # plot accuracy heatmap
-  plot_heatmap(df = validation_neigh_migration,
+  plot_heatmap(df = df_ValidationMigration,
                join_var = 'neighb_code',
                var = 'migration_background')
   
   # calculate total R2 score
-  validation_neigh_migration.R2 = R_squared(validation_neigh_migration$real, validation_neigh_migration$pred) 
+  df_ValidationMigration.R2 = R_squared(df_ValidationMigration$real, df_ValidationMigration$pred) 
 }
 
 ################################################################################
@@ -314,11 +314,11 @@ if (flag_validation_plots) {
 
 # Load stratified dataset
 setwd(paste(this.path::this.dir(), "/data/stratified-datasets", sep = ""))
-strat.edu_absolved = read.csv("edu_absolved-71493NED.csv", sep = ";")
-strat.edu_current = read.csv("edu_current-71450NED.csv", sep = ";")
+df_StratEduAbsolved = read.csv("edu_absolved-71493NED.csv", sep = ";")
+df_StratEduCurrent = read.csv("edu_current-71450NED.csv", sep = ";")
 
 # Select interesting attributes
-strat.edu_absolved = strat.edu_absolved %>%
+df_StratEduAbsolved = df_StratEduAbsolved %>%
   select(Geslacht,
          Leeftijd,
          Migratieachtergrond,
@@ -331,7 +331,7 @@ strat.edu_absolved = strat.edu_absolved %>%
          education_code = Onderwijssoort,
          n_people = Gediplomeerden_1
   )
-strat.edu_current = strat.edu_current %>%
+df_StratEduCurrent = df_StratEduCurrent %>%
   select(Geslacht,
          Leeftijd,
          Migratieachtergrond,
@@ -346,83 +346,91 @@ strat.edu_current = strat.edu_current %>%
          n_people = LeerlingenDeelnemersStudenten_1
   )
 
-strat.edu_absolved = refactor_gender(strat.edu_absolved)
-strat.edu_absolved = refactor_ages_education(strat.edu_absolved, codes_ages_education)
-strat.edu_absolved = refactor_migration(strat.edu_absolved)
-strat.edu_absolved = refactor_education(strat.edu_absolved, codes_education)
+df_StratEduAbsolved = refactor_gender(df_StratEduAbsolved)
+df_StratEduAbsolved = refactor_ages_education(df_StratEduAbsolved, codes_ages_education)
+df_StratEduAbsolved = refactor_migration(df_StratEduAbsolved)
+df_StratEduAbsolved = refactor_education(df_StratEduAbsolved, codes_education)
 
-strat.edu_current = refactor_gender(strat.edu_current)
-strat.edu_current = refactor_ages_education(strat.edu_current, codes_ages_education)
-strat.edu_current = refactor_migration(strat.edu_current)
-strat.edu_current = refactor_education(strat.edu_current, codes_education)
+df_StratEduCurrent = refactor_gender(df_StratEduCurrent)
+df_StratEduCurrent = refactor_ages_education(df_StratEduCurrent, codes_ages_education)
+df_StratEduCurrent = refactor_migration(df_StratEduCurrent)
+df_StratEduCurrent = refactor_education(df_StratEduCurrent, codes_education)
 
 # Create new group ages in the synthetic population
-agent_df$age_group_education = as.character(agent_df$age)
-agent_df$age_group_education[agent_df$age %in% 30:34] = "age_30_35"
-agent_df$age_group_education[agent_df$age %in% 35:39] = "age_35_40"
-agent_df$age_group_education[agent_df$age %in% 40:44] = "age_40_45" 
-agent_df$age_group_education[agent_df$age %in% 45:49] = "age_45_50" 
-agent_df$age_group_education[agent_df$age >= 50] = "age_over_50"  
+df_SynthPop$age_group_education = as.character(df_SynthPop$age)
+df_SynthPop$age_group_education[df_SynthPop$age %in% 30:34] = "age_30_35"
+df_SynthPop$age_group_education[df_SynthPop$age %in% 35:39] = "age_35_40"
+df_SynthPop$age_group_education[df_SynthPop$age %in% 40:44] = "age_40_45" 
+df_SynthPop$age_group_education[df_SynthPop$age %in% 45:49] = "age_45_50" 
+df_SynthPop$age_group_education[df_SynthPop$age >= 50] = "age_over_50"
 
-edu_stats = unique(strat.edu_absolved[, c("age_group_education" ,  "gender"  , "migration_background")])
-for(n in 1:nrow(edu_stats)){
-  edu_stats$absolved_high[n] = sum(strat.edu_absolved$n_people[which(strat.edu_absolved$age_group_education == edu_stats$age_group_education[n] & strat.edu_absolved$gender == edu_stats$gender[n] & strat.edu_absolved$migration_background == edu_stats$migration_background[n] & strat.edu_absolved$education_level == "high")])
-  edu_stats$absolved_middle[n] = sum(strat.edu_absolved$n_people[which(strat.edu_absolved$age_group_education == edu_stats$age_group_education[n] & strat.edu_absolved$gender == edu_stats$gender[n] & strat.edu_absolved$migration_background == edu_stats$migration_background[n] & strat.edu_absolved$education_level == "middle")])
-  edu_stats$absolved_low[n] = sum(strat.edu_absolved$n_people[which(strat.edu_absolved$age_group_education == edu_stats$age_group_education[n] & strat.edu_absolved$gender == edu_stats$gender[n] & strat.edu_absolved$migration_background == edu_stats$migration_background[n] & strat.edu_absolved$education_level == "low")])
-  edu_stats$absolved_tot[n] = sum(strat.edu_absolved$n_people[which(strat.edu_absolved$age_group_education == edu_stats$age_group_education[n] & strat.edu_absolved$gender == edu_stats$gender[n] & strat.edu_absolved$migration_background == edu_stats$migration_background[n] & strat.edu_absolved$education_level != "")])
+# Reformat and combine education stratified information
+df_StratEducation = unique(df_StratEduAbsolved[, c("age_group_education" ,  "gender"  , "migration_background")])
+for(n in 1:nrow(df_StratEducation)){
+  df_StratEducation$absolved_high[n] = sum(df_StratEduAbsolved$n_people[which(df_StratEduAbsolved$age_group_education == df_StratEducation$age_group_education[n] & df_StratEduAbsolved$gender == df_StratEducation$gender[n] & df_StratEduAbsolved$migration_background == df_StratEducation$migration_background[n] & df_StratEduAbsolved$education_level == "high")])
+  df_StratEducation$absolved_middle[n] = sum(df_StratEduAbsolved$n_people[which(df_StratEduAbsolved$age_group_education == df_StratEducation$age_group_education[n] & df_StratEduAbsolved$gender == df_StratEducation$gender[n] & df_StratEduAbsolved$migration_background == df_StratEducation$migration_background[n] & df_StratEduAbsolved$education_level == "middle")])
+  df_StratEducation$absolved_low[n] = sum(df_StratEduAbsolved$n_people[which(df_StratEduAbsolved$age_group_education == df_StratEducation$age_group_education[n] & df_StratEduAbsolved$gender == df_StratEducation$gender[n] & df_StratEduAbsolved$migration_background == df_StratEducation$migration_background[n] & df_StratEduAbsolved$education_level == "low")])
+  df_StratEducation$absolved_tot[n] = sum(df_StratEduAbsolved$n_people[which(df_StratEduAbsolved$age_group_education == df_StratEducation$age_group_education[n] & df_StratEduAbsolved$gender == df_StratEducation$gender[n] & df_StratEduAbsolved$migration_background == df_StratEducation$migration_background[n] & df_StratEduAbsolved$education_level != "")])
   
-  edu_stats$current_high[n] = sum(strat.edu_current$n_people[which(strat.edu_current$age_group_education == edu_stats$age_group_education[n] & strat.edu_current$gender == edu_stats$gender[n] & strat.edu_current$migration_background == edu_stats$migration_background[n] & strat.edu_current$education_level == "high")])
-  edu_stats$current_middle[n] = sum(strat.edu_current$n_people[which(strat.edu_current$age_group_education == edu_stats$age_group_education[n] & strat.edu_current$gender == edu_stats$gender[n] & strat.edu_current$migration_background == edu_stats$migration_background[n] & strat.edu_current$education_level == "middle")])
-  edu_stats$current_low[n] = sum(strat.edu_current$n_people[which(strat.edu_current$age_group_education == edu_stats$age_group_education[n] & strat.edu_current$gender == edu_stats$gender[n] & strat.edu_current$migration_background == edu_stats$migration_background[n] & strat.edu_current$education_level == "low")])
+  df_StratEducation$current_high[n] = sum(df_StratEduCurrent$n_people[which(df_StratEduCurrent$age_group_education == df_StratEducation$age_group_education[n] & df_StratEduCurrent$gender == df_StratEducation$gender[n] & df_StratEduCurrent$migration_background == df_StratEducation$migration_background[n] & df_StratEduCurrent$education_level == "high")])
+  df_StratEducation$current_middle[n] = sum(df_StratEduCurrent$n_people[which(df_StratEduCurrent$age_group_education == df_StratEducation$age_group_education[n] & df_StratEduCurrent$gender == df_StratEducation$gender[n] & df_StratEduCurrent$migration_background == df_StratEducation$migration_background[n] & df_StratEduCurrent$education_level == "middle")])
+  df_StratEducation$current_low[n] = sum(df_StratEduCurrent$n_people[which(df_StratEduCurrent$age_group_education == df_StratEducation$age_group_education[n] & df_StratEduCurrent$gender == df_StratEducation$gender[n] & df_StratEduCurrent$migration_background == df_StratEducation$migration_background[n] & df_StratEduCurrent$education_level == "low")])
   
-  edu_stats$current_total[n] = sum(strat.edu_current$n_people[which(strat.edu_current$age_group_education==edu_stats$age_group_education[n] & strat.edu_current$gender == edu_stats$gender[n] & strat.edu_current$migration_background == edu_stats$migration_background[n])])
-  edu_stats$current_no_edu[n] = (edu_stats$current_total[n] - sum(edu_stats$current_low[n], edu_stats$current_middle[n], edu_stats$current_high[n]))
+  df_StratEducation$current_total[n] = sum(df_StratEduCurrent$n_people[which(df_StratEduCurrent$age_group_education==df_StratEducation$age_group_education[n] & df_StratEduCurrent$gender == df_StratEducation$gender[n] & df_StratEduCurrent$migration_background == df_StratEducation$migration_background[n])])
+  df_StratEducation$current_no_edu[n] = (df_StratEducation$current_total[n] - sum(df_StratEducation$current_low[n], df_StratEducation$current_middle[n], df_StratEducation$current_high[n]))
 }
 
-agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "absolved_high", total_population =  "absolved_tot", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
-agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "absolved_middle", total_population =  "absolved_tot", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
-agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "absolved_low", total_population =  "absolved_tot", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
-agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "current_high", total_population =  "current_total", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
-agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "current_middle", total_population =  "current_total", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
-agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "current_low", total_population =  "current_total", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
-agent_df = calc_propens_agents(dataframe =  edu_stats, variable = "current_no_edu", total_population =  "current_total", agent_df =  agent_df, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+# Calculate propensities for both current and absolved education
+df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "absolved_high", total_population =  "absolved_tot", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "absolved_middle", total_population =  "absolved_tot", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "absolved_low", total_population =  "absolved_tot", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "current_high", total_population =  "current_total", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "current_middle", total_population =  "current_total", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "current_low", total_population =  "current_total", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
+df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "current_no_edu", total_population =  "current_total", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
 
-## assigning attributes to agents
-agent_df$current_edu_exclude = 0
-agent_df$current_edu_exclude[which(is.na(agent_df$prop_current_high))] = 1
+# Refine and distribute current education
+df_SynthPop$current_edu_exclude = 0
+df_SynthPop$current_edu_exclude[which(is.na(df_SynthPop$prop_current_high))] = 1
 
-agent_df = distr_attr_cond_prop(agent_df = agent_df,
+df_SynthPop = distr_attr_cond_prop(agent_df = df_SynthPop,
                                 variable=  "current_education",
                                 list_agent_propens =  c("prop_current_low",  "prop_current_middle", "prop_current_high", "prop_current_no_edu"),
                                 list_class_names = c("low", "middle", "high", "no_current_edu"),
                                 agent_exclude = "current_edu_exclude")
 
-agent_df$current_education[which(agent_df$age > 5 & agent_df$age < 15) ] = "low"
-agent_df$current_education[which(agent_df$age <= 5) ] = "no_current_edu"
+# Remove extra columns
+df_SynthPop = subset(df_SynthPop, select=-c(prop_current_low, prop_current_middle, prop_current_high, prop_current_no_edu, random_scores, age_group_education, excluded, current_edu_exclude))
 
-agent_df$absolved = ""
-agent_df$absolved[agent_df$current_education == "middle"] = "low"
-agent_df$absolved[agent_df$current_education == "high" & agent_df$age <= 22] = "middle"
-agent_df$absolved[agent_df$current_education == "high" & agent_df$age > 22] = "high"
+# Refine values
+df_SynthPop$current_education[which(df_SynthPop$age > 5 & df_SynthPop$age < 15) ] = "low" # students between 5 and 15 are obliged to low level schools
+df_SynthPop$current_education[which(df_SynthPop$age <= 5) ] = "no_current_edu" # individuals younger than 5 do not go to school at all
+df_SynthPop[df_SynthPop$current_education == 0,]$current_education = 'no_current_edu' # reformat to string
 
-marginal_distributions$LowerEdu = 0
-marginal_distributions$MiddleEdu = 0
-marginal_distributions$HigherEdu = 0
+# Refine and distribute absolved education
+df_SynthPop$absolved = ""
+df_SynthPop$absolved[df_SynthPop$current_education == "middle"] = "low" # if the current education is middle, the absolved cannot be higher than low
+df_SynthPop$absolved[df_SynthPop$current_education == "high" & df_SynthPop$age <= 22] = "middle" # if current is high and yonger than 22 it cannot have another high degree
+df_SynthPop$absolved[df_SynthPop$current_education == "high" & df_SynthPop$age > 22] = "high" # if current is high and it is older than 22, it means it is doing a master degree and already achieve a bachelor
 
-for(i in 1:nrow(marginal_distributions)){
-  marginal_distributions[i,c("LowerEdu")] = marginal_distributions[i,c("education_absolved_low")] - nrow(agent_df[agent_df$absolved == "low" & agent_df$neighb_code == marginal_distributions$neighb_code[i] & agent_df$age >= 15,])
-  marginal_distributions[i,c("MiddleEdu" )] = marginal_distributions[i,c("education_absolved_middle" )]- nrow(agent_df[agent_df$absolved == "middle" & agent_df$neighb_code == marginal_distributions$neighb_code[i] & agent_df$age >= 15,])
-  marginal_distributions[i,c("HigherEdu")] = marginal_distributions[i,c("education_absolved_high")] - nrow(agent_df[agent_df$absolved == "high" & agent_df$neighb_code == marginal_distributions$neighb_code[i] & agent_df$age >= 15,])
+# readjust data in the marginal distribution excluding the people younger than 15 years old
+df_MarginalDistr$LowerEdu = 0
+df_MarginalDistr$MiddleEdu = 0
+df_MarginalDistr$HigherEdu = 0
+for(i in 1:nrow(df_MarginalDistr)){
+  df_MarginalDistr[i,c("LowerEdu")] = df_MarginalDistr[i,c("education_absolved_low")] - nrow(df_SynthPop[df_SynthPop$absolved == "low" & df_SynthPop$neighb_code == df_MarginalDistr$neighb_code[i] & df_SynthPop$age >= 15,])
+  df_MarginalDistr[i,c("MiddleEdu" )] = df_MarginalDistr[i,c("education_absolved_middle" )]- nrow(df_SynthPop[df_SynthPop$absolved == "middle" & df_SynthPop$neighb_code == df_MarginalDistr$neighb_code[i] & df_SynthPop$age >= 15,])
+  df_MarginalDistr[i,c("HigherEdu")] = df_MarginalDistr[i,c("education_absolved_high")] - nrow(df_SynthPop[df_SynthPop$absolved == "high" & df_SynthPop$neighb_code == df_MarginalDistr$neighb_code[i] & df_SynthPop$age >= 15,])
 }
-marginal_distributions$LowerEdu[marginal_distributions$LowerEdu < 0] = 0
-marginal_distributions$MiddleEdu[marginal_distributions$MiddleEdu < 0] = 0
-marginal_distributions$HigherEdu[marginal_distributions$HigherEdu < 0] = 0
+df_MarginalDistr$LowerEdu[df_MarginalDistr$LowerEdu < 0] = 0
+df_MarginalDistr$MiddleEdu[df_MarginalDistr$MiddleEdu < 0] = 0
+df_MarginalDistr$HigherEdu[df_MarginalDistr$HigherEdu < 0] = 0
 
-agent_df$diplm_exclude = 0
-agent_df$diplm_exclude[which(is.na(agent_df$prop_absolved_high)| agent_df$age < 15 | agent_df$absolved != "") ] = 1
+df_SynthPop$diplm_exclude = 0
+df_SynthPop$diplm_exclude[which(is.na(df_SynthPop$prop_absolved_high)| df_SynthPop$age < 15 | df_SynthPop$absolved != "") ] = 1
 
-agent_df = distr_attr_strat_neigh_stats_3plus(agent_df = agent_df,
-                                              neigh_df = marginal_distributions,
+df_SynthPop = distr_attr_strat_neigh_stats_3plus(agent_df = df_SynthPop,
+                                              neigh_df = df_MarginalDistr,
                                               neigh_ID = "neighb_code",
                                               variable=  "absolved_education", 
                                               list_var_classes_neigh_df = c("LowerEdu" , "MiddleEdu" ,"HigherEdu"), 
@@ -430,13 +438,31 @@ agent_df = distr_attr_strat_neigh_stats_3plus(agent_df = agent_df,
                                               list_class_names = c("low", "middle", "high"),
                                               agent_exclude = c("diplm_exclude"))
 
-agent_df$absolved_education[agent_df$absolved != ""] = agent_df$absolved[agent_df$absolved != ""]
-agent_df[agent_df$absolved_education == 0,]$absolved_education = 'no_absolved_edu'
+# Refine values
+df_SynthPop$absolved_education[df_SynthPop$absolved != ""] = df_SynthPop$absolved[df_SynthPop$absolved != ""]
+df_SynthPop[df_SynthPop$absolved_education == 0,]$absolved_education = 'no_absolved_edu'
 
+# Remove extra columns
+df_SynthPop = subset(df_SynthPop, select=-c(prop_absolved_low, prop_absolved_middle, prop_absolved_high, random_scores, absolved, diplm_exclude, excluded))
 
-neigh_valid = crossvalid(valid_df=marginal_distributions,
-                         agent_df = agent_df,
-                         join_var = "neighb_code",
-                         list_valid_var = c("education_absolved_low" , "education_absolved_middle" ,"education_absolved_high"), 
-                         agent_var = "absolved_education",
-                         list_agent_attr = c("low", "middle", "high") )
+################################################################################
+## Validation and analysis
+
+if (flag_validation_plots) {
+  # calculate cross-validation neighb_code - gender, with neighborhood totals
+  df_ValidationEduAbsolved = validation(df_real_distr = df_MarginalDistr,
+                                          df_synt_pop = df_SynthPop,
+                                          join_var = "neighb_code",
+                                          list_real_df_var = c("education_absolved_low" , "education_absolved_middle" ,"education_absolved_high"), 
+                                          var_pred_df = "absolved_education",
+                                          list_values = c("low", "middle", "high")
+  )
+  
+  # plot accuracy heatmap
+  plot_heatmap(df = df_ValidationEduAbsolved,
+               join_var = 'neighb_code',
+               var = 'absolved_education')
+  
+  # calculate total R2 score
+  df_ValidationEduAbsolved.R2 = R_squared(df_ValidationEduAbsolved$real, df_ValidationEduAbsolved$pred) 
+}
