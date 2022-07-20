@@ -5,7 +5,7 @@ library("this.path")
 setwd(this.path::this.dir())
 source('utils.R')
 
-flag_validation_plots = FALSE
+flag_validation_plots = TRUE
 
 ########################## Conversion codes ####################################
 
@@ -34,8 +34,6 @@ DHZW_neighborhood_codes <- c('BU05183284',
 
 ################################################################################
 ## Load marginal distributions
-
-setwd(paste(this.path::this.dir(), "/data", sep = ""))
 
 ## Load The Hague neighborhood dataset: n people per age group and neighbourhood 
 setwd(paste(this.path::this.dir(), "/data", sep = ""))
@@ -390,30 +388,35 @@ df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "cu
 df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "current_no_edu", total_population =  "current_total", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
 
 # Refine and distribute current education
-df_SynthPop$current_edu_exclude = 0
-df_SynthPop$current_edu_exclude[which(is.na(df_SynthPop$prop_current_high))] = 1
+#df_SynthPop$current_edu_exclude = 0
+#df_SynthPop$current_edu_exclude[which(is.na(df_SynthPop$prop_current_no_edu))] = 1
 
 df_SynthPop = distr_attr_cond_prop(agent_df = df_SynthPop,
                                 variable=  "current_education",
                                 list_agent_propens =  c("prop_current_low",  "prop_current_middle", "prop_current_high", "prop_current_no_edu"),
-                                list_class_names = c("low", "middle", "high", "no_current_edu"),
-                                agent_exclude = "current_edu_exclude")
+                                list_class_names = c("low", "middle", "high", "no_current_edu")
+                                #agent_exclude = "current_edu_exclude"
+                                )
 
 # Remove extra columns
-df_SynthPop = subset(df_SynthPop, select=-c(prop_current_low, prop_current_middle, prop_current_high, prop_current_no_edu, random_scores, age_group_education, excluded, current_edu_exclude))
-
+df_SynthPop = subset(df_SynthPop, select=-c(prop_current_low, prop_current_middle, prop_current_high, prop_current_no_edu, random_scores, age_group_education))
+                                            
 # Refine values
 df_SynthPop$current_education[which(df_SynthPop$age > 5 & df_SynthPop$age < 15) ] = "low" # students between 5 and 15 are obliged to low level schools
 df_SynthPop$current_education[which(df_SynthPop$age <= 5) ] = "no_current_edu" # individuals younger than 5 do not go to school at all
 df_SynthPop[df_SynthPop$current_education == 0,]$current_education = 'no_current_edu' # reformat to string
 
-# Refine and distribute absolved education
+
+################################################################################
+# Absolved education
+
+# Manually contruct the absolved education based on the previous created current education
 df_SynthPop$absolved = ""
 df_SynthPop$absolved[df_SynthPop$current_education == "middle"] = "low" # if the current education is middle, the absolved cannot be higher than low
 df_SynthPop$absolved[df_SynthPop$current_education == "high" & df_SynthPop$age <= 22] = "middle" # if current is high and yonger than 22 it cannot have another high degree
 df_SynthPop$absolved[df_SynthPop$current_education == "high" & df_SynthPop$age > 22] = "high" # if current is high and it is older than 22, it means it is doing a master degree and already achieve a bachelor
 
-# readjust data in the marginal distribution excluding the people younger than 15 years old
+# re adjust the marginal, removing the people fow which I already manually generated the absolved education
 df_MarginalDistr$LowerEdu = 0
 df_MarginalDistr$MiddleEdu = 0
 df_MarginalDistr$HigherEdu = 0
@@ -426,6 +429,7 @@ df_MarginalDistr$LowerEdu[df_MarginalDistr$LowerEdu < 0] = 0
 df_MarginalDistr$MiddleEdu[df_MarginalDistr$MiddleEdu < 0] = 0
 df_MarginalDistr$HigherEdu[df_MarginalDistr$HigherEdu < 0] = 0
 
+# exclude from the attribute distribution these agents that already have an absolved education based on the current education, or they are younger than 15 yo.
 df_SynthPop$diplm_exclude = 0
 df_SynthPop$diplm_exclude[which(is.na(df_SynthPop$prop_absolved_high)| df_SynthPop$age < 15 | df_SynthPop$absolved != "") ] = 1
 
@@ -466,3 +470,7 @@ if (flag_validation_plots) {
   # calculate total R2 score
   df_ValidationEduAbsolved.R2 = R_squared(df_ValidationEduAbsolved$real, df_ValidationEduAbsolved$pred) 
 }
+
+# Save synthetic population
+setwd(paste(this.path::this.dir(), "/data/synthetic-populations", sep = ""))
+write.csv(df_SynthPop, 'synthetic_population_DHZW.csv')
