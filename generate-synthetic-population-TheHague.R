@@ -523,6 +523,10 @@ df_StratHousehold = df_StratHousehold %>%
 df_StratHousehold[is.na(df_StratHousehold )] <- 0
 df_StratHousehold$total = df_StratHousehold$children + df_StratHousehold$singles + df_StratHousehold$couples + df_StratHousehold$single_parents
 
+# Save synthetic population
+setwd(paste(this.path::this.dir(), "/data/households/distributions", sep = ""))
+write.csv(df_StratHousehold, 'household_gender_age-71488NED-formatted.csv', row.names=FALSE)
+
 # Create group ages in the synthetic population
 df_SynthPop$age_group = ""
 df_SynthPop$age_group[df_SynthPop$age %in% 0:5] = "age_0_5"
