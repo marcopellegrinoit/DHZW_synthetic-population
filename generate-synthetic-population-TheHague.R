@@ -84,7 +84,7 @@ df_MarginalDistr$education_absolved_middle=as.numeric(df_MarginalDistr$education
 df_MarginalDistr$education_absolved_high=as.numeric(df_MarginalDistr$education_absolved_high)
 
 ################################################################################
-## Initialise synthetic population with age groups withing neigbhbourhoods
+## Initialise synthetic population with age groups withing neigbbourhoods
 ################################################################################
 
 # create empty synthetic population dataframe with number of agents
@@ -388,14 +388,14 @@ df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "cu
 df_SynthPop = calc_propens_agents(dataframe =  df_StratEducation, variable = "current_no_edu", total_population =  "current_total", agent_df =  df_SynthPop, list_conditional_var = c("age_group_education", "gender", "migration_background") )
 
 # Refine and distribute current education
-#df_SynthPop$current_edu_exclude = 0
-#df_SynthPop$current_edu_exclude[which(is.na(df_SynthPop$prop_current_no_edu))] = 1
+df_SynthPop$current_edu_exclude = 0
+df_SynthPop$current_edu_exclude[which(df_SynthPop$age<15)] = 1
 
 df_SynthPop = distr_attr_cond_prop(agent_df = df_SynthPop,
                                 variable=  "current_education",
                                 list_agent_propens =  c("prop_current_low",  "prop_current_middle", "prop_current_high", "prop_current_no_edu"),
-                                list_class_names = c("low", "middle", "high", "no_current_edu")
-                                #agent_exclude = "current_edu_exclude"
+                                list_class_names = c("low", "middle", "high", "no_current_edu"),
+                                agent_exclude = "current_edu_exclude"
                                 )
 
 # Remove extra columns
@@ -431,7 +431,7 @@ df_MarginalDistr$HigherEdu[df_MarginalDistr$HigherEdu < 0] = 0
 
 # exclude from the attribute distribution these agents that already have an absolved education based on the current education, or they are younger than 15 yo.
 df_SynthPop$diplm_exclude = 0
-df_SynthPop$diplm_exclude[which(is.na(df_SynthPop$prop_absolved_high)| df_SynthPop$age < 15 | df_SynthPop$absolved != "") ] = 1
+df_SynthPop$diplm_exclude[which(is.na(df_SynthPop$prop_absolved_high)|df_SynthPop$age < 15 | df_SynthPop$absolved != "") ] = 1
 
 df_SynthPop = distr_attr_strat_neigh_stats_3plus(agent_df = df_SynthPop,
                                               neigh_df = df_MarginalDistr,
