@@ -1,0 +1,33 @@
+﻿education_code,education_title,education_level
+A025284,Vwo,low
+A025285,Havo,low
+A025287,Vmbo-b/k,low
+A025288,Vmbo g/t,low
+A025289,Praktijkonderwijs,low
+A025290,Totaal mbo (incl. extranei),
+A025293,Bbl totaal,
+A025293,Mbo bbl,
+A025294,Hoger beroepsonderwijs,
+A025297,Wetenschappelijk onderwijs,
+A025300,Vavo,
+A028669,Hbo-associate degree,high
+A028672,Wo-doctoraal,high
+A041687,Totaal middelbaar beroepsonderwijs,
+A041751,Mbo-entreeopleiding,
+A041755,Mbo niveau 2,middle
+A041759,Mbo niveau 3,middle
+A041773,Extranei,
+A041868,Bol totaal,
+A041919,Vo algemene leerjaren 1-3,
+A041920,Vwo 3-6,middle
+A041921,Havo 3-5,middle
+A041922,Vmbo theoretische-gemengde leerweg 3-4,low
+A041923,Vmbo basis-kaderberoeps 3-4,low
+A041924,Mbo niveau 4a,middle
+A041925,Mbo niveau 4b,middle
+A043049,Hbo-bachelor,high
+A043051,Hbo-master/vervolgopleiding,high
+A043054,Wo-bachelor,high
+A043055,Wo-master,high
+A043056,Wo-vervolgopleiding,high
+T001345,Totaal voortgezet onderwijs (vo),

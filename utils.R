@@ -43,7 +43,7 @@ refactor_education = function(df, df_codes){
   df = merge(df, df_codes, by='education_code')
   df = subset(df, select=-c(education_code, education_title))
   #df = df[df$education_level!='',]
-
+  
   #df=df %>% 
   #  group_by(gender, age_group_education, migration_background, education_level) %>% 
   #  summarise(n_people = sum(n_people))
@@ -70,18 +70,29 @@ refactor_migration = function(df){
 # @var_pred_df: column name of the variable to analyse in the synthetic population
 # @list_values: list of values of the variable to analyse (e.g. values contained in the column @var_pred_df)
 
-validation = function(df_real_distr, df_synt_pop, join_var, list_real_df_var, var_pred_df, list_values){
+validation = function(df_real_distr, df_synt_pop, join_var, list_real_df_var, var_pred_df, list_values, age_limits){
   df = expand.grid(unique(df_real_distr[,join_var]), list_values)
   colnames(df) = c(join_var, var_pred_df)
   
   df$pred = NA
   df$real = NA
   
-  # count the ones predicted
-  for (i in 1:nrow(df)) {
-    df[i,]$pred = nrow(df_synt_pop[df_synt_pop[,join_var]==df[i, join_var] &
-                                     df_synt_pop[,var_pred_df]==df[i,var_pred_df],])
+  if (age_limits) {
+    # count the ones predicted
+    for (i in 1:nrow(df)) {
+      df[i,]$pred = nrow(df_synt_pop[df_synt_pop[,join_var]==df[i, join_var] &
+                                       df_synt_pop[,var_pred_df]==df[i,var_pred_df] &
+                                       df_synt_pop['age']>=15 &
+                                       df_synt_pop['age']<=75,])
+    }    
+  } else {
+    # count the ones predicted
+    for (i in 1:nrow(df)) {
+      df[i,]$pred = nrow(df_synt_pop[df_synt_pop[,join_var]==df[i, join_var] &
+                                       df_synt_pop[,var_pred_df]==df[i,var_pred_df],])
+    }
   }
+
   
   # extract the true labels from the marginal
   for (a in 1:length(list_real_df_var)) {
@@ -98,7 +109,7 @@ validation = function(df_real_distr, df_synt_pop, join_var, list_real_df_var, va
                        ifelse(df$real==0,
                               0,
                               df$real/df$pred)
-                       )
+  )
   df$diff = df$pred-df$real
   
   return(df)
