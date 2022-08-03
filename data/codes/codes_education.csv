@@ -1,6 +1,6 @@
 ﻿education_code,education_title,education_level
-A025284,Vwo,low
-A025285,Havo,low
+A025284,Vwo,middle
+A025285,Havo,middle
 A025287,Vmbo-b/k,low
 A025288,Vmbo g/t,low
 A025289,Praktijkonderwijs,low
@@ -9,7 +9,7 @@ A025293,Bbl totaal,middle
 A025293,Mbo bbl,middle
 A025294,Hoger beroepsonderwijs,high
 A025297,Wetenschappelijk onderwijs,high
-A025300,Vavo,
+A025300,Vavo,middle
 A028669,Hbo-associate degree,high
 A028672,Wo-doctoraal,high
 A041687,Totaal middelbaar beroepsonderwijs,

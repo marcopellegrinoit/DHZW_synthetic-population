@@ -7,16 +7,6 @@ source('utils.R')
 
 municipality = "den_haag_2019"
 
-flag_validation_plots = TRUE
-
-########################## Conversion codes ####################################
-
-setwd(paste(this.path::this.dir(), "/data/codes", sep = ""))
-codes_age = read.csv("codes_age.csv", sep=",")
-codes_agegroup20 = read.csv("codes_agegroup20.csv", fileEncoding="UTF-8-BOM")
-codes_ages_education = read.csv("codes_ages_education.csv", fileEncoding="UTF-8-BOM", sep=";")
-codes_education = read.csv("codes_education.csv", fileEncoding="UTF-8-BOM")
-
 # Neighborhood codes of DHZW
 DHZW_neighborhood_codes <- c('BU05183284',
                              'BU05183536',
@@ -37,68 +27,8 @@ DHZW_neighborhood_codes <- c('BU05183284',
 ################################################################################
 ## Load marginal distributions
 
-## Load The Hague neighborhood dataset: n people per age group and neighbourhood 
 setwd(paste(this.path::this.dir(), "/data/", municipality, sep = ""))
-pop_df_MarginalDistr = read.csv("marginal_distributions_84583NED.csv", sep = ";")
-df_MarginalDistr = pop_df_MarginalDistr[which(pop_df_MarginalDistr$SoortRegio_2 == "Buurt     "),] # select neighborhood data only
-remove(pop_df_MarginalDistr)
-
-# filter DHZW area
-df_MarginalDistr = df_MarginalDistr[df_MarginalDistr$WijkenEnBuurten %in% DHZW_neighborhood_codes,]
-df_MarginalDistr$HuishoudensTotaal_28
-df_MarginalDistr$Eenpersoonshuishoudens_29
-df_MarginalDistr$HuishoudensZonderKinderen_30
-df_MarginalDistr$HuishoudensMetKinderen_31
-df_MarginalDistr$GemiddeldeHuishoudensgrootte_32
-
-# filter and rename only useful attributes
-df_MarginalDistr = df_MarginalDistr %>%
-  select(Codering_3,
-         AantalInwoners_5,
-         Mannen_6,
-         Vrouwen_7,
-         k_0Tot15Jaar_8,
-         k_15Tot25Jaar_9,
-         k_25Tot45Jaar_10,
-         k_45Tot65Jaar_11,
-         k_65JaarOfOuder_12,
-         WestersTotaal_17,
-         NietWestersTotaal_18,
-         HuishoudensTotaal_28,
-         Eenpersoonshuishoudens_29,
-         HuishoudensZonderKinderen_30,
-         HuishoudensMetKinderen_31,
-         GemiddeldeHuishoudensgrootte_32,
-         OpleidingsniveauLaag_64,
-         OpleidingsniveauMiddelbaar_65,
-         OpleidingsniveauHoog_66
-  )%>%
-  rename(neighb_code = Codering_3,
-         tot_pop = AantalInwoners_5,
-         gender_male = Mannen_6,
-         gender_female = Vrouwen_7,
-         age_0_15 = k_0Tot15Jaar_8,
-         age_15_25 = k_15Tot25Jaar_9,
-         age_25_45 = k_25Tot45Jaar_10,
-         age_45_65 = k_45Tot65Jaar_11,
-         age_over65 = k_65JaarOfOuder_12,
-         migration_west = WestersTotaal_17,
-         migration_non_west = NietWestersTotaal_18,
-         hh_total = HuishoudensTotaal_28,
-         hh_single = Eenpersoonshuishoudens_29,
-         hh_no_children = HuishoudensZonderKinderen_30,
-         hh_with_children = HuishoudensMetKinderen_31,
-         hh_avg_size = GemiddeldeHuishoudensgrootte_32,
-         education_absolved_low = OpleidingsniveauLaag_64,
-         education_absolved_middle = OpleidingsniveauMiddelbaar_65,
-         education_absolved_high = OpleidingsniveauHoog_66
-  )
-df_MarginalDistr[df_MarginalDistr$education_absolved_low=='       .',]$education_absolved_low=0
-df_MarginalDistr[df_MarginalDistr$education_absolved_middle=='       .',]$education_absolved_middle=0
-df_MarginalDistr[df_MarginalDistr$education_absolved_high=='       .',]$education_absolved_high=0
-df_MarginalDistr$education_absolved_low=as.numeric(df_MarginalDistr$education_absolved_low)
-df_MarginalDistr$education_absolved_middle=as.numeric(df_MarginalDistr$education_absolved_middle)
-df_MarginalDistr$education_absolved_high=as.numeric(df_MarginalDistr$education_absolved_high)
+df_MarginalDistr = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 
 ################################################################################
 ## Initialise synthetic population with age groups withing neigbbourhoods
@@ -126,41 +56,7 @@ df_SynthPop = distr_agent_neigh_age_group(neigh_df = df_MarginalDistr,
 
 # Load dataset
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
-df_StratGender = read.csv("gender_age-03759NED.csv", sep = ";") # count of people per lifeyear and gender in all of Amsterdam
-
-# Select and translate useful attributes
-df_StratGender = df_StratGender %>%
-  select(Geslacht,
-         Leeftijd,
-         BevolkingOp1Januari_1
-  ) %>%
-  rename(gender = Geslacht,
-         age_code = Leeftijd,
-         n_people = BevolkingOp1Januari_1)
-
-# Refactor gender, age
-df_StratGender = refactor_gender(df_StratGender)
-df_StratGender = refactor_age(df_StratGender, codes_age)
-df_StratGender = df_StratGender %>% filter(!is.na(as.numeric(age))) # filter only numeric ages. Anyway, the highest age is already 104
-df_StratGender$age = as.numeric(df_StratGender$age)
-
-# Reformat stratified dataset, transforming the gender column into a column for each value
-df_StratGender = restructure_one_var_marginal(df = df_StratGender,
-                                              variable = 'gender',
-                                              countsname = 'n_people')
-
-# create group ages in the stratified dataset
-df_StratGender$age_group = "age_over65" # default for non-numeric
-df_StratGender$age_group[df_StratGender$age %in% 0:14] = "age_0_15"
-df_StratGender$age_group[df_StratGender$age %in% 15:24] = "age_15_25"
-df_StratGender$age_group[df_StratGender$age %in% 25:44] = "age_25_45"
-df_StratGender$age_group[df_StratGender$age %in% 45:64] = "age_45_65"
-df_StratGender$age_group[df_StratGender$age %in% 65:105] = "age_over65"
-
-# for each individual age, calculate its proportion to the total of each age group
-df_StratGender = df_StratGender %>%
-  group_by(age_group) %>%
-  mutate(group_propensity = total/sum(total))
+df_StratGender = read.csv("gender_age-03759NED-formatted.csv", sep = ",")
 
 # for each group age of the synthetic population, sample the age from stratified dataset following the the frequency distribution
 df_SynthPop$age=''
@@ -193,31 +89,13 @@ df_SynthPop = distr_attr_strat_neigh_stats_binary(agent_df = df_SynthPop,
                                                   neigh_df = df_MarginalDistr,
                                                   neigh_ID = "neighb_code",
                                                   variable=  "gender",
-                                                  list_var_classes_neigh_df = c("gender_male", "gender_female"),
+                                                  list_var_classes_neigh_df = c("gender_female", "gender_male"),
                                                   list_agent_propens =  c("prop_female"),
                                                   list_class_names = c("female", "male")
 )
 
 # Remove extra columns
-df_SynthPop = subset(df_SynthPop, select=-c(prop_female, random_scores))
-
-################################################################################
-## Validation and analysis
-
-if (flag_validation_plots) {
-  # calculate cross-validation neighb_code - gender, with neighborhood totals
-  df_ValidationGender = validation(df_real_distr = df_MarginalDistr,
-                                   df_synt_pop = df_SynthPop,
-                                   join_var = "neighb_code",
-                                   list_real_df_var = c("gender_male", "gender_female"), 
-                                   var_pred_df = "gender",
-                                   list_values = c("male", "female"),
-                                   age_limits = FALSE
-  )
-  
-  # calculate total R2 score
-  df_ValidationGender.R2 = R_squared(df_ValidationGender$real, df_ValidationGender$pred) 
-}
+df_SynthPop = subset(df_SynthPop, select=-c(prop_female, random_scores, age_group))
 
 ################################################################################
 ## Migration background generation based on age and gender
@@ -225,63 +103,35 @@ if (flag_validation_plots) {
 
 # Load stratified dataset
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
-df_StratMigration = read.csv("gender_age_migration-84910NED.csv", sep = ";")
-
-# Select interesting attributes
-df_StratMigration = df_StratMigration %>%
-  select(Geslacht,
-         Leeftijd,
-         Migratieachtergrond,
-         BevolkingOp1Januari_1
-  ) %>%
-  rename(gender = Geslacht,
-         age_group_20_code = Leeftijd,
-         migration_background_code = Migratieachtergrond,
-         n_people = BevolkingOp1Januari_1
-  )
-df_StratMigration[is.na(df_StratMigration)] <- 0
-
-
-# Refactor group age, gender and migration background
-df_StratMigration = refactor_age_group_20(df_StratMigration, codes_agegroup20)
-df_StratMigration = refactor_gender(df_StratMigration)
-df_StratMigration = refactor_migration(df_StratMigration)
-
-# Reformat stratified dataset, transforming the migration background column into a column for each value
-df_StratMigration = restructure_one_var_marginal(df = df_StratMigration,
-                                                 variable = 'migration_background',
-                                                 countsname = 'n_people')
+df_StratMigration = read.csv("gender_age_migration-84910NED-formatted.csv", sep = ",")
 
 # Classify synthetic population ages into age groups to link to the stratified dataset
-df_SynthPop$age_group_20 = ""
-df_SynthPop$age_group_20[df_SynthPop$age %in% 0:4] = "age_0_5"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 5:9] = "age_5_10"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 10:14] =  "age_10_15"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 15:19] = "age_15_20"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 20:24] =  "age_20_25" 
-df_SynthPop$age_group_20[df_SynthPop$age %in% 25:29] = "age_25_30"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 30:34] =  "age_30_35"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 35:39] =  "age_35_40" 
-df_SynthPop$age_group_20[df_SynthPop$age %in% 40:44] = "age_40_45"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 45:49] = "age_45_50"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 50:54] =  "age_50_55"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 55:59] = "age_55_60"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 60:64] =  "age_60_65" 
-df_SynthPop$age_group_20[df_SynthPop$age %in% 65:69] = "age_65_70"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 70:74] =  "age_70_75"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 75:79] =  "age_75_80" 
-df_SynthPop$age_group_20[df_SynthPop$age %in% 80:84] =  "age_80_85" 
-df_SynthPop$age_group_20[df_SynthPop$age %in% 85:89] = "age_85_90"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 90:94] =  "age_90_95"
-df_SynthPop$age_group_20[df_SynthPop$age %in% 95:104] =  "age_over_95"
-
-# Calculate the missing Dutch migration background in the overall marginal distribution
-df_MarginalDistr$migration_Dutch = df_MarginalDistr$tot_pop - (df_MarginalDistr$migration_west + df_MarginalDistr$migration_non_west)
+df_SynthPop$age_group = ""
+df_SynthPop$age_group[df_SynthPop$age %in% 0:4] = "age_0_5"
+df_SynthPop$age_group[df_SynthPop$age %in% 5:9] = "age_5_10"
+df_SynthPop$age_group[df_SynthPop$age %in% 10:14] =  "age_10_15"
+df_SynthPop$age_group[df_SynthPop$age %in% 15:19] = "age_15_20"
+df_SynthPop$age_group[df_SynthPop$age %in% 20:24] =  "age_20_25" 
+df_SynthPop$age_group[df_SynthPop$age %in% 25:29] = "age_25_30"
+df_SynthPop$age_group[df_SynthPop$age %in% 30:34] =  "age_30_35"
+df_SynthPop$age_group[df_SynthPop$age %in% 35:39] =  "age_35_40" 
+df_SynthPop$age_group[df_SynthPop$age %in% 40:44] = "age_40_45"
+df_SynthPop$age_group[df_SynthPop$age %in% 45:49] = "age_45_50"
+df_SynthPop$age_group[df_SynthPop$age %in% 50:54] =  "age_50_55"
+df_SynthPop$age_group[df_SynthPop$age %in% 55:59] = "age_55_60"
+df_SynthPop$age_group[df_SynthPop$age %in% 60:64] =  "age_60_65" 
+df_SynthPop$age_group[df_SynthPop$age %in% 65:69] = "age_65_70"
+df_SynthPop$age_group[df_SynthPop$age %in% 70:74] =  "age_70_75"
+df_SynthPop$age_group[df_SynthPop$age %in% 75:79] =  "age_75_80" 
+df_SynthPop$age_group[df_SynthPop$age %in% 80:84] =  "age_80_85" 
+df_SynthPop$age_group[df_SynthPop$age %in% 85:89] = "age_85_90"
+df_SynthPop$age_group[df_SynthPop$age %in% 90:94] =  "age_90_95"
+df_SynthPop$age_group[df_SynthPop$age %in% 95:104] =  "age_over_95"
 
 ## Conditional Propensities
-df_SynthPop = calc_propens_agents(df_StratMigration, "Dutch", "total", df_SynthPop, c("age_group_20", "gender") )
-df_SynthPop = calc_propens_agents(df_StratMigration, "Western", "total", df_SynthPop, c("age_group_20", "gender") )
-df_SynthPop = calc_propens_agents(df_StratMigration, "Non_Western", "total", df_SynthPop, c("age_group_20", "gender") )
+df_SynthPop = calc_propens_agents(df_StratMigration, "Dutch", "total", df_SynthPop, c("age_group", "gender") )
+df_SynthPop = calc_propens_agents(df_StratMigration, "Western", "total", df_SynthPop, c("age_group", "gender") )
+df_SynthPop = calc_propens_agents(df_StratMigration, "Non_Western", "total", df_SynthPop, c("age_group", "gender") )
 
 # Distribute values
 df_SynthPop = distr_attr_strat_neigh_stats_3plus(agent_df =  df_SynthPop,
@@ -293,30 +143,7 @@ df_SynthPop = distr_attr_strat_neigh_stats_3plus(agent_df =  df_SynthPop,
                                                  list_class_names =  c("Dutch", "Western", "Non_Western"))
 
 # Remove extra columns
-df_SynthPop = subset(df_SynthPop, select=-c(prop_Dutch, prop_Western, prop_Non_Western, random_scores, age_group_20))
-
-################################################################################
-## Validation and analysis
-
-if (flag_validation_plots) {
-  # calculate cross-validation neighb_code - gender, with neighborhood totals
-  df_ValidationMigration = validation(df_real_distr = df_MarginalDistr,
-                                      df_synt_pop = df_SynthPop,
-                                      join_var = "neighb_code",
-                                      list_real_df_var = c("migration_Dutch", "migration_west", "migration_non_west"), 
-                                      var_pred_df = "migration_background",
-                                      list_values = c("Dutch", "Western", "Non_Western"),
-                                      age_limits = FALSE
-  )
-  
-  # plot accuracy heatmap
-  plot_heatmap(df = df_ValidationMigration,
-               join_var = 'neighb_code',
-               var = 'migration_background')
-  
-  # calculate total R2 score
-  df_ValidationMigration.R2 = R_squared(df_ValidationMigration$real, df_ValidationMigration$pred) 
-}
+df_SynthPop = subset(df_SynthPop, select=-c(prop_Dutch, prop_Western, prop_Non_Western, random_scores, age_group))
 
 ################################################################################
 ## Generate education based on group age, gender and migration
@@ -325,7 +152,7 @@ if (flag_validation_plots) {
 # Load stratified dataset
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
 df_StratEduAbsolved = read.csv("edu_absolved-71493NED.csv", sep = ";")
-df_StratEduCurrent = read.csv("edu_current-71450NED.csv", sep = ";")
+df_StratEduCurrent = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
 
 # Select interesting attributes
 df_StratEduAbsolved = df_StratEduAbsolved %>%
@@ -341,30 +168,12 @@ df_StratEduAbsolved = df_StratEduAbsolved %>%
          education_code = Onderwijssoort,
          n_people = Gediplomeerden_1
   )
-df_StratEduCurrent = df_StratEduCurrent %>%
-  select(Geslacht,
-         Leeftijd,
-         Migratieachtergrond,
-         Onderwijssoort,
-         LeerlingenStudenten_1
-         
-  ) %>%
-  rename(gender = Geslacht,
-         age_code = Leeftijd,
-         migration_background_code = Migratieachtergrond,
-         education_code = Onderwijssoort,
-         n_people = LeerlingenStudenten_1
-  )
+
 
 df_StratEduAbsolved = refactor_gender(df_StratEduAbsolved)
 df_StratEduAbsolved = refactor_ages_education(df_StratEduAbsolved, codes_ages_education)
 df_StratEduAbsolved = refactor_migration(df_StratEduAbsolved)
 df_StratEduAbsolved = refactor_education(df_StratEduAbsolved, codes_education)
-
-df_StratEduCurrent = refactor_gender(df_StratEduCurrent)
-df_StratEduCurrent = refactor_ages_education(df_StratEduCurrent, codes_ages_education)
-df_StratEduCurrent = refactor_migration(df_StratEduCurrent)
-df_StratEduCurrent = refactor_education(df_StratEduCurrent, codes_education)
 
 # Create new group ages in the synthetic population
 df_SynthPop$age_group_education = as.character(df_SynthPop$age)
@@ -615,4 +424,4 @@ df_SynthPop = subset(df_SynthPop, select=-c(hh_position_single, prop_child, prop
 
 # Save synthetic population
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/synthetic-populations", sep = ""))
-write.csv(df_SynthPop, 'synthetic_population_DHZW.csv', row.names=FALSE)
+write.csv(df_SynthPop, 'synthetic_population.csv', row.names=FALSE)
