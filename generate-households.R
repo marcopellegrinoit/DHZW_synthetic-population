@@ -72,10 +72,16 @@ remove(df_Singles)
   df_NeighbUnassigned = df_UnassignedAgents[df_UnassignedAgents$neighb_code==neighb_code,]
   
   df_SingleParents = df_NeighbUnassigned[df_NeighbUnassigned$hh_position=='single_parent',]
-  df_Children = df_NeighbUnassigned[df_NeighbUnassigned$hh_position=='child',]
+  df_Couples = df_NeighbUnassigned[df_NeighbUnassigned$hh_position=='couple',]
   
+  df_Children_Neighbourhood = df_NeighbUnassigned[df_NeighbUnassigned$hh_position=='child',]
+  n_children_singles = nrow(df_SingleParents)/(nrow(df_SingleParents)+(nrow(df_Couples)/2))
+  
+  df_Children_Singles = df_Children_Neighbourhood[sample(nrow(df_Children_Neighbourhood),  (n_children_singles*nrow(df_Children_Neighbourhood)) ), ]
+  df_Children_Couples = df_Children_Neighbourhood[!(df_Children_Neighbourhood$agent_ID %in% df_Children_Singles$agent_ID),]
+
   for (p in 1:nrow(df_SingleParents)) {
-    if (nrow(df_Children)>0) { # check if there is at least a child to assign
+    if (nrow(df_Children_Singles)>0) { # check if there is at least a child to assign
       
       # for each single parent in this neighbourhood
       parent = df_SingleParents[p,]
@@ -87,13 +93,13 @@ remove(df_Singles)
         replace=TRUE,
         prob=df_HouseholdSize$freq)
       
-      if (nrow(df_Children)>= hh_size) {
+      if (nrow(df_Children_Singles)>= hh_size) {
         # if there are enough children for the house
-        children_for_parent = df_Children[sample(nrow(df_Children), (hh_size-1)), ]
+        children_for_parent = df_Children_Singles[sample(nrowdf_Children_Singles, (hh_size-1)), ]
       } else {
         # add the few remaining children
-        children_for_parent = df_Children
-        hh_size = nrow(df_Children)+1 # override with new house size
+        children_for_parent = df_Children_Singles
+        hh_size = nrow(df_Children_Singles)+1 # override with new house size
       }
       
       df_Households[nrow(df_Households) + 1,] = c(
@@ -105,7 +111,7 @@ remove(df_Singles)
       # remove parent and children
       df_UnassignedAgents <- df_UnassignedAgents[!(df_UnassignedAgents$agent_ID %in% parent$agent_ID),]
       df_UnassignedAgents <- df_UnassignedAgents[!(df_UnassignedAgents$agent_ID %in% children_for_parent$agent_ID),]
-      df_Children <- df_Children[!(df_Children$agent_ID %in% children_for_parent$agent_ID),]
+      df_Children_Singles <- df_Children_Singles[!(df_Children_Singles$agent_ID %in% children_for_parent$agent_ID),]
       
       
     } else {
@@ -117,9 +123,6 @@ remove(df_Singles)
   # Assign couples and their child(ren)
   
   df_NeighbUnassigned = df_UnassignedAgents[df_UnassignedAgents$neighb_code==neighb_code,]
-  
-  df_Couples = df_NeighbUnassigned[df_NeighbUnassigned$hh_position=='couple',]
-  df_Children = df_NeighbUnassigned[df_NeighbUnassigned$hh_position=='child',]
   
   while(nrow(df_Couples)>=2) {
     # if there is at least a couple
@@ -135,23 +138,23 @@ remove(df_Singles)
       replace=TRUE,
       prob=df_HouseholdSize$freq)
     
-    if (hh_size > 2 & nrow(df_Children)>0) {
+    if (hh_size > 2 & nrow(df_Children_Couples)>0) {
       # if there should be children and if there are still some to be assigned
       
-      if (nrow(df_Children)>= hh_size) {
+      if (nrow(df_Children_Couples)>= hh_size) {
         # if there are enough children for the house
-        children_for_parent = df_Children[sample(nrow(df_Children), (hh_size-2)), ]
+        children_for_parent = df_Children_Couples[sample(nrow(df_Children_Couples), (hh_size-2)), ]
       } else {
         # add the few remaining children
-        children_for_parent = df_Children
-        hh_size = nrow(df_Children)+2 # override with new house size
+        children_for_parent = df_Children_Couples
+        hh_size = nrow(df_Children_Couples)+2 # override with new house size
         
         print(paste('children are finished are there are still couples people to assign: ', nrow(df_Couples), sep=" "))
       }
       
       # remove children
       df_UnassignedAgents <- df_UnassignedAgents[!(df_UnassignedAgents$agent_ID %in% children_for_parent$agent_ID),]
-      df_Children <- df_Children[!(df_Children$agent_ID %in% children_for_parent$agent_ID),]
+      df_Children_Couples <- df_Children_Couples[!(df_Children_Couples$agent_ID %in% children_for_parent$agent_ID),]
     }
     
     df_Households[nrow(df_Households) + 1,] = c(
