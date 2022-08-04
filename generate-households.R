@@ -27,25 +27,27 @@ colnames(df_Households) <- c("hh_ID", "hh_size", "neighb_code")
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/households/output", sep = ""))
 
 ################################################################################
-## First, assign all singles
+# First, assign all singles
 df_Singles = df_UnassignedAgents[df_UnassignedAgents$hh_position=='single',]
 
 # create households ID and size
 df_Households <- tibble::rowid_to_column(df_Singles, "hid")
 df_Households$hh_size = 1
+df_Households$hh_type = 'single'
 
 # split single individuals into households and save them
 if (flag_save) {
   out <- split(df_Households, df_Households$hid) # list of dfs
   lapply(names(out),
-         function(x){write.csv(out[[x]], paste0("DHZW_household_",x,".csv"), row.names = FALSE)})
+         function(x){write.csv(out[[x]], paste0("household_",x,".csv"), row.names = FALSE)})
 }
 
 # create the main households container
 df_Households = df_Households %>%
   select(hid,
          hh_size,
-         neighb_code)
+         neighb_code,
+         hh_type)
 
 # remove single unassigned agents
 df_UnassignedAgents <- df_UnassignedAgents[!(df_UnassignedAgents$agent_ID %in% df_Singles$agent_ID),]

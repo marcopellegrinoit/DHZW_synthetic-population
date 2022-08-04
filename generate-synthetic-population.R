@@ -298,58 +298,8 @@ if (flag_validation_plots) {
 ################################################################################
 
 # Load stratified dataset
-setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
-df_StratHousehold = read.csv("household_gender_age-71488ned.csv", sep = ";", fileEncoding="UTF-8-BOM")
-
-# Rename, translate and reorganise dataset
-df_StratHousehold = df_StratHousehold %>%
-  rename(gender = Geslacht,
-         age_group = Leeftijd,
-         child = Personen.in.particuliere.huishoudens.Thuiswonend.kind..aantal.,
-         single = Personen.in.particuliere.huishoudens.Alleenstaand..aantal.,
-         couple = Personen.in.particuliere.huishoudens.Samenwonend.Totaal.samenwonende.personen..aantal.,
-         single_parent = Personen.in.particuliere.huishoudens.Ouder.in.eenouderhuishouden..aantal.) %>%
-  select(
-    gender,
-    age_group,
-    child,
-    single,
-    couple,
-    single_parent
-  ) %>%
-  mutate(age_group = recode(age_group,
-                            "0 tot 5 jaar" = 'age_0_5',
-                            '5 tot 10 jaar' = 'age_5_10',
-                            '10 tot 15 jaar' = 'age_10_15',
-                            '15 tot 20 jaar' = 'age_15_20',
-                            '20 tot 25 jaar' = 'age_20_25',
-                            '25 tot 30 jaar' = 'age_25_30',
-                            '30 tot 35 jaar' = 'age_30_35',
-                            '35 tot 40 jaar' = 'age_35_40',
-                            '40 tot 45 jaar' = 'age_40_45',
-                            '45 tot 50 jaar' = 'age_45_50',
-                            '50 tot 55 jaar' = 'age_50_55',
-                            '55 tot 60 jaar' = 'age_55_60',
-                            '60 tot 65 jaar' = 'age_60_65',
-                            '65 tot 70 jaar' = 'age_65_70',
-                            '70 tot 75 jaar' = 'age_70_75',
-                            '75 tot 80 jaar' = 'age_75_80',
-                            '80 tot 85 jaar' = 'age_80_85',
-                            '85 tot 90 jaar' = 'age_85_90',
-                            '90 tot 95 jaar' = 'age_90_95',
-                            '95 jaar of ouder' = 'age_over_95')) %>%
-  mutate(gender = recode(gender,
-                         "Mannen" = 'male',
-                         "Vrouwen" = 'female',
-  ))
-
-df_StratHousehold[is.na(df_StratHousehold )] <- 0
-
-df_StratHousehold$total = df_StratHousehold$child + df_StratHousehold$single + df_StratHousehold$couple + df_StratHousehold$single_parent
-
-# Save synthetic population
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/households/distributions", sep = ""))
-write.csv(df_StratHousehold, 'household_gender_age-71488NED-formatted.csv', row.names=FALSE)
+df_StratHousehold = read.csv("household_gender_age-71488NED-formatted.csv", sep = ",", fileEncoding="UTF-8-BOM")
 
 # Create group ages in the synthetic population
 df_SynthPop$age_group = ""
@@ -387,40 +337,25 @@ df_MarginalDistr$pp_no_single = df_MarginalDistr$tot_pop - df_MarginalDistr$hh_s
 df_SynthPop = distr_attr_strat_neigh_stats_binary(agent_df = df_SynthPop,
                                                   neigh_df = df_MarginalDistr,
                                                   neigh_ID = "neighb_code",
-                                                  variable=  "hh_position_single",
+                                                  variable=  "is_single",
                                                   list_var_classes_neigh_df = c("hh_single", "pp_no_single"),
                                                   list_agent_propens =  c("prop_single"),
                                                   list_class_names = c("single", "no_single")
 )
 
-if (flag_validation_plots) {
-  # calculate cross-validation neighb_code - hh_single, with neighborhood totals
-  df_ValidationSingles = validation(df_real_distr = df_MarginalDistr,
-                                        df_synt_pop = df_SynthPop,
-                                        join_var = "neighb_code",
-                                        list_real_df_var = c("hh_single", "pp_no_single"), 
-                                        var_pred_df = "hh_position_single",
-                                        list_values = c("single", "no_single"),
-                                        age_limits = FALSE
-  )
-
-  # calculate total R2 score
-  df_ValidationSingles.R2 = R_squared(df_ValidationSingles$real, df_ValidationSingles$pred) 
-}
-
 # Distribute remaining attributes
 df_SynthPop$singles_exclude = 0
-df_SynthPop$singles_exclude[which(df_SynthPop$hh_position_single=='single')] = 1
+df_SynthPop$singles_exclude[which(df_SynthPop$is_single=='single')] = 1
 df_SynthPop = distr_attr_cond_prop(agent_df = df_SynthPop,
                                    variable = 'hh_position',
                                    list_agent_propens = c('prop_child', 'prop_couple', 'prop_single_parent'),
                                    list_class_names = c('child', 'couple', 'single_parent'),
                                    agent_exclude = "singles_exclude")
-df_SynthPop$hh_position[which(df_SynthPop$hh_position_single=='single')] = 'single'
+df_SynthPop$hh_position[which(df_SynthPop$is_single=='single')] = 'single'
 
 
 # Remove extra columns
-df_SynthPop = subset(df_SynthPop, select=-c(hh_position_single, prop_child, prop_single, prop_couple, prop_single_parent, random_scores, singles_exclude, excluded))
+df_SynthPop = subset(df_SynthPop, select=-c(prop_child, prop_single, prop_couple, prop_single_parent, random_scores, singles_exclude, excluded))
 
 # Save synthetic population
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/synthetic-populations", sep = ""))
