@@ -13,9 +13,9 @@ df_HouseholdSize = df_HouseholdSize %>%
          '2' = k_2Personen_24,
          '3' = k_3Personen_25,
          '4' = k_4Personen_26,
-         '5_or_more' = k_5OfMeerPersonen_27
+         '5' = k_5OfMeerPersonen_27
   )%>%
-  select('1', '2', '3', '4', '5_or_more')
+  select('1', '2', '3', '4', '5')
 df_HouseholdSize = as.data.frame(t(df_HouseholdSize))
 colnames(df_HouseholdSize) = c('freq')
 df_HouseholdSize <- cbind(size = rownames(df_HouseholdSize), df_HouseholdSize)
