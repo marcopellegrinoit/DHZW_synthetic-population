@@ -3,7 +3,8 @@ library("this.path")
 
 municipality = 'den_haag_2019'
 
-setwd(paste(this.path::this.dir(), "/data/", municipality, "/households/distributions", sep = ""))
+setwd(this.path::this.dir())
+setwd(paste("../data/", municipality, "/households/distributions", sep = ""))
 
 # Load and reformat household size distributions
 df_HouseholdSize = read.csv("household_size_71486NED.csv", sep = ";", fileEncoding="UTF-8-BOM")

@@ -2,17 +2,20 @@ library(GenSynthPop)
 library(dplyr)
 
 library("this.path")
+
 setwd(this.path::this.dir())
-source('utils.R')
+source('../utils.R')
 
 municipality = "den_haag_2019"
 
 # Load age conversion codes
-setwd(paste(this.path::this.dir(), "/data/codes", sep = ""))
+setwd(this.path::this.dir())
+setwd("../data/codes")
 codes_ages_education = read.csv("codes_ages_education.csv", fileEncoding="UTF-8-BOM", sep=";")
 codes_education = read.csv("codes_education.csv", fileEncoding="UTF-8-BOM")
 
-setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
+setwd(this.path::this.dir())
+setwd(paste("../data/", municipality, "/stratified-datasets", sep = ""))
 df_StratEduCurrent = read.csv("edu_current-71450NED.csv", sep = ";")
 
 df_StratEduCurrent = df_StratEduCurrent %>%

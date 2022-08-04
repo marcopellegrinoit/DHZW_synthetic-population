@@ -3,7 +3,8 @@ library("this.path")
 
 municipality = 'den_haag_2019'
 
-setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
+setwd(this.path::this.dir())
+setwd(paste("../data/", municipality, "/stratified-datasets", sep = ""))
 df_StratHousehold = read.csv("household_gender_age-71488ned.csv", sep = ";", fileEncoding="UTF-8-BOM")
 
 # Rename, translate and reorganise dataset
@@ -52,6 +53,6 @@ df_StratHousehold[is.na(df_StratHousehold )] <- 0
 
 df_StratHousehold$total = df_StratHousehold$child + df_StratHousehold$single + df_StratHousehold$couple + df_StratHousehold$single_parent
 
-# Save synthetic population
-setwd(paste(this.path::this.dir(), "/data/", municipality, "/households/distributions", sep = ""))
+setwd(this.path::this.dir())
+setwd(paste("../data/", municipality, "/households/distributions", sep = ""))
 write.csv(df_StratHousehold, 'household_gender_age-71488NED-formatted.csv', row.names=FALSE)

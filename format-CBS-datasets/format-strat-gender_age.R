@@ -2,17 +2,20 @@ library(GenSynthPop)
 library(dplyr)
 
 library("this.path")
+
 setwd(this.path::this.dir())
-source('utils.R')
+source('../utils.R')
 
 municipality = "den_haag_2019"
 
 # Load age conversion codes
-setwd(paste(this.path::this.dir(), "/data/codes", sep = ""))
+setwd(this.path::this.dir())
+setwd(paste("../data/codes", sep = ""))
 codes_age = read.csv("codes_age.csv", sep=",")
 
 # Load dataset
-setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
+setwd(this.path::this.dir())
+setwd(paste("../data/", municipality, "/stratified-datasets", sep = ""))
 df_StratGender = read.csv("gender_age-03759NED.csv", sep = ";") # count of people per lifeyear and gender in all of Amsterdam
 
 # Select and translate useful attributes

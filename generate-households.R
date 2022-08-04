@@ -66,9 +66,24 @@ df_FreqCoupleSingleParents = df_FreqCoupleSingleParents %>%
 df_FreqCoupleSingleParents <- cbind(type = rownames(df_FreqCoupleSingleParents), df_FreqCoupleSingleParents)
 rownames(df_FreqCoupleSingleParents) <- 1:nrow(df_FreqCoupleSingleParents)
 
-# go thhrough each neighbourhood
+# go through each neighbourhood
 for (i in 1:100) {
   neighb_code = 'BU05183398'
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   # sample a household size
   hh_size <- sample(
