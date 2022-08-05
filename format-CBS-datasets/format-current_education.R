@@ -12,7 +12,7 @@ municipality = "den_haag_2019"
 setwd(this.path::this.dir())
 setwd("../data/codes")
 codes_ages_education = read.csv("codes_ages_education.csv", fileEncoding="UTF-8-BOM", sep=";")
-codes_education = read.csv("codes_education.csv", fileEncoding="UTF-8-BOM")
+codes_education = read.csv("codes_education.csv", sep=';', fileEncoding="UTF-8-BOM")
 
 setwd(this.path::this.dir())
 setwd(paste("../data/", municipality, "/stratified-datasets", sep = ""))
