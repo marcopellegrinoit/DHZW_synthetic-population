@@ -30,6 +30,9 @@ DHZW_neighborhood_codes <- c('BU05183284',
 setwd(paste(this.path::this.dir(), "/data/", municipality, sep = ""))
 df_MarginalDistr = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 
+# filter DHZW area
+df_MarginalDistr = df_MarginalDistr[df_MarginalDistr$neighb_code %in% DHZW_neighborhood_codes,]
+
 ################################################################################
 ## Initialise synthetic population with age groups withing neigbbourhoods
 ################################################################################
@@ -230,49 +233,6 @@ df_SynthPop$current_education[which(df_SynthPop$age > 5 & df_SynthPop$age < 15) 
 df_SynthPop$current_education[which(df_SynthPop$age <= 5) ] = "no_current_edu" # individuals younger than 5 do not go to school at all
 df_SynthPop[df_SynthPop$current_education == 0,]$current_education = 'no_current_edu' # reformat to string
 
-
-################################################################################
-# Absolved education
-
-# Manually contruct the absolved education based on the previous created current education
-df_SynthPop$absolved = ""
-df_SynthPop$absolved[df_SynthPop$current_education == "middle"] = "low" # if the current education is middle, the absolved cannot be higher than low
-df_SynthPop$absolved[df_SynthPop$current_education == "high" & df_SynthPop$age <= 22] = "middle" # if current is high and yonger than 22 it cannot have another high degree
-df_SynthPop$absolved[df_SynthPop$current_education == "high" & df_SynthPop$age > 22] = "high" # if current is high and it is older than 22, it means it is doing a master degree and already achieve a bachelor
-
-# re adjust the marginal, removing the people fow which I already manually generated the absolved education
-df_MarginalDistr$LowerEdu = 0
-df_MarginalDistr$MiddleEdu = 0
-df_MarginalDistr$HigherEdu = 0
-for(i in 1:nrow(df_MarginalDistr)){
-  df_MarginalDistr[i,c("LowerEdu")] = df_MarginalDistr[i,c("education_absolved_low")] - nrow(df_SynthPop[df_SynthPop$absolved == "low" & df_SynthPop$neighb_code == df_MarginalDistr$neighb_code[i] & df_SynthPop$age >= 15,])
-  df_MarginalDistr[i,c("MiddleEdu" )] = df_MarginalDistr[i,c("education_absolved_middle" )]- nrow(df_SynthPop[df_SynthPop$absolved == "middle" & df_SynthPop$neighb_code == df_MarginalDistr$neighb_code[i] & df_SynthPop$age >= 15,])
-  df_MarginalDistr[i,c("HigherEdu")] = df_MarginalDistr[i,c("education_absolved_high")] - nrow(df_SynthPop[df_SynthPop$absolved == "high" & df_SynthPop$neighb_code == df_MarginalDistr$neighb_code[i] & df_SynthPop$age >= 15,])
-}
-df_MarginalDistr$LowerEdu[df_MarginalDistr$LowerEdu < 0] = 0
-df_MarginalDistr$MiddleEdu[df_MarginalDistr$MiddleEdu < 0] = 0
-df_MarginalDistr$HigherEdu[df_MarginalDistr$HigherEdu < 0] = 0
-
-# exclude from the attribute distribution these agents that already have an absolved education based on the current education, or they are younger than 15 yo.
-df_SynthPop$diplm_exclude = 0
-df_SynthPop$diplm_exclude[which(df_SynthPop$age < 15 | df_SynthPop$absolved != "") ] = 1
-
-df_SynthPop = distr_attr_strat_neigh_stats_3plus(agent_df = df_SynthPop,
-                                                 neigh_df = df_MarginalDistr,
-                                                 neigh_ID = "neighb_code",
-                                                 variable=  "absolved_education", 
-                                                 list_var_classes_neigh_df = c("LowerEdu" , "MiddleEdu" ,"HigherEdu"), 
-                                                 list_agent_propens =  c("prop_absolved_low",  "prop_absolved_middle", "prop_absolved_high" ), 
-                                                 list_class_names = c("low", "middle", "high"),
-                                                 agent_exclude = c("diplm_exclude"))
-
-# Refine values
-df_SynthPop$absolved_education[df_SynthPop$absolved != ""] = df_SynthPop$absolved[df_SynthPop$absolved != ""]
-df_SynthPop[df_SynthPop$absolved_education == 0,]$absolved_education = 'no_absolved_edu'
-
-# Remove extra columns
-df_SynthPop = subset(df_SynthPop, select=-c(prop_absolved_low, prop_absolved_middle, prop_absolved_high, random_scores, absolved, diplm_exclude, excluded))
-
 ################################################################################
 ## Generate household position based on group age and gender
 ################################################################################
@@ -338,5 +298,5 @@ df_SynthPop$hh_position[which(df_SynthPop$is_single=='single')] = 'single'
 df_SynthPop = subset(df_SynthPop, select=-c(prop_child, prop_single, prop_couple, prop_single_parent, random_scores, singles_exclude, excluded))
 
 # Save synthetic population
-setwd(paste(this.path::this.dir(), "/data/", municipality, "/synthetic-populations", sep = ""))
-write.csv(df_SynthPop, 'synthetic_population.csv', row.names=FALSE)
+setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
+write.csv(df_SynthPop, 'synthetic_population_DHZW.csv', row.names=FALSE)

@@ -2,32 +2,12 @@ library(dplyr)
 
 municipality = "den_haag_2019"
 
-# Neighborhood codes of DHZW
-DHZW_neighborhood_codes <- c('BU05183284',
-                             'BU05183536',
-                             'BU05183638',
-                             'BU05183620',
-                             'BU05183639',
-                             'BU05183488',
-                             'BU05183489',
-                             'BU05183488',
-                             'BU05183480',
-                             'BU05181785',
-                             'BU05183387',
-                             'BU05183396',
-                             'BU05183398',
-                             'BU05183399'
-)
-
 ## Load neighborhood dataset: n people per age group and neighbourhood 
 setwd(this.path::this.dir())
 setwd(paste("../data/", municipality, sep = ""))
 pop_df_MarginalDistr = read.csv("marginal_distributions_84583NED.csv", sep = ";")
 df_MarginalDistr = pop_df_MarginalDistr[which(pop_df_MarginalDistr$SoortRegio_2 == "Buurt     "),] # select neighborhood data only
 remove(pop_df_MarginalDistr)
-
-# filter DHZW area
-#df_MarginalDistr = df_MarginalDistr[df_MarginalDistr$WijkenEnBuurten %in% DHZW_neighborhood_codes,]
 
 # filter and rename only useful attributes
 df_MarginalDistr = df_MarginalDistr %>%

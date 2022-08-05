@@ -1,41 +1,41 @@
-﻿"Geslacht";"Leeftijd";"Perioden";"Regio's";"Personen in particuliere huishoudens/Thuiswonend kind (aantal)";"Personen in particuliere huishoudens/Alleenstaand (aantal)";"Personen in particuliere huishoudens/Samenwonend/Totaal samenwonende personen (aantal)";"Personen in particuliere huishoudens/Ouder in eenouderhuishouden (aantal)";"Personen in particuliere huishoudens/Overig lid huishouden (aantal)"
-"Mannen";"0 tot 5 jaar";"2019";"Nederland";435664;;;;6823
-"Mannen";"5 tot 10 jaar";"2019";"Nederland";462402;;;;6553
-"Mannen";"10 tot 15 jaar";"2019";"Nederland";479367;;;;8152
-"Mannen";"15 tot 20 jaar";"2019";"Nederland";500072;21464;3646;2;8392
-"Mannen";"20 tot 25 jaar";"2019";"Nederland";340295;129985;54525;74;15972
-"Mannen";"25 tot 30 jaar";"2019";"Nederland";140527;179357;224011;579;15990
-"Mannen";"30 tot 35 jaar";"2019";"Nederland";46736;143165;334079;2213;9376
-"Mannen";"35 tot 40 jaar";"2019";"Nederland";23384;115457;359703;5546;5709
-"Mannen";"40 tot 45 jaar";"2019";"Nederland";15495;105698;368076;10730;4230
-"Mannen";"45 tot 50 jaar";"2019";"Nederland";14527;121527;448288;20115;5071
-"Mannen";"50 tot 55 jaar";"2019";"Nederland";10617;122687;470238;24965;6153
-"Mannen";"55 tot 60 jaar";"2019";"Nederland";5897;118352;457626;20110;7583
-"Mannen";"60 tot 65 jaar";"2019";"Nederland";2312;103540;414853;11490;7689
-"Mannen";"65 tot 70 jaar";"2019";"Nederland";693;90304;381975;6007;7439
-"Mannen";"70 tot 75 jaar";"2019";"Nederland";137;80121;349850;3573;6288
-"Mannen";"75 tot 80 jaar";"2019";"Nederland";15;56004;217005;2187;4154
-"Mannen";"80 tot 85 jaar";"2019";"Nederland";1;43576;125890;1609;2733
-"Mannen";"85 tot 90 jaar";"2019";"Nederland";0;29110;51508;1082;1526
-"Mannen";"90 tot 95 jaar";"2019";"Nederland";0;12199;11188;495;545
-"Mannen";"95 jaar of ouder";"2019";"Nederland";0;2613;1071;141;119
-"Vrouwen";"0 tot 5 jaar";"2019";"Nederland";414799;;;;6485
-"Vrouwen";"5 tot 10 jaar";"2019";"Nederland";439865;;;;6312
-"Vrouwen";"10 tot 15 jaar";"2019";"Nederland";457812;;;;7575
-"Vrouwen";"15 tot 20 jaar";"2019";"Nederland";467993;26566;6489;501;8772
-"Vrouwen";"20 tot 25 jaar";"2019";"Nederland";254563;139987;108132;7421;16969
-"Vrouwen";"25 tot 30 jaar";"2019";"Nederland";72037;135888;300917;24695;14343
-"Vrouwen";"30 tot 35 jaar";"2019";"Nederland";18614;83934;375477;43698;7601
-"Vrouwen";"35 tot 40 jaar";"2019";"Nederland";7430;55109;385434;58727;4301
-"Vrouwen";"40 tot 45 jaar";"2019";"Nederland";4480;47890;386154;69448;3578
-"Vrouwen";"45 tot 50 jaar";"2019";"Nederland";4163;62247;455386;88827;4531
-"Vrouwen";"50 tot 55 jaar";"2019";"Nederland";3249;81970;464123;75451;5596
-"Vrouwen";"55 tot 60 jaar";"2019";"Nederland";2136;108068;448302;44539;7268
-"Vrouwen";"60 tot 65 jaar";"2019";"Nederland";991;121135;396498;20223;7629
-"Vrouwen";"65 tot 70 jaar";"2019";"Nederland";353;131844;347189;10104;6928
-"Vrouwen";"70 tot 75 jaar";"2019";"Nederland";99;150004;297977;7744;6359
-"Vrouwen";"75 tot 80 jaar";"2019";"Nederland";14;136635;167022;6333;4916
-"Vrouwen";"80 tot 85 jaar";"2019";"Nederland";2;130644;84001;5985;4337
-"Vrouwen";"85 tot 90 jaar";"2019";"Nederland";0;98167;27375;4689;3705
-"Vrouwen";"90 tot 95 jaar";"2019";"Nederland";0;42474;4373;2192;1981
-"Vrouwen";"95 jaar of ouder";"2019";"Nederland";0;9901;323;611;646
+﻿"Geslacht";"Leeftijd";"Perioden";"Regio's";"Totaal personen in huishoudens (aantal)";"Personen in particuliere huishoudens/Thuiswonend kind (aantal)";"Personen in particuliere huishoudens/Alleenstaand (aantal)";"Personen in particuliere huishoudens/Samenwonend/Totaal samenwonende personen (aantal)";"Personen in particuliere huishoudens/Ouder in eenouderhuishouden (aantal)"
+"Mannen";"0 tot 5 jaar";"2019";"'s-Gravenhage (gemeente)";16180;15683;;;
+"Mannen";"5 tot 10 jaar";"2019";"'s-Gravenhage (gemeente)";15915;15479;;;
+"Mannen";"10 tot 15 jaar";"2019";"'s-Gravenhage (gemeente)";15200;14741;;;
+"Mannen";"15 tot 20 jaar";"2019";"'s-Gravenhage (gemeente)";15432;13696;1093;211;0
+"Mannen";"20 tot 25 jaar";"2019";"'s-Gravenhage (gemeente)";17319;8645;5316;2262;9
+"Mannen";"25 tot 30 jaar";"2019";"'s-Gravenhage (gemeente)";20789;4385;7574;7479;30
+"Mannen";"30 tot 35 jaar";"2019";"'s-Gravenhage (gemeente)";20677;1781;6584;11221;102
+"Mannen";"35 tot 40 jaar";"2019";"'s-Gravenhage (gemeente)";20240;909;5872;12524;201
+"Mannen";"40 tot 45 jaar";"2019";"'s-Gravenhage (gemeente)";18964;512;5345;12189;356
+"Mannen";"45 tot 50 jaar";"2019";"'s-Gravenhage (gemeente)";20814;452;5944;13179;648
+"Mannen";"50 tot 55 jaar";"2019";"'s-Gravenhage (gemeente)";19136;249;5383;12140;763
+"Mannen";"55 tot 60 jaar";"2019";"'s-Gravenhage (gemeente)";17113;152;5028;10627;667
+"Mannen";"60 tot 65 jaar";"2019";"'s-Gravenhage (gemeente)";13913;69;4369;8507;411
+"Mannen";"65 tot 70 jaar";"2019";"'s-Gravenhage (gemeente)";11844;28;3566;7549;239
+"Mannen";"70 tot 75 jaar";"2019";"'s-Gravenhage (gemeente)";10248;8;2944;6764;131
+"Mannen";"75 tot 80 jaar";"2019";"'s-Gravenhage (gemeente)";6171;0;1812;4003;75
+"Mannen";"80 tot 85 jaar";"2019";"'s-Gravenhage (gemeente)";3806;0;1196;2280;44
+"Mannen";"85 tot 90 jaar";"2019";"'s-Gravenhage (gemeente)";2022;0;713;1023;22
+"Mannen";"90 tot 95 jaar";"2019";"'s-Gravenhage (gemeente)";782;0;323;269;6
+"Mannen";"95 jaar of ouder";"2019";"'s-Gravenhage (gemeente)";213;0;91;44;3
+"Vrouwen";"0 tot 5 jaar";"2019";"'s-Gravenhage (gemeente)";15380;14961;;;
+"Vrouwen";"5 tot 10 jaar";"2019";"'s-Gravenhage (gemeente)";15332;14964;;;
+"Vrouwen";"10 tot 15 jaar";"2019";"'s-Gravenhage (gemeente)";14525;14082;;;
+"Vrouwen";"15 tot 20 jaar";"2019";"'s-Gravenhage (gemeente)";15181;12811;1494;353;30
+"Vrouwen";"20 tot 25 jaar";"2019";"'s-Gravenhage (gemeente)";18167;6881;6028;3838;430
+"Vrouwen";"25 tot 30 jaar";"2019";"'s-Gravenhage (gemeente)";21531;2600;6584;9997;1446
+"Vrouwen";"30 tot 35 jaar";"2019";"'s-Gravenhage (gemeente)";20925;855;4457;12710;2293
+"Vrouwen";"35 tot 40 jaar";"2019";"'s-Gravenhage (gemeente)";20173;304;3227;13391;2907
+"Vrouwen";"40 tot 45 jaar";"2019";"'s-Gravenhage (gemeente)";18726;171;2829;12349;3141
+"Vrouwen";"45 tot 50 jaar";"2019";"'s-Gravenhage (gemeente)";19838;143;3285;12520;3567
+"Vrouwen";"50 tot 55 jaar";"2019";"'s-Gravenhage (gemeente)";17895;91;3648;10852;2932
+"Vrouwen";"55 tot 60 jaar";"2019";"'s-Gravenhage (gemeente)";16317;74;4463;9408;1906
+"Vrouwen";"60 tot 65 jaar";"2019";"'s-Gravenhage (gemeente)";14131;24;4852;7866;983
+"Vrouwen";"65 tot 70 jaar";"2019";"'s-Gravenhage (gemeente)";12332;10;4961;6448;556
+"Vrouwen";"70 tot 75 jaar";"2019";"'s-Gravenhage (gemeente)";11161;4;5009;5476;285
+"Vrouwen";"75 tot 80 jaar";"2019";"'s-Gravenhage (gemeente)";7334;1;4016;2705;202
+"Vrouwen";"80 tot 85 jaar";"2019";"'s-Gravenhage (gemeente)";5467;0;3360;1433;165
+"Vrouwen";"85 tot 90 jaar";"2019";"'s-Gravenhage (gemeente)";3827;0;2468;507;114
+"Vrouwen";"90 tot 95 jaar";"2019";"'s-Gravenhage (gemeente)";2055;0;1158;109;69
+"Vrouwen";"95 jaar of ouder";"2019";"'s-Gravenhage (gemeente)";758;0;388;9;16
