@@ -7,23 +7,6 @@ source('utils.R')
 
 municipality = "den_haag_2019"
 
-# Neighborhood codes of DHZW
-DHZW_neighborhood_codes <- c('BU05183284',
-                             'BU05183536',
-                             'BU05183638',
-                             'BU05183620',
-                             'BU05183639',
-                             'BU05183488',
-                             'BU05183489',
-                             'BU05183488',
-                             'BU05183480',
-                             'BU05181785',
-                             'BU05183387',
-                             'BU05183396',
-                             'BU05183398',
-                             'BU05183399'
-)
-
 ################################################################################
 ## Load marginal distributions
 
@@ -31,6 +14,9 @@ setwd(paste(this.path::this.dir(), "/data/", municipality, sep = ""))
 df_MarginalDistr = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 
 # filter DHZW area
+setwd(paste(this.path::this.dir(), "/data", sep = ""))
+DHZW_neighborhood_codes <- read.csv("DHZW_neighbourhoods_codes.csv", sep = ";" ,header=F)$V1
+
 df_MarginalDistr = df_MarginalDistr[df_MarginalDistr$neighb_code %in% DHZW_neighborhood_codes,]
 
 ################################################################################
@@ -232,70 +218,6 @@ df_SynthPop = subset(df_SynthPop, select=-c(excluded, prop_current_low, prop_cur
 df_SynthPop$current_education[which(df_SynthPop$age > 5 & df_SynthPop$age < 15) ] = "low" # students between 5 and 15 are obliged to low level schools
 df_SynthPop$current_education[which(df_SynthPop$age <= 5) ] = "no_current_edu" # individuals younger than 5 do not go to school at all
 df_SynthPop[df_SynthPop$current_education == 0,]$current_education = 'no_current_edu' # reformat to string
-
-################################################################################
-## Generate household position based on group age and gender
-################################################################################
-
-# Load stratified dataset
-setwd(paste(this.path::this.dir(), "/data/", municipality, "/households/distributions", sep = ""))
-df_StratHousehold = read.csv("household_gender_age-71488NED-formatted.csv", sep = ",", fileEncoding="UTF-8-BOM")
-
-# Create group ages in the synthetic population
-df_SynthPop$age_group = ""
-df_SynthPop$age_group[df_SynthPop$age %in% 0:5] = "age_0_5"
-df_SynthPop$age_group[df_SynthPop$age %in% 5:10] = "age_5_10"
-df_SynthPop$age_group[df_SynthPop$age %in% 10:15] = "age_10_15"
-df_SynthPop$age_group[df_SynthPop$age %in% 15:20] = "age_15_20"
-df_SynthPop$age_group[df_SynthPop$age %in% 20:25] = "age_20_25"
-df_SynthPop$age_group[df_SynthPop$age %in% 25:30] = "age_25_30"
-df_SynthPop$age_group[df_SynthPop$age %in% 30:35] = "age_30_35"
-df_SynthPop$age_group[df_SynthPop$age %in% 35:40] = "age_35_40"
-df_SynthPop$age_group[df_SynthPop$age %in% 40:45] = "age_40_45"
-df_SynthPop$age_group[df_SynthPop$age %in% 45:50] = "age_45_50"
-df_SynthPop$age_group[df_SynthPop$age %in% 50:55] = "age_50_55"
-df_SynthPop$age_group[df_SynthPop$age %in% 55:60] = "age_55_60"
-df_SynthPop$age_group[df_SynthPop$age %in% 60:65] = "age_60_65"
-df_SynthPop$age_group[df_SynthPop$age %in% 65:70] = "age_65_70"
-df_SynthPop$age_group[df_SynthPop$age %in% 70:75] = "age_70_75"
-df_SynthPop$age_group[df_SynthPop$age %in% 75:80] = "age_75_80"
-df_SynthPop$age_group[df_SynthPop$age %in% 80:85] = "age_80_85"
-df_SynthPop$age_group[df_SynthPop$age %in% 85:90] = "age_85_90"
-df_SynthPop$age_group[df_SynthPop$age %in% 90:95] = "age_90_95"
-df_SynthPop$age_group[df_SynthPop$age %in% 95:105] = "age_over_95"
-
-# Calculate propensities
-df_SynthPop = calc_propens_agents(df_StratHousehold, "single", "total", df_SynthPop, c("age_group", "gender") )
-df_SynthPop = calc_propens_agents(df_StratHousehold, "child", "total", df_SynthPop, c("age_group", "gender") )
-df_SynthPop = calc_propens_agents(df_StratHousehold, "couple", "total", df_SynthPop, c("age_group", "gender") )
-df_SynthPop = calc_propens_agents(df_StratHousehold, "single_parent", "total", df_SynthPop, c("age_group", "gender") )
-
-## start by distributing single which is also on the marginal distributions
-## note: a single household is also a single individual (which is what we have in the stratified dataset)
-
-df_MarginalDistr$pp_no_single = df_MarginalDistr$tot_pop - df_MarginalDistr$hh_single
-df_SynthPop = distr_attr_strat_neigh_stats_binary(agent_df = df_SynthPop,
-                                                  neigh_df = df_MarginalDistr,
-                                                  neigh_ID = "neighb_code",
-                                                  variable=  "is_single",
-                                                  list_var_classes_neigh_df = c("hh_single", "pp_no_single"),
-                                                  list_agent_propens =  c("prop_single"),
-                                                  list_class_names = c("single", "no_single")
-)
-
-# Distribute remaining attributes
-df_SynthPop$singles_exclude = 0
-df_SynthPop$singles_exclude[which(df_SynthPop$is_single=='single')] = 1
-df_SynthPop = distr_attr_cond_prop(agent_df = df_SynthPop,
-                                   variable = 'hh_position',
-                                   list_agent_propens = c('prop_child', 'prop_couple', 'prop_single_parent'),
-                                   list_class_names = c('child', 'couple', 'single_parent'),
-                                   agent_exclude = "singles_exclude")
-df_SynthPop$hh_position[which(df_SynthPop$is_single=='single')] = 'single'
-
-
-# Remove extra columns
-df_SynthPop = subset(df_SynthPop, select=-c(prop_child, prop_single, prop_couple, prop_single_parent, random_scores, singles_exclude, excluded))
 
 # Save synthetic population
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
