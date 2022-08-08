@@ -128,15 +128,15 @@ df_SynthPop = subset(df_SynthPop, select=-c(age_group))
 ################################################################################
 
 # Validation of singles with marginal distribution
-df_SinglesMarginals = validation(df_real_distr = df_MarginalDistr,
+df_HouseholdMarginals = validation(df_real_distr = df_GeneratedMarginals,
                                 df_synt_pop = df_SynthPop,
                                 join_var = "neighb_code",
-                                list_real_df_var = c("hh_single"),
-                                var_pred_df = "is_single",
-                                list_values = c("single"),
+                                list_real_df_var = c("pp_single", "pp_singleparent", "pp_couple", "pp_children"),
+                                var_pred_df = "hh_position",
+                                list_values = c("single", "single_parent", "couple", "child"),
                                 age_limits = FALSE
 )
-R2_SinglesMarginals = R_squared(df_SinglesMarginals$real, df_SinglesMarginals$pred)
+R2_HouseholdMarginals = R_squared(df_HouseholdMarginals$real, df_HouseholdMarginals$pred)
 
 # Validation of household position with stratified dataset
 df_HouseholdGenderAge = df_StratHousehold %>%
