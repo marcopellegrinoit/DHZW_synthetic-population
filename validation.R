@@ -14,7 +14,7 @@ df_MarginalDistr = read.csv("marginal_distributions_84583NED-formatted.csv", sep
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
 df_StratGender = read.csv("gender_age-03759NED-formatted.csv", sep = ",")
 df_StratMigration = read.csv("gender_age_migration-84910NED-formatted.csv", sep = ",")
-#df_StratEduCurrent = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
+df_StratEduCurrent = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
 
 #setwd(paste(this.path::this.dir(), "/data/", municipality, "/households/distributions", sep = ""))
 #df_StratHousehold = read.csv("household_gender_age-71488NED-formatted.csv", sep = ",", fileEncoding="UTF-8-BOM")
@@ -26,7 +26,7 @@ df_SynthPop = read.csv("synthetic_population_DHZW.csv", sep = ",")
 setwd(paste(this.path::this.dir(), "/data", sep = ""))
 DHZW_neighborhood_codes <- read.csv("DHZW_neighbourhoods_codes.csv", sep = ";" ,header=F)$V1
 
-#df_MarginalDistr = df_MarginalDistr[df_MarginalDistr$neighb_code %in% DHZW_neighborhood_codes,]
+df_MarginalDistr = df_MarginalDistr[df_MarginalDistr$neighb_code %in% DHZW_neighborhood_codes,]
 
 ################################################################################
 # Gender
@@ -108,8 +108,30 @@ df_SynthPop = subset(df_SynthPop, select=-c(age_group))
 ################################################################################
 # Current education
 ################################################################################
-# todo
 
+df_StratEduCurrent = df_StratEduCurrent %>%
+  select(gender, age_group, migration_background, low, middle, high, no_current_edu) %>%
+  pivot_longer(cols = -c(gender, age_group, migration_background), names_to = "current_education", values_to = "real")
+df_StratEduCurrent$pred = 0
+
+df_SynthPop$age_group[df_SynthPop$age < 15] = NA
+df_SynthPop$age_group[df_SynthPop$age %in% 15:19] = "age_15_20"
+df_SynthPop$age_group[df_SynthPop$age %in% 20:24] = "age_20_25" 
+df_SynthPop$age_group[df_SynthPop$age %in% 25:29] = "age_25_30" 
+df_SynthPop$age_group[df_SynthPop$age %in% 30:34] = "age_30_35" 
+df_SynthPop$age_group[df_SynthPop$age %in% 35:39] = "age_35_40" 
+df_SynthPop$age_group[df_SynthPop$age %in% 40:44] = "age_40_45"
+df_SynthPop$age_group[df_SynthPop$age %in% 45:49] = "age_45_50"
+df_SynthPop$age_group[df_SynthPop$age >= 50] = "age_over_50"
+
+for (i in (1:nrow(df_StratEduCurrent))) {
+  df_StratEduCurrent[i, 'pred',] = nrow(df_SynthPop[df_SynthPop$age_group == df_StratEduCurrent[i, 'age_group']$age_group &
+                                                    df_SynthPop$gender == df_StratEduCurrent[i, 'gender']$gender &
+                                                    df_SynthPop$migration_background == df_StratEduCurrent[i, 'migration_background']$migration_background &
+                                                    df_SynthPop$current_education == df_StratEduCurrent[i, 'current_education']$current_education,])
+}
+R2_EduCurrent = R_squared(df_StratEduCurrent$real, df_StratEduCurrent$pred)
+df_SynthPop = subset(df_SynthPop, select=-c(age_group))
 
 ################################################################################
 # Household position

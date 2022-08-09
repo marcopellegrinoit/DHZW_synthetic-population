@@ -42,11 +42,6 @@ refactor_ages_education = function(df, df_codes){
 refactor_education = function(df, df_codes){
   df = merge(df, df_codes, by='education_code')
   df = subset(df, select=-c(education_code, education_title))
-  #df = df[df$education_level!='',]
-  
-  #df=df %>% 
-  #  group_by(gender, age_group_education, migration_background, education_level) %>% 
-  #  summarise(n_people = sum(n_people))
   
   return(df)
 }
