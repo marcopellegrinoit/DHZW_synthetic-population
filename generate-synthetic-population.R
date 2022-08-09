@@ -137,11 +137,6 @@ df_SynthPop = subset(df_SynthPop, select=-c(prop_Dutch, prop_Western, prop_Non_W
 ## Generate current education based on group age, gender and migration
 ################################################################################
 
-municipality = "utrecht_2021"
-
-setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-df_SynthPop = read.csv('synthetic_population_Utrecht_2021.csv')
-
 # Load stratified dataset
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
 df_StratEduCurrent = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
@@ -183,4 +178,4 @@ df_SynthPop$current_education[which(df_SynthPop$age <= 5) ] = "no_current_edu" #
 
 # Save synthetic population
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-write.csv(df_SynthPop, 'synthetic_population_Utrecht_2021.csv', row.names=FALSE)
+write.csv(df_SynthPop, 'synthetic_population_DHZW_2019.csv', row.names=FALSE)
