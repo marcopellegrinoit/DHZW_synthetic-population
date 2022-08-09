@@ -1,2 +1,3 @@
-"hh_ID","agent_ID","age_group","neighb_code","age","gender","migration_background","current_education","absolved_education","hh_position","hh_size"
-6,"Agent_49113","age_55_60","BU05183480",57,"female","Dutch","high","high","single",1
+version https://git-lfs.github.com/spec/v1
+oid sha256:d013bc1fe7ad9c682eaba7474466f1e448446be2af1a7322e8b0c2c77c9f9dd7
+size 236

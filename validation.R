@@ -20,7 +20,7 @@ df_StratEduCurrent = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
 #df_StratHousehold = read.csv("household_gender_age-71488NED-formatted.csv", sep = ",", fileEncoding="UTF-8-BOM")
 
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-df_SynthPop = read.csv("synthetic_population_DHZW.csv", sep = ",")
+df_SynthPop = read.csv("synthetic_population_DHZW_2019.csv", sep = ",")
 
 # filter DHZW area
 setwd(paste(this.path::this.dir(), "/data", sep = ""))

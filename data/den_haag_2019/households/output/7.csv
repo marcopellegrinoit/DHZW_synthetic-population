@@ -1,2 +1,3 @@
-"hh_ID","agent_ID","age_group","neighb_code","age","gender","migration_background","current_education","absolved_education","hh_position","hh_size"
-7,"Agent_36575","age_40_45","BU05183398",43,"male","Western","high","high","single",1
+version https://git-lfs.github.com/spec/v1
+oid sha256:ecf1d0f8a1a5b60d13baddea8ddc40565b5e3af0def8ad3b251e3d5104df2606
+size 236

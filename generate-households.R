@@ -9,7 +9,7 @@ year = 2019
 
 # Load synthetic population
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-df_SynthPop = read.csv('synthetic_population_DHZW.csv')
+df_SynthPop = read.csv('synthetic_population_DHZW_2019.csv')
 
 # Load formatted stratified dataset about household position, gender and groupages (municipality aggregated)
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/households/distributions", sep = ""))
@@ -206,7 +206,7 @@ for (neighb_code in unique(df_SynthPop$neighb_code)) {
 
 # Save synthetic population
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-write.csv(df_SynthPop, 'synthetic_population_DHZW.csv', row.names=FALSE)
+write.csv(df_SynthPop, 'synthetic_population_DHZW_2019.csv', row.names=FALSE)
 
 ################################################################################
 # Assign individuals to households
@@ -299,9 +299,11 @@ for (i in 1:nrow(df_SynthPop)) {
   }
 }
 
+df_UnAssignedAgents = df_SynthPop[is.na(df_SynthPop$hh_ID),]
+
 # Save synthetic population
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-write.csv(df_SynthPop, 'synthetic_population_DHZW.csv', row.names=FALSE)
+write.csv(df_SynthPop, 'synthetic_population_DHZW_2019.csv', row.names=FALSE)
 
 # save individual household files
 library(dplyr)
