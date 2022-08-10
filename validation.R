@@ -134,6 +134,20 @@ R2_EduCurrent = R_squared(df_StratEduCurrent$real, df_StratEduCurrent$pred)
 df_SynthPop = subset(df_SynthPop, select=-c(age_group))
 
 ################################################################################
+# Education attainment
+################################################################################
+
+df_EduAttainmentMarginals = validation(df_real_distr = df_MarginalDistr,
+                                       df_synt_pop = df_SynthPop,
+                                       join_var = "neighb_code",
+                                       list_real_df_var = c("education_absolved_low", "education_absolved_middle", "education_absolved_high"),
+                                       var_pred_df = "edu_attainment",
+                                       list_values = c("low", "middle", "high"),
+                                       age_limits = FALSE
+)
+R2_EduAttainment = R_squared(df_EduAttainmentMarginals$real, df_EduAttainmentMarginals$pred)
+
+################################################################################
 # Household position
 ################################################################################
 

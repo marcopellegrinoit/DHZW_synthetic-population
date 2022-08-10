@@ -176,6 +176,65 @@ df_SynthPop = subset(df_SynthPop, select=-c(excluded, prop_low, prop_middle, pro
 df_SynthPop$current_education[which(df_SynthPop$age > 5 & df_SynthPop$age < 15) ] = "low" # students between 5 and 15 are obliged to low level schools
 df_SynthPop$current_education[which(df_SynthPop$age <= 5) ] = "no_current_edu" # individuals younger than 5 do not go to school at all
 
+################################################################################
+# Generate education attainment
+################################################################################
+
+setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
+df_SynthPop = read.csv('synthetic_population_DHZW_2019.csv')
+
+df_SynthPop$edu_attainment = NA
+
+# Firstly, generate part of the attribute based on the current education
+
+# young people can only have low education attainment
+df_SynthPop[df_SynthPop$age < 15,]$edu_attainment = 'low'
+
+# if currently in low education, the attainment cannot be higher than that
+df_SynthPop[df_SynthPop$current_education=='low',]$edu_attainment = 'low'
+
+# if currently in middle education, the attainment cannot be higher than low
+df_SynthPop[df_SynthPop$current_education=='middle',]$edu_attainment = 'low'
+
+# if currently in high education and younger than 22 yo, the attainment cannot be higher than middle, because the agent is currently in a bachelors
+df_SynthPop[df_SynthPop$current_education=='high' & df_SynthPop$age <= 22,]$edu_attainment = 'middle'
+
+# if currently in high education and older than 22 yo, the attainment must be high, because the agent is currently in a masters and already completed a bachelors.
+df_SynthPop[df_SynthPop$current_education=='high' & df_SynthPop$age > 22,]$edu_attainment = 'high'
+
+# now, I have to assign the education attainment to the remaining agents, hence the ones that are currently not in school. I can only use the marginal distribution.
+
+# Prepare table from the marginals
+df_EduAttainment = df_MarginalDistr[c('neighb_code', 'education_absolved_low',
+                                    'education_absolved_middle',
+                                    'education_absolved_high')]
+
+# Update marginal figures removing the individuals I already generated the attainment education for
+for(i in 1:nrow(df_EduAttainment)){
+  df_EduAttainment[i,c("education_absolved_low")] = df_EduAttainment[i,c("education_absolved_low")] - nrow(df_SynthPop[df_SynthPop$edu_attainment == "low" & df_SynthPop$neighb_code == df_EduAttainment$neighb_code[i] & df_SynthPop$age >= 15,])
+  df_EduAttainment[i,c("education_absolved_middle" )] = df_EduAttainment[i,c("education_absolved_middle" )]- nrow(df_SynthPop[df_SynthPop$edu_attainment == "middle" & df_SynthPop$neighb_code == df_EduAttainment$neighb_code[i] & df_SynthPop$age >= 15,])
+  df_EduAttainment[i,c("education_absolved_high")] = df_EduAttainment[i,c("education_absolved_high")] - nrow(df_SynthPop[df_SynthPop$edu_attainment == "high" & df_SynthPop$neighb_code == df_EduAttainment$neighb_code[i] & df_SynthPop$age >= 15,])
+}
+df_EduAttainment$education_absolved_low[df_EduAttainment$education_absolved_low < 0] = 0
+df_EduAttainment$education_absolved_middle[df_EduAttainment$education_absolved_middle < 0] = 0
+df_EduAttainment$education_absolved_high[df_EduAttainment$education_absolved_high < 0] = 0
+
+df_EduAttainment = as.data.frame(t(df_EduAttainment))
+df_EduAttainment = df_EduAttainment %>%
+  `colnames<-`(.[1, ]) %>%
+  .[-1, ]
+
+df_EduAttainment <- cbind(edu_attainment = rownames(df_EduAttainment), df_EduAttainment)
+rownames(df_EduAttainment) <- 1:nrow(df_EduAttainment)
+df_EduAttainment[df_EduAttainment$edu_attainment=='education_absolved_low',]$edu_attainment='low'
+df_EduAttainment[df_EduAttainment$edu_attainment=='education_absolved_middle',]$edu_attainment='middle'
+df_EduAttainment[df_EduAttainment$edu_attainment=='education_absolved_high',]$edu_attainment='high'
+
+df_SynthPop[is.na(df_SynthPop$edu_attainment),]$edu_attainment = sample(x = df_EduAttainment$edu_attainment,
+                                                                        size = nrow(df_SynthPop[is.na(df_SynthPop$edu_attainment),]),
+                                                                        replace = TRUE,  
+                                                                        prob = df_EduAttainment$df_SynthPop[is.na(df_SynthPop$edu_attainment),]$neighb_code
+                                                                        )
 # Save synthetic population
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
 write.csv(df_SynthPop, 'synthetic_population_DHZW_2019.csv', row.names=FALSE)
