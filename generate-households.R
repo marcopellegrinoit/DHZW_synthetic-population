@@ -1,4 +1,5 @@
 library(dplyr)
+library (readr)
 
 library("this.path")
 setwd(this.path::this.dir())
@@ -23,6 +24,25 @@ setwd(paste(this.path::this.dir(), "/data/", municipality, sep = ""))
 df_MarginalDistr = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 # recalculate the correct total of households
 df_MarginalDistr$hh_total = df_MarginalDistr$hh_single + df_MarginalDistr$hh_no_children + df_MarginalDistr$hh_no_children
+
+# Load age disparity between mother and children.
+setwd(paste(this.path::this.dir(), "/data/", sep = ""))
+df_MotherChildrenAgeDisparity <- read_delim("mother_children_age_disparity.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+df_MotherChildrenAgeDisparity = df_MotherChildrenAgeDisparity[df_MotherChildrenAgeDisparity$Year==year,]
+avg_child_diff_first = df_MotherChildrenAgeDisparity$`For first child`
+avg_child_diff_second = df_MotherChildrenAgeDisparity$`For second child`
+avg_child_diff_all = df_MotherChildrenAgeDisparity$`For all children`
+
+# Load gender disparity for couples
+setwd(paste(this.path::this.dir(), "/data/", sep = ""))
+df_GenderDisparity <- read.csv("couples_gender_disparity_37772ENG-formatted.csv", sep=',')
+df_GenderDisparity = df_GenderDisparity %>%
+  select(type, paste('X', year, sep=''))
+colnames(df_GenderDisparity) = c('type', 'freq')
+
+# Load age disparity for couples
+setwd(paste(this.path::this.dir(), "/data/", sep = ""))
+df_AgeCouplesDisparity <- read.csv("couples_age_disparity.csv", sep=',')
 
 ################################################################################
 # Generation of appropriate household sizes for each neighbourhood
@@ -222,50 +242,66 @@ df_SynthPop$hh_ID = NA
 for (i in 1:nrow(df_SynthPop)) {
   neighb_code = df_SynthPop[i,'neighb_code']
   
-  if(TRUE) {
+  # if agent is single
+  if(df_SynthPop[i,'hh_position']=='single') {
+    # pick an unassigned house
+    household = df_UnAssignedHouseholds[df_UnAssignedHouseholds$neighb_code==neighb_code & df_UnAssignedHouseholds$hh_type=='single',]
     
-    # if agent is single
-    if(df_SynthPop[i,'hh_position']=='single') {
-      # pick an unassigned house
-      household = df_UnAssignedHouseholds[df_UnAssignedHouseholds$neighb_code==neighb_code & df_UnAssignedHouseholds$hh_type=='single',]
+    if(nrow(household>0)) {
+      household = household[1,]
       
-      if(nrow(household>0)) {
-        household = household[1,]
-        
-        # Assign agent
+      # Assign agent
+      df_SynthPop[i,]$hh_ID = household$hh_ID
+      
+      # Remove household
+      df_UnAssignedHouseholds <- df_UnAssignedHouseholds[!(df_UnAssignedHouseholds$hh_ID %in% household$hh_ID),]
+    }
+  }
+  
+  if(df_SynthPop[i,'hh_position']=='single_parent') {
+    # pick an unassigned house
+    household = df_UnAssignedHouseholds[df_UnAssignedHouseholds$neighb_code==neighb_code & df_UnAssignedHouseholds$hh_type=='single_parent',]
+    
+    # if there is a household and enough children
+    if(nrow(household)>0){
+      # check if there are enough children left
+      df_Children = df_SynthPop[df_SynthPop$neighb_code==neighb_code & df_SynthPop$hh_position=='child' & is.na(df_SynthPop$hh_ID),]
+      household = household[1,]
+      
+      if(nrow(df_Children)>=(household$hh_size-1)){
+        # Assign parent
         df_SynthPop[i,]$hh_ID = household$hh_ID
         
-        # Remove household
-        df_UnAssignedHouseholds <- df_UnAssignedHouseholds[!(df_UnAssignedHouseholds$hh_ID %in% household$hh_ID),]
-      }
-    }
-  
-    if(df_SynthPop[i,'hh_position']=='single_parent') {
-      # pick an unassigned house
-      household = df_UnAssignedHouseholds[df_UnAssignedHouseholds$neighb_code==neighb_code & df_UnAssignedHouseholds$hh_type=='single_parent',]
-      
-      # if there is a household and enough children
-      if(nrow(household)>0){
-        # check if there are enough children left
-        df_Children = df_SynthPop[df_SynthPop$neighb_code==neighb_code & df_SynthPop$hh_position=='child' & is.na(df_SynthPop$hh_ID),]
-        household = household[1,]
-        
-        if(nrow(df_Children)>=(household$hh_size-1)){
-          # Assign parent
-          df_SynthPop[i,]$hh_ID = household$hh_ID
-          
-          # Assign children
-          if((household$hh_size-1)>0){
-            for (c in 1:(household$hh_size-1)) {
-              df_SynthPop[df_SynthPop$agent_ID==df_Children[c,]$agent_ID,]$hh_ID=household$hh_ID
-            }
+        # Assign children
+        if((household$hh_size-1)>0){
+          for (c in 1:(household$hh_size-1)) {
+            
+            #if (df_SynthPop[i,]$gender=='female') {
+              if (c==1) {
+                best_child_age = df_SynthPop[i,]$age - avg_child_diff_first
+              } else if (c==2) {
+                best_child_age = df_SynthPop[i,]$age - avg_child_diff_second
+              } else {
+                best_child_age = df_SynthPop[i,]$age - avg_child_diff_all
+              } 
+            #}
+
+            
+            # find best child and assign it to the house
+            index_best_child = which.min(abs(df_Children$age - best_child_age))
+            child = df_Children[index_best_child,]
+            df_SynthPop[df_SynthPop$agent_ID == child$agent_ID,]$hh_ID = household$hh_ID
+            
+            print(paste('For parent of age ', df_SynthPop[i,]$age, ', ideally the child should be', best_child_age, 'and it is:', child$age, sep=' '))
+            
+            # remove child from the list
+            df_Children = df_SynthPop[df_SynthPop$neighb_code==neighb_code & df_SynthPop$hh_position=='child' & is.na(df_SynthPop$hh_ID),]
           }
-          # Remove household
-          df_UnAssignedHouseholds <- df_UnAssignedHouseholds[!(df_UnAssignedHouseholds$hh_ID %in% household$hh_ID),]   
         }
       }
+      # Remove household
+      df_UnAssignedHouseholds <- df_UnAssignedHouseholds[!(df_UnAssignedHouseholds$hh_ID %in% household$hh_ID),]   
     }
-
   }
   
   if(df_SynthPop[i,'hh_position']=='couple' & is.na(df_SynthPop[i,'hh_ID'])) {
@@ -280,7 +316,94 @@ for (i in 1:nrow(df_SynthPop)) {
       household = household[1,]
       
       if(nrow(df_Children)>=(household$hh_size-2) & nrow(df_Partner)>0){
-        partner = df_Partner[1,]
+        
+        # restrict gender disparity to this agent case
+        agent_gender = df_SynthPop[i,]$gender
+        if (agent_gender == 'male') {
+          df_GenderDisparity_temp = df_GenderDisparity[df_GenderDisparity$type=='male_female' | df_GenderDisparity$type=='male_male',]
+        } else {
+          df_GenderDisparity_temp = df_GenderDisparity[df_GenderDisparity$type=='male_female' | df_GenderDisparity$type=='female_female',]
+        }
+        
+        # sample gender and look for such partner. Repeat till someone is found.
+        partner_found=FALSE
+        while (partner_found==FALSE) {
+          gender_partner <- sample(
+            x = df_GenderDisparity_temp$type,
+            size = 1,
+            replace=TRUE,
+            prob = df_GenderDisparity_temp$freq
+          )
+          
+          if(agent_gender=='male') {
+            if(gender_partner=='male_female') {
+              gender_partner='female'
+            } else{
+              gender_partner='male'
+            }
+          } else {
+            # agent is female
+            if(gender_partner=='male_female') {
+              gender_partner='male'
+            } else{
+              gender_partner='female'
+            }  
+          }
+          
+          # determine partner's ideal age
+          if (agent_gender != gender_partner) {
+            df_AgeCouplesDisparity_temp = df_AgeCouplesDisparity %>%
+              select(gap, male_female) %>%
+              rename(freq = male_female)
+          } else {
+            if(agent_gender == 'male') {
+              df_AgeCouplesDisparity_temp = df_AgeCouplesDisparity %>%
+                select(gap, male_male) %>%
+                rename(freq = male_male)
+            } else {
+              df_AgeCouplesDisparity_temp = df_AgeCouplesDisparity %>%
+                select(gap, male_female) %>%
+                rename(freq = male_female)     
+            }
+          }
+          age_diff <- sample(
+            x = df_AgeCouplesDisparity_temp$gap,
+            size = 1,
+            replace=TRUE,
+            prob = df_AgeCouplesDisparity_temp$freq
+          )
+          if(age_diff=='0') {
+            # same age as partner
+            age_partner = df_SynthPop[i,]$age
+          } else if (age_diff == '1_4'){
+            age_diff = runif(1, 0, 4)
+            age_partner = c((df_SynthPop[i,]$age-4) : (df_SynthPop[i,]$age-1), (df_SynthPop[i,]$age+1) : (df_SynthPop[i,]$age+4))
+          } else if (age_diff == '5_9'){
+            age_diff = runif(1, 5, 9)
+            age_partner = c((df_SynthPop[i,]$age-5) : (df_SynthPop[i,]$age-9), (df_SynthPop[i,]$age+5) : (df_SynthPop[i,]$age+9))
+          } else if (age_diff == '10_14'){
+            age_diff = runif(1, 10, 14)
+            age_partner = c((df_SynthPop[i,]$age-10) : (df_SynthPop[i,]$age-14), (df_SynthPop[i,]$age+10) : (df_SynthPop[i,]$age+14))
+          } else if (age_diff == '15_19'){
+            age_diff = runif(1, 15, 19)
+            age_partner = c((df_SynthPop[i,]$age-15) : (df_SynthPop[i,]$age-19), (df_SynthPop[i,]$age+15) : (df_SynthPop[i,]$age+19))
+          } else {
+            age_diff = runif(1, 20, 105)
+            age_partner = c(0: (df_SynthPop[i,]$age-20), (df_SynthPop[i,]$age+20) : 105)
+          }
+          
+          print(gender_partner)
+          print(age_partner)
+          
+          # look for an agent with such gender
+          partner = df_Partner[df_Partner$gender==gender_partner & df_Partner$age %in% age_partner,]
+          
+          if(nrow(partner)>0) {
+            partner_found = TRUE
+            partner = df_Partner[df_Partner$gender==gender_partner,][1,]
+          }
+        }
+        
         # Assign parents
         df_SynthPop[i,]$hh_ID = household$hh_ID
         df_SynthPop[df_SynthPop$agent_ID == partner$agent_ID,]$hh_ID = household$hh_ID

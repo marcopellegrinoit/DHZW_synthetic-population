@@ -88,7 +88,6 @@ df_StratMigration = df_StratMigration %>%
 # merge the migration background dataset, so  that I can get the totals for each group combination
 df_StratEduCurrent = merge(df_StratEduCurrent, df_StratMigration, by=c('age_group', 'gender', 'migration_background'))
 
-
 df_StratEduCurrent = df_StratEduCurrent %>%
   rename(total = n_people)
 
