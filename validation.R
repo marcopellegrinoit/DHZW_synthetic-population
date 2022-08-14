@@ -41,7 +41,7 @@ df_GenderMarginalsValid = validation(df_real_distr = df_MarginalDistr,
                                  list_values = c("male", "female"),
                                  age_limits = FALSE
 )
-R2_GenderMarginals = R_squared(df_GenderMarginalsValid$real, df_GenderMarginalsValid$pred)
+R2_GenderMarginals = R_squared_manual(df_GenderMarginalsValid$real, df_GenderMarginalsValid$pred)
 
 # Validation with stratified dataset
 df_GenderStratValid = validation(df_real_distr = df_StratGender,
@@ -52,7 +52,7 @@ df_GenderStratValid = validation(df_real_distr = df_StratGender,
                                  list_values = c("male", "female"),
                                  age_limits = FALSE
 )
-R2_GenderStrat = R_squared(df_GenderStratValid$real, df_GenderStratValid$pred)
+R2_GenderStrat = R_squared_manual(df_GenderStratValid$real, df_GenderStratValid$pred)
 
 ################################################################################
 # Migration background
@@ -67,7 +67,7 @@ df_MigratMarginals = validation(df_real_distr = df_MarginalDistr,
                                      list_values = c("Dutch", "Western", "Non_Western"),
                                      age_limits = FALSE
 )
-R2_MigratMarginals = R_squared(df_MigratMarginals$real, df_MigratMarginals$pred)
+R2_MigratMarginals = R_squared_manual(df_MigratMarginals$real, df_MigratMarginals$pred)
 
 ## Validation with stratified dataset: age_group and gender
 df_MigratGenderAge = df_StratMigration %>%
@@ -102,7 +102,7 @@ for (i in (1:nrow(df_MigratGenderAge))) {
                                                     df_SynthPop$gender == df_MigratGenderAge[i, 'gender']$gender &
                                                     df_SynthPop$migration_background == df_MigratGenderAge[i, 'migration_background']$migration_background,])
 }
-R2_MigratGenderAge = R_squared(df_MigratGenderAge$real, df_MigratGenderAge$pred)
+R2_MigratGenderAge = R_squared_manual(df_MigratGenderAge$real, df_MigratGenderAge$pred)
 df_SynthPop = subset(df_SynthPop, select=-c(age_group))
 
 ################################################################################
@@ -130,7 +130,7 @@ for (i in (1:nrow(df_StratEduCurrent))) {
                                                     df_SynthPop$migration_background == df_StratEduCurrent[i, 'migration_background']$migration_background &
                                                     df_SynthPop$current_education == df_StratEduCurrent[i, 'current_education']$current_education,])
 }
-R2_EduCurrent = R_squared(df_StratEduCurrent$real, df_StratEduCurrent$pred)
+R2_EduCurrent = R_squared_manual(df_StratEduCurrent$real, df_StratEduCurrent$pred)
 df_SynthPop = subset(df_SynthPop, select=-c(age_group))
 
 ################################################################################
@@ -145,7 +145,7 @@ df_EduAttainmentMarginals = validation(df_real_distr = df_MarginalDistr,
                                        list_values = c("low", "middle", "high"),
                                        age_limits = FALSE
 )
-R2_EduAttainment = R_squared(df_EduAttainmentMarginals$real, df_EduAttainmentMarginals$pred)
+R2_EduAttainment = R_squared_manual(df_EduAttainmentMarginals$real, df_EduAttainmentMarginals$pred)
 
 ################################################################################
 # Household position

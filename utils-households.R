@@ -1,51 +1,105 @@
-sample_agent <- function(df_SynthPop, df_StratHousehold, hh_position, neighb_code, fixed_groupage, fixed_gender) {
-  # sample agegroup and gender from the given household type distribution
-  sample_age_gender <- df_StratHousehold[sample.int(nrow(df_StratHousehold),
-                                                    1,
-                                                    replace = TRUE,
-                                                    prob = unlist(df_StratHousehold[hh_position])),]
-  
-  # sample the agent with the given groupage, gender, household type and (optionally) neighbourhood code
-  
-  if (missing(fixed_groupage)) {
-    # only neighbourhood code fixed
-    agent = df_SynthPop[which.max(df_SynthPop$neighb_code == neighb_code &
-                                    df_SynthPop$age_group == sample_age_gender[1, 'age_group'] &
-                                    df_SynthPop$gender == sample_age_gender[1, 'gender'] &
-                                    df_SynthPop$household_position == hh_position),
-    ]
+# Generate the gender of the partner based on the agent's gender (@agent_gender) and the distribution
+# of genders among couples (@df_gender_disparity).
+
+sample_partner_gender <- function(agent_gender, df_gender_disparity) {
+  # subselect the correct genders of the frequency dataframe based on the agent's gender
+  if (agent_gender == 'male') {
+    df_gender_disparity = df_gender_disparity[df_gender_disparity$type=='male_female' | df_gender_disparity$type=='male_male',]
   } else {
-    if (missing(fixed_gender)) {
-      # fix neighbourhood code and groupage
-      df_filtered = df_StratHousehold[df_StratHousehold$age_group == fixed_groupage,]
-      sample_age_gender <- df_filtered[sample.int(nrow(df_filtered),
-                                                  1,
-                                                  replace = TRUE,
-                                                  prob = unlist(df_filtered[hh_position])),]
-      
-      agent = df_SynthPop[which.max(df_SynthPop$neighb_code == neighb_code &
-                                      df_SynthPop$age_group == fixed_groupage &
-                                      df_SynthPop$gender == sample_age_gender[1, 'gender'] &
-                                      df_SynthPop$household_position == hh_position),
-      ]
+    df_gender_disparity = df_gender_disparity[df_gender_disparity$type=='male_female' | df_gender_disparity$type=='female_female',]
+  }
+  
+  # sample partner's gender based on frequencies
+  partner_gender <- sample(
+    x = df_gender_disparity$type,
+    size = 1,
+    replace=TRUE,
+    prob = df_gender_disparity$freq
+  )
+  
+  if(agent_gender=='male') {
+    if(partner_gender=='male_female') {
+      # agent: male, partner = female
+      partner_gender='female'
+    } else{
+      # agent: male, partner = male
+      partner_gender='male'
+    }
+  } else {
+    if(partner_gender=='male_female') {
+      # agent: female, partner = male
+      partner_gender='male'
+    } else{
+      # agent: female, partner = female
+      partner_gender='female'
+    }  
+  }
+  
+  return(partner_gender)
+}
+
+# Generate all possible partner's ages based on age disparity frequencies and
+# each other gender
+sample_partner_age <- function (agent_gender, partner_gender, agent_age, df_age_couples_disparity) {
+  # subselect the correct age disparities of the frequency dataframe based on agent's and partner's gender
+  if (agent_gender != partner_gender) {
+    df_age_couples_disparity = df_age_couples_disparity %>%
+      select(gap, male_female) %>%
+      rename(freq = male_female)
+  } else {
+    if(agent_gender == 'male') {
+      df_age_couples_disparity = df_age_couples_disparity %>%
+        select(gap, male_male) %>%
+        rename(freq = male_male)
     } else {
-      # fix neighbourhood code, groupage and gender
-      df_filtered = df_StratHousehold[df_StratHousehold$age_group == fixed_groupage &
-                                        df_StratHousehold$gender == fixed_gender,]
-      
-      sample_age_gender <- df_filtered[sample.int(nrow(df_filtered),
-                                                  1,
-                                                  replace = TRUE,
-                                                  prob = unlist(df_filtered[hh_position])),]
-      
-      agent = df_SynthPop[which.max(df_SynthPop$neighb_code == neighb_code &
-                                      df_SynthPop$age_group == fixed_groupage &
-                                      df_SynthPop$gender == fixed_gender &
-                                      df_SynthPop$household_position == hh_position),
-      ]
+      df_age_couples_disparity = df_age_couples_disparity %>%
+        select(gap, male_female) %>%
+        rename(freq = male_female)     
     }
   }
   
-  # return the agent, or if not found, code -1
-  return (agent)
+  # sample partner's difference age
+  age_diff <- sample(
+    x = df_age_couples_disparity$gap,
+    size = 1,
+    replace=TRUE,
+    prob = df_age_couples_disparity$freq
+  )
+  
+  if(age_diff=='0') {
+    # same age as partner
+    partner_ages = c(agent_age)
+  } else if (age_diff == '1_4'){
+    age_diff = runif(1, 0, 4)
+    partner_ages = c((agent_age-4) : (agent_age-1), (agent_age+1) : (agent_age+4))
+  } else if (age_diff == '5_9'){
+    age_diff = runif(1, 5, 9)
+    partner_ages = c((agent_age-5) : (agent_age-9), (agent_age+5) : (agent_age+9))
+  } else if (age_diff == '10_14'){
+    age_diff = runif(1, 10, 14)
+    partner_ages = c((agent_age-10) : (agent_age-14), (agent_age+10) : (agent_age+14))
+  } else if (age_diff == '15_19'){
+    age_diff = runif(1, 15, 19)
+    partner_ages = c((agent_age-15) : (agent_age-19), (agent_age+15) : (agent_age+19))
+  } else {
+    age_diff = runif(1, 20, 105)
+    partner_ages = c(0: (agent_age-20), (agent_age+20) : 105)
+  }
+  
+  return(partner_ages)  
+}
+
+sample_child_age <- function(mother_age, child_position, avg_child_diff_first, avg_child_diff_second, avg_child_diff_all) {
+  if (child_position==1) {
+    child_age = mother_age - avg_child_diff_first
+  } else if (child_position==2) {
+    child_age = mother_age - avg_child_diff_second
+  } else {
+    child_age = mother_age - avg_child_diff_all
+  }
+  
+  if (child_age<0) {
+    child_age=0
+  }
+  return(child_age)
 }

@@ -110,9 +110,23 @@ validation = function(df_real_distr, df_synt_pop, join_var, list_real_df_var, va
   return(df)
 }
 
+normalise <- function(x){(x-min(x))/(max(x)-min(x))}
+
+
 R_squared = function(y_actual,y_predict){
   cor(y_actual,y_predict)^2
 }
+
+R_squared_manual = function(actual, preds){
+  preds = normalise(preds)
+  actual = normalise(actual)
+  
+  rss <- sum((preds - actual) ^ 2)  ## residual sum of squares
+  tss <- sum((actual - mean(actual)) ^ 2)  ## total sum of squares
+  rsq <- 1 - rss/tss
+  return (rsq)
+}
+
 
 plot_heatmap = function(df, join_var, var) {
   ggplot(df,
