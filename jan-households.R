@@ -14,7 +14,7 @@ n_children = 1000
 # calculate probs
 p_child_in_household = df_children_aggregated
 p_child_in_household = subset(p_child_in_household, select=-c(unmarried, married, singleparents, total_children))
-p_child_in_household$prob = p_child_in_household$prob * p_child_in_household$hh_size
+p_child_in_household$prob = p_child_in_household$prob * p_child_in_household$children_in_house
 
 # normalise
 p_child_in_household$prob = p_child_in_household$prob / sum(p_child_in_household$prob)
@@ -26,7 +26,7 @@ children_in_households = subset(children_in_households, select=-c(prob))
 
 # Make sure that each bin for a household size contains a number of children that is neatly divisible over the actual size of that household
 for (i in (nrow(children_in_households):2)) {
-  remainder = children_in_households[i,]$num_children %% children_in_households[i,]$hh_size
+  remainder = children_in_households[i,]$num_children %% children_in_households[i,]$children_in_house
   if (remainder > 0) {
     children_in_households[i, 'num_children'] = children_in_households[i, 'num_children'] - remainder
     children_in_households[i-1, 'num_children'] = children_in_households[i-1, 'num_children'] - remainder
@@ -37,12 +37,12 @@ children_in_households[1,]$num_children = n_children - sum(children_in_household
 
 # Now we calculate the actual number of households again by dividing the number of children by the size
 n_households = children_in_households
-n_households$num_households = n_households$num_children / n_households$hh_size
+n_households$num_households = n_households$num_children / n_households$children_in_house
 n_households = subset(n_households, select=-c(num_children))
 
 # Print results
 for(i in 1:nrow(df_children_aggregated)) {
-  print(paste0('    HH size ', children_in_households[i,]$hh_size))
+  print(paste0('Household composed on ', children_in_households[i,]$children_in_house, ' children'))
   print(paste0('Children: ', children_in_households[i,]$num_children))
   print(paste0(n_households[i,]$num_households, ' households of this size'))
   print(paste0('Which is ', n_households[i,]$num_households/sum(n_households$num_households), ' of total'))

@@ -32,11 +32,8 @@ df_children_aggregated = data.frame(c(df_children$unmarried_1, df_children$unmar
                                     c(df_children$married_1, df_children$married_2,df_children$married_3),
                                     c(df_children$singleparent_1, df_children$singleparent_2,df_children$singleparent_3))
 colnames(df_children_aggregated) = c('unmarried', 'married', 'singleparents')
-df_children_aggregated$hh_size = c(1, 2, 3)
+df_children_aggregated$children_in_house = c(1, 2, 3)
 df_children_aggregated$total_children = rowSums(df_children_aggregated)
 df_children_aggregated$prob = df_children_aggregated$total_children / sum(df_children_aggregated$total_children)
-
-df_children_aggregated = subset(children_in_households, select=-c(prob))
-
 
 write.csv(df_children_aggregated, 'children_71486NED-formatted.csv', row.names=FALSE)
