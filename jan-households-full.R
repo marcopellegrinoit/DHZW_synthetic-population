@@ -2,62 +2,115 @@ library("this.path")
 setwd(this.path::this.dir())
 library(dplyr)
 library (readr)
+source('jan-households.R')
 
 municipality = "den_haag_2019"
 
+setwd(this.path::this.dir())
+setwd(paste0('data/', municipality, '/households/distributions'))
+df_parents <- read_csv("couples_singleparents-71488NED-formatted.csv")
+df_singleparents <- read_csv("singleparents_gender-71488NED-formatted.csv")
+
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-df_SynthPop = read.csv('synthetic_population_DHZW_2019.csv')
-df_SynthPop$hh_ID = NA
-
-df_children_unassigned = df_SynthPop[df_SynthPop$hh_position=='child',]
-
-df_children_assigned = df_children_unassigned
-df_children_assigned <- df_children_assigned[0,]
+df_synth_pop = read.csv('synthetic_population_DHZW_2019.csv')
+df_synth_pop$hh_ID = NA
 
 # Empty container of households
 df_households <- data.frame(matrix(ncol = 3, nrow = 0))
 colnames(df_households) <- c("hh_ID", "children_in_house", "neighb_code")
 
+# For each neighbourhood area
+#for (neighb_code in unique(df_synth_pop$neighb_code)) {
+neighb_code = 'BU05183398'
+  
+  # Retrieve how many households per children in households we need
+  n_households = get_households_children(df_synth_pop, neighb_code)
+  
+  # list of all unassigned children
+  df_children_unassigned = df_synth_pop[df_synth_pop$hh_position=='child' & df_synth_pop$neighb_code==neighb_code,]
+  
+  # For quantity of children in household, from largest to smallest (we start with the most difficult constraints)
+  for (children_size in (nrow(n_households):1)) {
+    
+    # repeat for all the households needed for such quantity of children in household
+    counter_houses = 0
+    while(counter_houses < (n_households[children_size,]$num_households-1)){
+      # Get new household ID
+      hh_ID = nrow(df_households) + 1
+      
+      # empty list of children for this new household
+      df_children_house <- df_children_unassigned[0,]
+      
+      # Pick a random child c and remove from list
+      c = sample_n(df_children_unassigned, 1)
+      c$hh_ID = hh_ID
+      df_children_unassigned = df_children_unassigned[df_children_unassigned$agent_ID != c$agent_ID,]
+      df_children_house <- rbind(df_children_house, c)
+      
+      # Assign child to household
+      df_synth_pop[df_synth_pop$agent_ID==c$agent_ID,]$hh_ID = hh_ID
+      
+      # While household has fewer children than children_in_house
+      counter_siblings = 0
+      while (counter_siblings < (children_size-1)) {
+        # Get the ages a_c1, . , a_cn of all children c_1, . , c_n thus far assigned
+        ages_children = df_children_house$age
+        
+        # Assign each remaining child x a probability p(x) of being a sibling of c_1, . ,c_n, based on how well their age a_x matches the age difference with argmin (a_c1, a_cn ) or argmax(a_c1, a_c_n)
+        # todo, sample next sibling randomly
+        x = sample_n(df_children_unassigned, 1)
+        df_children_unassigned = df_children_unassigned[df_children_unassigned$agent_ID != x$agent_ID,]
+        df_children_house <- rbind(df_children_house, x)
+        df_synth_pop[df_synth_pop$agent_ID==x$agent_ID,]$hh_ID = hh_ID
+        
+        counter_siblings = counter_siblings + 1
+      }
+      
+      # Get average age of children in the house
+      avg_children_age = mean(df_children_house$age)
+      
+      # Get age of the oldest child
+      oldest_child_age = max(df_children_house$age)
+      
+      # Sample if household is singleparent or couple
+      hh_type = sample(df_parents$hh_type,
+             1,
+             replace=FALSE,
+             prob = df_parents$prob)
+      
+      if (hh_type=='singleparents'){
+        hh_size = nrow(df_children_house) + 1
+        singleparent_gender = sample(df_singleparents$gender,
+                                     1,
+                                     replace=FALSE,
+                                     prob = df_singleparents$prob)
+        
+        if (singleparent_gender == 'female') {
+          mother_ID = get_mother(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
+          
+          # add mother to the house
+          df_synth_pop[df_synth_pop$agent_ID==mother_ID,]$hh_ID = hh_ID
+        } else {
+          # look for a father
+          father_ID = get_father(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
+          
+          # add mother to the house
+          df_synth_pop[df_synth_pop$agent_ID==father_ID,]$hh_ID = hh_ID
+        }
+        
+      } else {
+        hh_size = nrow(df_children_house) + 2
+      }
 
-# For each children_in_house, from largest to smallest (we start with the most difficult constraints)
-for (children_size in (nrow(n_households):1)) {
-  # repeat for all the households needed for such quantity of children in household
-  for (n_houses in (1:n_households[children_size,]$num_households)){
-    # Pick a random child c and remove from list
-    c = sample_n(df_children_unassigned, 1)
-    df_children_unassigned = df_children_unassigned[df_children_unassigned$agent_ID != c$agent_ID,]
-    df_children_assigned <- rbind(df_children_assigned, c)
-    
-    # Get household ID and its neighbourhood code
-    hh_ID = nrow(df_households) + 1
-    neighb_code = c$neighb_code
-    
-    # Assign child to household
-    df_SynthPop[df_SynthPop$agent_ID==c$agent_ID,]$hh_ID = hh_ID
-    
-    # While household has fewer children than children_in_house
-    sibling_counter = 0
-    while (sibling_counter < (children_size-1)) {
-      # Get the ages a_c1, . , a_cn of all children c_1, . , c_n thus far assigned
-      ages_children = df_children_assigned[df_children_assigned$hh_ID == hh_ID,]$age
+
+      df_households[hh_ID,] = c(
+        hh_ID,
+        as.numeric(hh_size),
+        neighb_code)
       
-      # Assign each remaining child x a probability p(x) of being a sibling of c_1, . ,c_n, based on how well their age a_x matches the age difference with argmin (a_c1, a_cn ) or argmax(a_c1, a_c_n)
-      df_children_unassigned_neighb = df_children_unassigned[df_children_unassigned$neighb_code == neighb_code,]
-      
-      # todo, sample next sibling randomly
-      x = sample_n(df_children_unassigned_neighb, 1)
-      df_children_unassigned = df_children_unassigned[df_children_unassigned$agent_ID != x$agent_ID,]
-      df_children_assigned <- rbind(df_children_assigned, x)
-      df_SynthPop[df_SynthPop$agent_ID==x$agent_ID,]$hh_ID = hh_ID
-    
-      sibling_counter = sibling_counter + 1
+      counter_houses = counter_houses + 1
     }
     
-    hh_size = 2
-    df_households[hh_ID,] = c(
-      hh_ID,
-      as.numeric(hh_size),
-      neighb_code)
   }
-  
-}
+#}
+
