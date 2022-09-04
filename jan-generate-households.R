@@ -2,7 +2,7 @@ library("this.path")
 setwd(this.path::this.dir())
 library(dplyr)
 library (readr)
-source('jan-households.R')
+source('jan-utils-households.R')
 
 municipality = "den_haag_2019"
 
@@ -11,9 +11,14 @@ setwd(paste0('data/', municipality, '/households/distributions'))
 df_parents <- read_csv("couples_singleparents-71488NED-formatted.csv")
 df_singleparents <- read_csv("singleparents_gender-71488NED-formatted.csv")
 
-setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
+setwd(paste0(this.path::this.dir(), '/data/'))
+df_couples_genders <- read.csv("couples_gender_disparity_37772ENG-formatted.csv", sep=',')
+df_couples_ages <- read.csv("couples_age_disparity.csv", sep=',')
+
+setwd(paste0(this.path::this.dir(), "/synthetic-populations"))
 df_synth_pop = read.csv('synthetic_population_DHZW_2019.csv')
 df_synth_pop$hh_ID = NA
+df_synth_pop$hh_type = NA
 
 # Empty container of households
 df_households <- data.frame(matrix(ncol = 3, nrow = 0))
@@ -79,29 +84,87 @@ neighb_code = 'BU05183398'
              prob = df_parents$prob)
       
       if (hh_type=='singleparents'){
+        
+        # case: single-parent
         hh_size = nrow(df_children_house) + 1
+        
+        # generate gender of the parent from distribution
         singleparent_gender = sample(df_singleparents$gender,
                                      1,
                                      replace=FALSE,
                                      prob = df_singleparents$prob)
         
         if (singleparent_gender == 'female') {
-          mother_ID = get_mother(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
-          
-          # add mother to the house
-          df_synth_pop[df_synth_pop$agent_ID==mother_ID,]$hh_ID = hh_ID
+          # case: mother
+          parent_ID = get_mother(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
         } else {
-          # look for a father
-          father_ID = get_father(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
-          
-          # add mother to the house
-          df_synth_pop[df_synth_pop$agent_ID==father_ID,]$hh_ID = hh_ID
+          # case: father
+          age_fake_mother = get_age_fake_mother(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
+          parent_ID = get_second_partner(df_synth_pop, neighb_code, age_fake_mother, 'male_female')
         }
+
+        # add parent to house
+        df_synth_pop[df_synth_pop$agent_ID==parent_ID,]$hh_ID = hh_ID
+        
+        df_synth_pop[!is.na(df_synth_pop$hh_ID) & df_synth_pop$hh_ID==hh_ID,]$hh_type<-'single_parent'
         
       } else {
+        
+        # case: couple
         hh_size = nrow(df_children_house) + 2
-      }
+        
+        couple_gender = sample(df_couples_genders$genders,
+                               1,
+                               replace=FALSE,
+                               prob = df_couples_genders$prob)
+        
+        if(couple_gender == 'male_female') {
+          # couple with mother and father
+          
+          # get parents
+          mother_ID = get_mother(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
+          mother = df_synth_pop[df_synth_pop$agent_ID==mother_ID,]
+          
+          father_ID = get_second_partner(df_synth_pop, neighb_code, mother$age, couple_gender)
+          
+          # add parents to house
+          df_synth_pop[df_synth_pop$agent_ID==mother_ID,]$hh_ID = hh_ID
+          df_synth_pop[df_synth_pop$agent_ID==father_ID,]$hh_ID = hh_ID
+          df_synth_pop[!is.na(df_synth_pop$hh_ID) & df_synth_pop$hh_ID == hh_ID,]$hh_type<-'couple_straight'
+          
+        } else if (couple_gender == 'male_male') {
+          # couple with two fathers
+          
+          # generate first father based on a fake mother
+          age_fake_mother = get_age_fake_mother(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
+          first_father_ID = get_second_partner(df_synth_pop, neighb_code, age_fake_mother, 'male_female')
+          first_father = df_synth_pop[df_synth_pop$agent_ID==first_father_ID,]
+          
+          # generate second father based on the first father
+          second_father_ID = get_second_partner(df_synth_pop, neighb_code, first_father$age, couple_gender)
+          
+          # add parents to house
+          df_synth_pop[df_synth_pop$agent_ID==first_father_ID,]$hh_ID = hh_ID
+          df_synth_pop[df_synth_pop$agent_ID==second_father_ID,]$hh_ID = hh_ID
+          df_synth_pop[!is.na(df_synth_pop$hh_ID) & df_synth_pop$hh_ID == hh_ID,]$hh_type<-'couple_gay'
+          
+        } else if (couple_gender == 'female_female') {
+          # couple with two mothers
+          
+          # get first mother as real
+          first_mother_ID = get_mother(df_synth_pop, neighb_code, avg_children_age, oldest_child_age)
+          
+          first_mother = df_synth_pop[df_synth_pop$agent_ID==first_mother_ID,]
+          
+          # generate second mother based on the first mother
+          second_mother_ID = get_second_partner(df_synth_pop, neighb_code, first_mother$age, couple_gender)
 
+          # add parents to house
+          df_synth_pop[df_synth_pop$agent_ID==first_mother_ID,]$hh_ID = hh_ID
+          df_synth_pop[df_synth_pop$agent_ID==second_mother_ID,]$hh_ID = hh_ID
+          df_synth_pop[!is.na(df_synth_pop$hh_ID) & df_synth_pop$hh_ID == hh_ID,]$hh_type<-'couple_lesbian'
+        }
+      }
 
       df_households[hh_ID,] = c(
         hh_ID,
@@ -110,6 +173,8 @@ neighb_code = 'BU05183398'
       
       counter_houses = counter_houses + 1
     }
+    
+    # todo: create households for couples without children and singles
     
   }
 #}

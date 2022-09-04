@@ -102,13 +102,14 @@ get_mother <- function(df_synth_pop, neighb_code, avg_children_age, oldest_child
   return(mother_ID)
 }
 
-get_father <- function(df_synth_pop, neighb_code, avg_children_age, oldest_child_age) {
-  # sample age of the ideal mother
+get_age_fake_mother <- function(df_synth_pop, neighb_code, avg_children_age, oldest_child_age) {
+  # sample age difference of the ideal mother
   age_fake_mother_group = sample(df_mother_children$diff_group,
                            1,
                            replace=FALSE,
                            prob = df_mother_children$prob)
   
+  # transform age group difference into integer age difference generating a random integer in such interval
   if(age_fake_mother_group=='less_20')
     age_fake_mother = sample(c(16:19), 1)
   if(age_fake_mother_group=='between_20_25')
@@ -124,39 +125,64 @@ get_father <- function(df_synth_pop, neighb_code, avg_children_age, oldest_child
   if(age_fake_mother_group=='more_45')
     age_fake_mother = sample(c(45:105), 1)
   
+  # compute the ideal mother age adding the difference mother-child age to the average child of the house
   age_fake_mother = age_fake_mother + avg_children_age
+  
+  # if the oldest child is not 15 years older than the mother, add the remaining years to fulfull this contraint
   if (age_fake_mother < oldest_child_age + 15)
     age_fake_mother = oldest_child_age + 15
+  
+  return(age_fake_mother)
+}
 
-  df_fathers = df_synth_pop[df_synth_pop$gender=='male' & df_synth_pop$hh_position!='child' & df_synth_pop$neighb_code==neighb_code,]
+get_second_partner <- function(df_synth_pop, neighb_code, age_first_partner, genders) {
+  # get all the remaining second_partners
+  if(genders=='male_female') {
+    # look for the father, given the mother
+    df_second_partners = df_synth_pop[df_synth_pop$gender=='male' & df_synth_pop$hh_position!='child' & df_synth_pop$neighb_code==neighb_code,]
+  } else if (genders=='male_male') {
+    # look for the second father
+    df_second_partners = df_synth_pop[df_synth_pop$gender=='male' & df_synth_pop$hh_position!='child' & df_synth_pop$neighb_code==neighb_code,]
+  } else if (genders=='female_female') {
+    # look for the second mother
+    df_second_partners = df_synth_pop[df_synth_pop$gender=='female' & df_synth_pop$hh_position!='child' & df_synth_pop$neighb_code==neighb_code,]
+  }
   
-  df_fathers$age_diff = df_fathers$age - age_fake_mother
-  df_fathers$age_diff = abs(round(df_fathers$age_diff))
+  # for each partner, calculate the age difference with the given partner
+  df_second_partners$age_diff = df_second_partners$age - age_first_partner
   
+  # round the age difference and its absolute value
+  df_second_partners$age_diff = abs(round(df_second_partners$age_diff))
   
-  df_fathers$gap = ''
+  # group age differences
+  df_second_partners$gap = ''
   # Give to each father the probability of being the partner of such fake mother
-  if(nrow(df_fathers[df_fathers$age_diff < 1,])>0)
-    df_fathers[df_fathers$age_diff ==0 ,]$gap='0'
-  if(nrow(df_fathers[df_fathers$age_diff >= 1 & df_fathers$age_diff < 5,])>0)
-    df_fathers[df_fathers$age_diff >= 1 & df_fathers$age_diff < 5,]$gap='1_4'
-  if(nrow(df_fathers[df_fathers$age_diff >= 4 & df_fathers$age_diff < 10,])>0)
-    df_fathers[df_fathers$age_diff >= 4 & df_fathers$age_diff < 10,]$gap='4_9'
-  if(nrow(df_fathers[df_fathers$age_diff >= 9 & df_fathers$age_diff < 15,])>0)
-    df_fathers[df_fathers$age_diff >= 9 & df_fathers$age_diff < 15,]$gap='10_14'
-  if(nrow(df_fathers[df_fathers$age_diff >= 15 & df_fathers$age_diff < 20,])>0)
-    df_fathers[df_fathers$age_diff >= 15 & df_fathers$age_diff < 20,]$gap='15_19'
-  if(nrow(df_fathers[df_fathers$age_diff >= 20,])>0)
-    df_fathers[df_fathers$age_diff >= 20,]$gap='20_or_more'
+  if(nrow(df_second_partners[df_second_partners$age_diff < 1,])>0)
+    df_second_partners[df_second_partners$age_diff ==0 ,]$gap='0'
+  if(nrow(df_second_partners[df_second_partners$age_diff >= 1 & df_second_partners$age_diff < 5,])>0)
+    df_second_partners[df_second_partners$age_diff >= 1 & df_second_partners$age_diff < 5,]$gap='1_4'
+  if(nrow(df_second_partners[df_second_partners$age_diff >= 4 & df_second_partners$age_diff < 10,])>0)
+    df_second_partners[df_second_partners$age_diff >= 4 & df_second_partners$age_diff < 10,]$gap='4_9'
+  if(nrow(df_second_partners[df_second_partners$age_diff >= 9 & df_second_partners$age_diff < 15,])>0)
+    df_second_partners[df_second_partners$age_diff >= 9 & df_second_partners$age_diff < 15,]$gap='10_14'
+  if(nrow(df_second_partners[df_second_partners$age_diff >= 15 & df_second_partners$age_diff < 20,])>0)
+    df_second_partners[df_second_partners$age_diff >= 15 & df_second_partners$age_diff < 20,]$gap='15_19'
+  if(nrow(df_second_partners[df_second_partners$age_diff >= 20,])>0)
+    df_second_partners[df_second_partners$age_diff >= 20,]$gap='20_or_more'
   
-  df_fathers = merge(df_fathers, df_age_couples, by='gap')
-  
+  # assign probabilities from CBS distribution
+  df_second_partners = merge(df_second_partners, df_age_couples, by='gap')
   
   # normalise probabilities
-  df_fathers$prob = df_fathers$male_female / sum(df_fathers$male_female)
+  if(genders=='male_female') 
+    df_second_partners$prob = df_second_partners$male_female / sum(df_second_partners$male_female)
+  else if (genders=='male_male') 
+    df_second_partners$prob = df_second_partners$male_male / sum(df_second_partners$male_male)
+  else if (genders=='female_female') 
+    df_second_partners$prob = df_second_partners$female_female / sum(df_second_partners$female_female)
   
-  # sample mother
-  father_ID = sample(df_fathers$agent_ID, 1, replace=FALSE, prob = df_fathers$prob)
+  # sample father
+  second_partner_ID = sample(df_second_partners$agent_ID, 1, replace=FALSE, prob = df_second_partners$prob)
   
-  return(father_ID)
+  return(second_partner_ID)
 }
