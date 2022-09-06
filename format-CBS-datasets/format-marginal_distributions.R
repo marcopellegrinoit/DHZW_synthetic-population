@@ -117,7 +117,7 @@ df_marginal_dist[df_marginal_dist$neighb_code %in% neighb_code_to_correct,]$prop
 df_marginal_dist$prop_hh_no_children = df_marginal_dist$hh_no_children / df_marginal_dist$hh_total
 df_marginal_dist[df_marginal_dist$neighb_code %in% neighb_code_to_correct,]$prop_hh_no_children = mean(df_marginal_dist[!(df_marginal_dist$neighb_code %in% neighb_code_to_correct),]$prop_hh_no_children)
 
-#df_marginal_dist[df_marginal_dist$neighb_code %in% neighb_code_to_correct,]$hh_avg_size = mean(df_marginal_dist[!(df_marginal_dist$neighb_code %in% neighb_code_to_correct),]$hh_avg_size)
+df_marginal_dist[df_marginal_dist$neighb_code %in% neighb_code_to_correct,]$hh_avg_size = mean(as.numeric(df_marginal_dist[!(df_marginal_dist$neighb_code %in% neighb_code_to_correct),]$hh_avg_size))
 
 for (neighb_code in neighb_code_to_correct) {
   # genders
@@ -162,5 +162,5 @@ df_marginal_dist = subset(df_marginal_dist, select=-c(prop_male,
                                                       prop_hh_single,
                                                       prop_hh_no_children))
 
-
+setwd(paste("../data/", municipality, sep = ""))
 write.csv(df_marginal_dist, 'marginal_distributions_84583NED-formatted.csv', row.names=FALSE)

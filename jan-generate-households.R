@@ -260,6 +260,9 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
   n_individuals_couples = remaining_agents * prob_individual_is_couple
   n_couples = round(n_individuals_couples / 2) # round to closest even number (couples are made of two individuals)
   
+  print(paste0('Probability individual is couple ', prob_individual_is_couple))
+  print(paste0('N couples: ', n_couples))
+  
   print('Generating couples without children...')
   
   hh_size = 2
@@ -342,6 +345,8 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
                                     df_synth_pop$neighb_code == neighb_code, ]
   
   print('Generating singles...')
+  print(paste0('N singles: ', nrow(remaining_agents)))
+  
   
   hh_size = 1
   counter_singles = 1
@@ -373,3 +378,7 @@ difftime(end_time, start_time, units = "secs")
 difftime(end_time, start_time, units = "mins")
 
 write.csv(df_synth_pop, 'synthetic_population_DHZW_2019_with_hh.csv', row.names = FALSE)
+
+setwd(this.path::this.dir())
+setwd(paste0('data/', municipality, '/households/output'))
+write.csv(df_households, 'df_households_DHZW_2019.csv', row.names = FALSE)
