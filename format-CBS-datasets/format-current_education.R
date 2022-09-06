@@ -94,5 +94,10 @@ df_StratEduCurrent = df_StratEduCurrent %>%
 # Calculate the people that are not currently going to school
 df_StratEduCurrent$no_current_edu = df_StratEduCurrent$total - (df_StratEduCurrent$low + df_StratEduCurrent$middle + df_StratEduCurrent$high)
 
+# Calculate probabilities
+df_StratEduCurrent$prob_low = df_StratEduCurrent$low/df_StratEduCurrent$total
+df_StratEduCurrent$prob_middle = df_StratEduCurrent$middle/df_StratEduCurrent$total
+df_StratEduCurrent$prob_high = df_StratEduCurrent$high/df_StratEduCurrent$total
+
 # Save formatted dataset
 write.csv(df_StratEduCurrent, 'edu_current-71450NED-formatted.csv', row.names=FALSE)

@@ -40,8 +40,9 @@ df_synth_pop$child_too_old <- FALSE
 
 # For each neighbourhood area
 for (neighb_code in unique(df_synth_pop$neighb_code)) {
-  #df_synth_pop = df_synth_pop[df_synth_pop$neighb_code=='BU05183536',]
-  #neighb_code = 'BU05183536'
+  
+  #df_synth_pop = df_synth_pop[df_synth_pop$neighb_code=='BU05181785',]
+  #neighb_code = 'BU05181785'
   
   # Retrieve how many households per children in households we need
   n_households = get_households_children(df_synth_pop, neighb_code)
@@ -147,6 +148,19 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
                                replace = FALSE,
                                prob = df_couples_genders$prob)
         
+        # check if there are enough remaining agents with the chosen gender. If not, force to find a couple with the only available gender
+        if(nrow(df_synth_pop[df_synth_pop$gender=='female' &
+                             is.na(df_synth_pop$hh_ID) &
+                             df_synth_pop$is_child==0 &
+                             df_synth_pop$neighb_code==neighb_code,])==0){
+          couple_gender='male_male'
+        } else if (nrow(df_synth_pop[df_synth_pop$gender=='male' &
+                                     is.na(df_synth_pop$hh_ID) &
+                                     df_synth_pop$is_child==0 &
+                                     df_synth_pop$neighb_code==neighb_code,])==0) {
+          couple_gender='female_female'
+        }
+        
         if (couple_gender == 'male_female') {
           # couple with mother and father
           
@@ -167,7 +181,7 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
             df_synth_pop[df_synth_pop$agent_ID == mother_ID, ]$hh_ID = hh_ID
             df_synth_pop[df_synth_pop$agent_ID == father_ID, ]$hh_ID = hh_ID
             df_synth_pop[!is.na(df_synth_pop$hh_ID) &
-                           df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_straight'
+                           df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_children_straight'
           } else {
             df_synth_pop[!is.na(df_synth_pop$hh_ID) &
                            df_synth_pop$hh_ID == hh_ID, ]$child_too_old <- TRUE
@@ -196,7 +210,7 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
           df_synth_pop[df_synth_pop$agent_ID == first_father_ID, ]$hh_ID = hh_ID
           df_synth_pop[df_synth_pop$agent_ID == second_father_ID, ]$hh_ID = hh_ID
           df_synth_pop[!is.na(df_synth_pop$hh_ID) &
-                         df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_gay'
+                         df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_children_gay'
           
         } else if (couple_gender == 'female_female') {
           # couple with two mothers
@@ -220,7 +234,7 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
             df_synth_pop[df_synth_pop$agent_ID == first_mother_ID, ]$hh_ID = hh_ID
             df_synth_pop[df_synth_pop$agent_ID == second_mother_ID, ]$hh_ID = hh_ID
             df_synth_pop[!is.na(df_synth_pop$hh_ID) &
-                           df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_lesbian'
+                           df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_children_lesbian'
           } else {
             df_synth_pop[!is.na(df_synth_pop$hh_ID) &
                            df_synth_pop$hh_ID == hh_ID, ]$child_too_old <- TRUE
@@ -264,10 +278,21 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
                            replace = FALSE,
                            prob = df_couples_genders$prob)
     
+    # check if there are enough remaining agents with the chosen gender. If not, force to find a couple with the only available gender
+    if(nrow(df_synth_pop[df_synth_pop$gender=='female' &
+                         is.na(df_synth_pop$hh_ID) &
+                         df_synth_pop$is_child==0 &
+                         df_synth_pop$neighb_code==neighb_code,])==0){
+      couple_gender='male_male'
+    } else if (nrow(df_synth_pop[df_synth_pop$gender=='male' &
+                                 is.na(df_synth_pop$hh_ID) &
+                                 df_synth_pop$is_child==0 &
+                                 df_synth_pop$neighb_code==neighb_code,])==0) {
+      couple_gender='female_female'
+    }
+    
+
     # sample random agent as first partner
-    
-    print(couple_gender)
-    
     if (couple_gender == 'male_female') {
       first_partner = sample_n(df_synth_pop[df_synth_pop$gender=='female' &
                                               is.na(df_synth_pop$hh_ID) &
@@ -282,7 +307,7 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
       first_partner = sample_n(df_synth_pop[df_synth_pop$gender=='female' &
                                               is.na(df_synth_pop$hh_ID) &
                                               df_synth_pop$is_child==0 &
-                                              df_synth_pop$neighb_code==neighb_code], 1)
+                                              df_synth_pop$neighb_code==neighb_code,], 1)
     }
     # find its best partner based on gender and age difference
     second_partner_ID = get_second_partner(df_synth_pop,
@@ -293,8 +318,20 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
     # add partners to house
     df_synth_pop[df_synth_pop$agent_ID == first_partner$agent_ID, ]$hh_ID = hh_ID
     df_synth_pop[df_synth_pop$agent_ID == second_partner_ID, ]$hh_ID = hh_ID
-    df_synth_pop[!is.na(df_synth_pop$hh_ID) &
-                   df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_no_children'
+    
+    if (couple_gender == 'male_female') {
+      
+      df_synth_pop[!is.na(df_synth_pop$hh_ID) &
+                     df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_no_children_straight'
+    } else if (couple_gender == 'male_male') {
+      
+      df_synth_pop[!is.na(df_synth_pop$hh_ID) &
+                     df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_no_children_gay'
+    } else if (couple_gender == 'female_female') {
+      
+      df_synth_pop[!is.na(df_synth_pop$hh_ID) &
+                     df_synth_pop$hh_ID == hh_ID, ]$hh_type <- 'couple_no_children_lesbian'
+    }
     
     counter_couples = counter_couples + 1
   }
@@ -328,15 +365,11 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
     
     counter_singles = counter_singles + 1
   }
-
+  
 }
-
-## TO DEB: SAVE POPULATION SO I DONT HAVE TO RUN THE FAMILIES EVERYTIME. THE ERROR IS IN THE COUPLES
 
 end_time <- Sys.time()
 difftime(end_time, start_time, units = "secs")
 difftime(end_time, start_time, units = "mins")
 
-write.csv(df_synth_pop,
-          'synthetic_population_DHZW_2019_with_hh.csv',
-          row.names = FALSE)
+write.csv(df_synth_pop, 'synthetic_population_DHZW_2019_with_hh.csv', row.names = FALSE)
