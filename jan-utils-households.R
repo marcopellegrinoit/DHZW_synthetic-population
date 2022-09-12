@@ -181,9 +181,12 @@ get_second_partner <- function(df_synth_pop, neighb_code, age_first_partner, gen
   
   # assign probabilities from CBS distribution
   if(genders=='male_female') {
-    df_second_partners$gender_older='female'
+    df_second_partners$gender_older='none'
     if (nrow(df_second_partners[df_second_partners$age > age_first_partner,])>0) {
       df_second_partners[df_second_partners$age > age_first_partner,]$gender_older='male'
+    }
+    if (nrow(df_second_partners[df_second_partners$age < age_first_partner,])>0) {
+      df_second_partners[df_second_partners$age < age_first_partner,]$gender_older='female'
     }
     df_second_partners = merge(df_second_partners, df_age_couples_heterosexual, by=c('gap', 'gender_older'))
   } else {

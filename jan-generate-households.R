@@ -381,4 +381,4 @@ write.csv(df_synth_pop, 'synthetic_population_DHZW_2019_with_hh.csv', row.names 
 
 setwd(this.path::this.dir())
 setwd(paste0('data/', municipality, '/households/output'))
-write.csv(df_households, 'df_households_DHZW_2019.csv', row.names = FALSE)
+write.csv(df_households, 'df_households_DHZW_2019-new.csv', row.names = FALSE)
