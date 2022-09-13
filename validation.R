@@ -20,7 +20,7 @@ df_StratEduCurrent = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
 #df_StratHousehold = read.csv("household_gender_age-71488NED-formatted.csv", sep = ",", fileEncoding="UTF-8-BOM")
 
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-df_SynthPop = read.csv("synthetic_population_DHZW_2019.csv", sep = ",")
+df_synth_pop = read.csv("synthetic_population_DHZW_2019_with_hh.csv", sep = ",")
 
 # filter DHZW area
 setwd(paste(this.path::this.dir(), "/data", sep = ""))
@@ -109,92 +109,44 @@ df_SynthPop = subset(df_SynthPop, select=-c(age_group))
 # Current education
 ################################################################################
 
-df_StratEduCurrent = df_StratEduCurrent %>%
+df_StratEduCurrentValidation = df_StratEduCurrent %>%
   select(gender, age_group, migration_background, low, middle, high, no_current_edu) %>%
   pivot_longer(cols = -c(gender, age_group, migration_background), names_to = "current_education", values_to = "real")
-df_StratEduCurrent$pred = 0
+df_StratEduCurrentValidation$pred = 0
 
-df_SynthPop$age_group[df_SynthPop$age < 15] = NA
-df_SynthPop$age_group[df_SynthPop$age %in% 15:19] = "age_15_20"
-df_SynthPop$age_group[df_SynthPop$age %in% 20:24] = "age_20_25" 
-df_SynthPop$age_group[df_SynthPop$age %in% 25:29] = "age_25_30" 
-df_SynthPop$age_group[df_SynthPop$age %in% 30:34] = "age_30_35" 
-df_SynthPop$age_group[df_SynthPop$age %in% 35:39] = "age_35_40" 
-df_SynthPop$age_group[df_SynthPop$age %in% 40:44] = "age_40_45"
-df_SynthPop$age_group[df_SynthPop$age %in% 45:49] = "age_45_50"
-df_SynthPop$age_group[df_SynthPop$age >= 50] = "age_over_50"
+df_synth_pop$age_group[df_synth_pop$age < 15] = NA
+df_synth_pop$age_group[df_synth_pop$age %in% 10:14] = "age_10_15"
+df_synth_pop$age_group[df_synth_pop$age %in% 15:19] = "age_15_20"
+df_synth_pop$age_group[df_synth_pop$age %in% 20:24] = "age_20_25" 
+df_synth_pop$age_group[df_synth_pop$age %in% 25:29] = "age_25_30" 
+df_synth_pop$age_group[df_synth_pop$age %in% 30:34] = "age_30_35" 
+df_synth_pop$age_group[df_synth_pop$age %in% 35:39] = "age_35_40" 
+df_synth_pop$age_group[df_synth_pop$age %in% 40:44] = "age_40_45"
+df_synth_pop$age_group[df_synth_pop$age %in% 45:49] = "age_45_50"
+df_synth_pop$age_group[df_synth_pop$age >= 50] = "age_over_50"
 
-for (i in (1:nrow(df_StratEduCurrent))) {
-  df_StratEduCurrent[i, 'pred',] = nrow(df_SynthPop[df_SynthPop$age_group == df_StratEduCurrent[i, 'age_group']$age_group &
-                                                    df_SynthPop$gender == df_StratEduCurrent[i, 'gender']$gender &
-                                                    df_SynthPop$migration_background == df_StratEduCurrent[i, 'migration_background']$migration_background &
-                                                    df_SynthPop$current_education == df_StratEduCurrent[i, 'current_education']$current_education,])
+for (i in (1:nrow(df_StratEduCurrentValidation))) {
+  df_StratEduCurrentValidation[i, 'pred',] = nrow(df_synth_pop[!is.na(df_synth_pop$age_group) &
+                                                               df_synth_pop$age_group == df_StratEduCurrentValidation[i, 'age_group']$age_group &
+                                                               df_synth_pop$gender == df_StratEduCurrentValidation[i, 'gender']$gender &
+                                                               df_synth_pop$migration_background == df_StratEduCurrentValidation[i, 'migration_background']$migration_background &
+                                                               df_synth_pop$current_education == df_StratEduCurrentValidation[i, 'current_education']$current_education,])
 }
-R2_EduCurrent = R_squared_manual(df_StratEduCurrent$real, df_StratEduCurrent$pred)
-df_SynthPop = subset(df_SynthPop, select=-c(age_group))
+R2_EduCurrent = R_squared_manual(df_StratEduCurrentValidation$real, df_StratEduCurrentValidation$pred)
+
+
+df_synth_pop = subset(df_synth_pop, select=-c(age_group))
 
 ################################################################################
 # Education attainment
 ################################################################################
 
 df_EduAttainmentMarginals = validation(df_real_distr = df_MarginalDistr,
-                                       df_synt_pop = df_SynthPop,
+                                       df_synt_pop = df_synth_pop,
                                        join_var = "neighb_code",
                                        list_real_df_var = c("education_absolved_low", "education_absolved_middle", "education_absolved_high"),
                                        var_pred_df = "edu_attainment",
                                        list_values = c("low", "middle", "high"),
-                                       age_limits = FALSE
+                                       age_limits = TRUE
 )
 R2_EduAttainment = R_squared_manual(df_EduAttainmentMarginals$real, df_EduAttainmentMarginals$pred)
-
-################################################################################
-# Household position
-################################################################################
-
-# Validation of singles with marginal distribution
-df_HouseholdMarginals = validation(df_real_distr = df_GeneratedMarginals,
-                                df_synt_pop = df_SynthPop,
-                                join_var = "neighb_code",
-                                list_real_df_var = c("pp_single", "pp_singleparent", "pp_couple", "pp_children"),
-                                var_pred_df = "hh_position",
-                                list_values = c("single", "single_parent", "couple", "child"),
-                                age_limits = FALSE
-)
-R2_HouseholdMarginals = R_squared(df_HouseholdMarginals$real, df_HouseholdMarginals$pred)
-
-# Validation of household position with stratified dataset
-df_HouseholdGenderAge = df_StratHousehold %>%
-  select(gender, age_group, child, single, couple, single_parent) %>%
-  pivot_longer(cols = -c(gender, age_group), names_to = "hh_position", values_to = "real")
-df_HouseholdGenderAge$pred = 0
-
-df_SynthPop$age_group = ""
-df_SynthPop$age_group[df_SynthPop$age %in% 0:4] = "age_0_5"
-df_SynthPop$age_group[df_SynthPop$age %in% 5:19] = "age_5_10"
-df_SynthPop$age_group[df_SynthPop$age %in% 10:14] = "age_10_15"
-df_SynthPop$age_group[df_SynthPop$age %in% 15:19] = "age_15_20"
-df_SynthPop$age_group[df_SynthPop$age %in% 20:24] = "age_20_25"
-df_SynthPop$age_group[df_SynthPop$age %in% 25:29] = "age_25_30"
-df_SynthPop$age_group[df_SynthPop$age %in% 30:34] = "age_30_35"
-df_SynthPop$age_group[df_SynthPop$age %in% 35:39] = "age_35_40"
-df_SynthPop$age_group[df_SynthPop$age %in% 40:44] = "age_40_45"
-df_SynthPop$age_group[df_SynthPop$age %in% 45:49] = "age_45_50"
-df_SynthPop$age_group[df_SynthPop$age %in% 50:54] = "age_50_55"
-df_SynthPop$age_group[df_SynthPop$age %in% 55:59] = "age_55_60"
-df_SynthPop$age_group[df_SynthPop$age %in% 60:64] = "age_60_65"
-df_SynthPop$age_group[df_SynthPop$age %in% 65:69] = "age_65_70"
-df_SynthPop$age_group[df_SynthPop$age %in% 70:74] = "age_70_75"
-df_SynthPop$age_group[df_SynthPop$age %in% 75:79] = "age_75_80"
-df_SynthPop$age_group[df_SynthPop$age %in% 80:84] = "age_80_85"
-df_SynthPop$age_group[df_SynthPop$age %in% 85:89] = "age_85_90"
-df_SynthPop$age_group[df_SynthPop$age %in% 90:94] = "age_90_95"
-df_SynthPop$age_group[df_SynthPop$age %in% 95:105] = "age_over_95"
-
-for (i in (1:nrow(df_HouseholdGenderAge))) {
-  df_HouseholdGenderAge[i, 'pred',] = nrow(df_SynthPop[df_SynthPop$age_group == df_HouseholdGenderAge[i, 'age_group']$age_group &
-                                                       df_SynthPop$gender == df_HouseholdGenderAge[i, 'gender']$gender &
-                                                       df_SynthPop$hh_position == df_HouseholdGenderAge[i, 'hh_position']$hh_position,])
-}
-R2_HouseholdGenderAge = R_squared(df_HouseholdGenderAge$real, df_HouseholdGenderAge$pred)
-
-df_SynthPop = subset(df_SynthPop, select=-c(age_group))

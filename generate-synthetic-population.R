@@ -188,14 +188,15 @@ write.csv(df_synth_pop, 'synthetic_population_DHZW_2019.csv', row.names=FALSE)
 ################################################################################
 
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-df_synth_pop = read.csv('synthetic_population_DHZW_2019.csv')
+df_synth_pop = read.csv('synthetic_population_DHZW_2019_with_hh.csv')
 
 # Load stratified dataset
 setwd(paste(this.path::this.dir(), "/data/", municipality, "/stratified-datasets", sep = ""))
 df_StratEduCurrent = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
 
 # Create groupages in the synthetic population to match the stratified dataset
-df_synth_pop$age_group[df_synth_pop$age < 15] = NA
+df_synth_pop$age_group[df_synth_pop$age < 10] = NA
+df_synth_pop$age_group[df_synth_pop$age %in% 10:14] = "age_10_15"
 df_synth_pop$age_group[df_synth_pop$age %in% 15:19] = "age_15_20"
 df_synth_pop$age_group[df_synth_pop$age %in% 20:24] = "age_20_25" 
 df_synth_pop$age_group[df_synth_pop$age %in% 25:29] = "age_25_30" 
@@ -213,35 +214,62 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
                                           !is.na(df_synth_pop$age_group) &
                                           df_synth_pop$age_group == df_StratEduCurrent[i, 'age_group'] &
                                           df_synth_pop$migration_background == df_StratEduCurrent[i, 'migration_background'],]
+    n_agents = nrow(agents_neighbourhood)
     
-    n_agents_low_edu = round(nrow(agents_neighbourhood)*df_StratEduCurrent[i, 'prob_low'])
-    n_agents_middle_edu = round(nrow(agents_neighbourhood)*df_StratEduCurrent[i, 'prob_middle'])
-    n_agents_high_edu = round(nrow(agents_neighbourhood)*df_StratEduCurrent[i, 'prob_high'])
-    n_agents_no_edu = (nrow(agents_neighbourhood))-(n_agents_low_edu+n_agents_middle_edu+n_agents_high_edu)
-    
-    print(paste(nrow(agents_neighbourhood), n_agents_low_edu, n_agents_middle_edu, n_agents_high_edu, n_agents_no_edu), sep=' ')
+    n_agents_low_edu = round(n_agents*df_StratEduCurrent[i, 'prob_low'])
+    n_agents_middle_edu = round(n_agents*df_StratEduCurrent[i, 'prob_middle'])
+    n_agents_high_edu = round(n_agents*df_StratEduCurrent[i, 'prob_high'])
+    n_agents_no_edu = n_agents-(n_agents_low_edu+n_agents_middle_edu+n_agents_high_edu)
     
     if (n_agents_low_edu > 0) {
-      agents_low_edu = sample_n(agents_neighbourhood, n_agents_low_edu)
+      agents_unassigned = df_synth_pop[df_synth_pop$neighb_code == neighb_code &
+                                         df_synth_pop$gender == df_StratEduCurrent[i, 'gender'] &
+                                         !is.na(df_synth_pop$age_group) &
+                                         df_synth_pop$age_group == df_StratEduCurrent[i, 'age_group'] &
+                                         df_synth_pop$migration_background == df_StratEduCurrent[i, 'migration_background'] &
+                                         df_synth_pop$current_education=='',]
+      
+      agents_low_edu = sample_n(agents_unassigned, n_agents_low_edu)
       df_synth_pop[df_synth_pop$agent_ID %in% agents_low_edu$agent_ID,]$current_education='low'
     }
     if (n_agents_middle_edu > 0) {
-      agents_middle_edu = sample_n(agents_neighbourhood, n_agents_middle_edu)
+      agents_unassigned = df_synth_pop[df_synth_pop$neighb_code == neighb_code &
+                                         df_synth_pop$gender == df_StratEduCurrent[i, 'gender'] &
+                                         !is.na(df_synth_pop$age_group) &
+                                         df_synth_pop$age_group == df_StratEduCurrent[i, 'age_group'] &
+                                         df_synth_pop$migration_background == df_StratEduCurrent[i, 'migration_background'] &
+                                         df_synth_pop$current_education=='',]
+      
+      agents_middle_edu = sample_n(agents_unassigned, n_agents_middle_edu)
       df_synth_pop[df_synth_pop$agent_ID %in% agents_middle_edu$agent_ID,]$current_education='middle'
     }
     if (n_agents_high_edu > 0) {
-      agents_high_edu = sample_n(agents_neighbourhood, n_agents_high_edu)
+      agents_unassigned = df_synth_pop[df_synth_pop$neighb_code == neighb_code &
+                                         df_synth_pop$gender == df_StratEduCurrent[i, 'gender'] &
+                                         !is.na(df_synth_pop$age_group) &
+                                         df_synth_pop$age_group == df_StratEduCurrent[i, 'age_group'] &
+                                         df_synth_pop$migration_background == df_StratEduCurrent[i, 'migration_background'] &
+                                         df_synth_pop$current_education=='',]
+      
+      agents_high_edu = sample_n(agents_unassigned, n_agents_high_edu)
       df_synth_pop[df_synth_pop$agent_ID %in% agents_high_edu$agent_ID,]$current_education='high'
     }
     if (n_agents_no_edu > 0) {
-      agents_no_edu = sample_n(agents_neighbourhood, n_agents_no_edu)
-      df_synth_pop[df_synth_pop$agent_ID %in% agents_no_edu$agent_ID,]$current_education='no_current_education'
+      agents_unassigned = df_synth_pop[df_synth_pop$neighb_code == neighb_code &
+                                         df_synth_pop$gender == df_StratEduCurrent[i, 'gender'] &
+                                         !is.na(df_synth_pop$age_group) &
+                                         df_synth_pop$age_group == df_StratEduCurrent[i, 'age_group'] &
+                                         df_synth_pop$migration_background == df_StratEduCurrent[i, 'migration_background'] &
+                                         df_synth_pop$current_education=='',]
+      
+      agents_no_edu = sample_n(agents_unassigned, n_agents_no_edu)
+      df_synth_pop[df_synth_pop$agent_ID %in% agents_no_edu$agent_ID,]$current_education='no_current_edu'
     }
   }
 }
 
 # fix education for young kids
-df_synth_pop[df_synth_pop$age < 15 & df_synth_pop$age > 5,]$current_education = 'low'
+df_synth_pop[df_synth_pop$age < 10 & df_synth_pop$age > 5,]$current_education = 'low'
 df_synth_pop[df_synth_pop$age <= 5,]$current_education = 'no_current_edu'
 
 
@@ -250,17 +278,17 @@ df_synth_pop[df_synth_pop$age <= 5,]$current_education = 'no_current_edu'
 ################################################################################
 
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-df_synth_pop = read.csv('synthetic_population_DHZW_2019.csv')
+df_synth_pop = read.csv('synthetic_population_DHZW_2019_with_hh.csv')
 
 df_synth_pop$edu_attainment = NA
 
 # Firstly, generate part of the attribute based on the current education
 
 # young people can only have low education attainment
-df_synth_pop[df_synth_pop$age < 15,]$edu_attainment = 'low'
+df_synth_pop[df_synth_pop$age < 10,]$edu_attainment = 'nothing'
 
 # if currently in low education, the attainment cannot be higher than that
-df_synth_pop[df_synth_pop$current_education=='low',]$edu_attainment = 'low'
+df_synth_pop[df_synth_pop$current_education=='low',]$edu_attainment = 'nothing'
 
 # if currently in middle education, the attainment cannot be higher than low
 df_synth_pop[df_synth_pop$current_education=='middle',]$edu_attainment = 'low'
@@ -306,4 +334,4 @@ df_synth_pop[is.na(df_synth_pop$edu_attainment),]$edu_attainment = sample(x = df
 )
 # Save synthetic population
 setwd(paste(this.path::this.dir(), "/synthetic-populations", sep = ""))
-write.csv(df_synth_pop, 'synthetic_population_DHZW_2019.csv', row.names=FALSE)
+#write.csv(df_synth_pop, 'synthetic_population_DHZW_2019_with_hh.csv', row.names=FALSE)

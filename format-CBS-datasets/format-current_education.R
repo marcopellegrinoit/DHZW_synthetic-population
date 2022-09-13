@@ -13,7 +13,7 @@ municipality = "den_haag_2019"
 # Load age conversion codes
 setwd(this.path::this.dir())
 setwd("../data/codes")
-codes_ages_education = read.csv("codes_ages_education.csv", fileEncoding="UTF-8-BOM", sep=";")
+codes_ages_education = read.csv("codes_ages_current_education.csv", fileEncoding="UTF-8-BOM", sep=";")
 codes_education = read.csv("codes_education.csv", sep=';', fileEncoding="UTF-8-BOM")
 
 setwd(this.path::this.dir())
@@ -44,8 +44,8 @@ df_StratEduCurrent = refactor_education(df_StratEduCurrent, codes_education)
 df_StratEduCurrent = df_StratEduCurrent[df_StratEduCurrent$education_level!='',]
 
 # Create new group ages in the stratified dataset to match the migration background stratified
-df_StratEduCurrent = df_StratEduCurrent[!(df_StratEduCurrent$age_group_education %in% 12:14),]
-df_StratEduCurrent$age_group = "age_over_50" 
+#df_StratEduCurrent = df_StratEduCurrent[!(df_StratEduCurrent$age_group_education %in% 12:14),]
+df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education %in% 10:14] = "age_10_15"
 df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education %in% 15:19] = "age_15_20"
 df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education %in% 20:24] = "age_20_25" 
 df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education %in% 25:29] = "age_25_30" 
@@ -53,6 +53,8 @@ df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education == 'age_30_3
 df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education == 'age_35_40'] = "age_35_40" 
 df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education == 'age_40_45'] = "age_40_45"
 df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education == 'age_45_50'] = "age_45_50"
+df_StratEduCurrent$age_group[df_StratEduCurrent$age_group_education == 'age_over_50'] = "age_over_50"
+
 
 # Group the young integer ages into groupages, to match the other dataset groupages
 df_StratEduCurrent = df_StratEduCurrent %>%
