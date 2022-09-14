@@ -1,3 +1,4 @@
+# Select attributes and translate them into English. For ODiN only.
 select_attributes_ODiN <- function (df) {
   df <- df %>% 
     sjlabelled::remove_all_labels() %>% 
@@ -13,27 +14,25 @@ select_attributes_ODiN <- function (df) {
            Herkomst,
            HHGestInkG,
            OPRijbewijsAu,
-           FqNEFiets,
-           FqEFiets,
-           FqBTM,
-           FqTrein,
-           FqAutoB,
-           FqAutoP,
-           FqBrSnor,
+           #FqNEFiets,
+           #FqEFiets,
+           #FqBTM,
+           #FqTrein,
+           #FqAutoB,
+           #FqAutoP,
+           #FqBrSnor,
            Jaar,
            Maand,
            Dag,
            Weekdag,
-           Feestdag,
+           #Feestdag,
            AantVpl,
            AantOVVpl,
            
            VerplID,
            Doel,
            VertLoc,
-           VertGeb,
            VertPC,
-           AankGeb,
            AankPC,
            AfstV,
            Hvm,
@@ -52,8 +51,8 @@ select_attributes_ODiN <- function (df) {
            RVertMin,
            RAankUur,
            RAankMin,
-           RVertStat,
-           RAankStat,
+           #RVertStat,
+           #RAankStat,
            
            FactorP
     ) %>%
@@ -66,27 +65,25 @@ select_attributes_ODiN <- function (df) {
            migration_background = Herkomst,
            hh_std_income = HHGestInkG,
            has_driving_license = OPRijbewijsAu,
-           freq_ebike = FqNEFiets,
-           freq_bike = FqEFiets,
-           freq_bus_tram_metro = FqBTM,
-           treq_train = FqTrein,
-           freq_car_driver = FqAutoB,
-           freq_car_passenger = FqAutoP,
-           freq_moped = FqBrSnor,
+           #freq_ebike = FqNEFiets,
+           #freq_bike = FqEFiets,
+           #freq_bus_tram_metro = FqBTM,
+           #treq_train = FqTrein,
+           #freq_car_driver = FqAutoB,
+           #freq_car_passenger = FqAutoP,
+           #freq_moped = FqBrSnor,
            year = Jaar,
            month = Maand,
            day = Dag,
            weekday = Weekdag,
-           is_festivity = Feestdag,
+           #is_festivity = Feestdag,
            freq_trips = AantVpl,
            freq_trips_public_transp = AantOVVpl,
            
            disp_id = VerplID,
            disp_reason = Doel,
            disp_start_home = VertLoc,
-           disp_start_NL = VertGeb,
            disp_start_PC4 = VertPC,
-           disp_arrival_NL = AankGeb,
            disp_arrival_PC4 = AankPC,
            disp_distance = AfstV,
            disp_modal_choice = Hvm,
@@ -106,14 +103,16 @@ select_attributes_ODiN <- function (df) {
            ride_start_min = RVertMin,
            ride_arrival_hour = RAankUur,
            ride_arrival_min = RAankMin,
-           ride_start_train_station = RVertStat,
-           ride_arrival_train_station = RAankStat,
+           #ride_start_train_station = RVertStat,
+           #ride_arrival_train_station = RAankStat,
            
            p_value = FactorP
     )
+  df$disp_start_PC4 <- as.character(df$disp_start_PC4)
   return(df)
 }
 
+# Select attributes and translate them into English. For OViN only (>2014).
 select_attributes_OViN <- function (df) {
   df <- df %>% 
     sjlabelled::remove_all_labels() %>% 
@@ -140,9 +139,7 @@ select_attributes_OViN <- function (df) {
            VerplNr,
            Doel,
            Vertrekp,
-           VertPCBL,
            VertPC,
-           AankPCBL,
            AankPC,
            AfstV,
            Hvm,
@@ -161,8 +158,8 @@ select_attributes_OViN <- function (df) {
            RVertMin,
            RAankUur,
            RAankMin,
-           RVertStat,
-           RAankStat,
+           #RVertStat,
+           #RAankStat,
            
            FactorP
     ) %>%
@@ -205,14 +202,15 @@ select_attributes_OViN <- function (df) {
            ride_start_min = RVertMin,
            ride_arrival_hour = RAankUur,
            ride_arrival_min = RAankMin,
-           ride_start_train_station = RVertStat,
-           ride_arrival_train_station = RAankStat,
+           #ride_start_train_station = RVertStat,
+           #ride_arrival_train_station = RAankStat,
            
            p_value = FactorP
     )
   return(df)
 }
 
+# Select attributes and translate them into English. For OViN only (<2015).
 select_attributes_OViN_2014 <- function (df) {
   df <- df %>% 
     sjlabelled::remove_all_labels() %>% 
@@ -239,9 +237,7 @@ select_attributes_OViN_2014 <- function (df) {
            VerplNr,
            Doel,
            Vertrekp,
-           VertPCBL,
            VertPC,
-           AankPCBL,
            AankPC,
            AfstV,
            Hvm,
@@ -308,32 +304,240 @@ select_attributes_OViN_2014 <- function (df) {
   return(df)
 }
 
+# Filter agents that live in a specific area, PC4 level
 filter_hh_PC4 <- function(df, df_PC4) {
   df <- df[df$hh_PC4 %in% df_PC4,]
   return(df)
 }
 
+# Filter agents that live in a specific area, municipality level
 filter_hh_municipality <- function(df, municipality_code) {
+  # Filter municipality home
   df <- df[df$hh_municipality == municipality_code,]
+  
+  # Remove useless column
+  df<- subset(df, select=-c(hh_municipality))
   return(df)
 }
 
+# Use the PC4 of the first day displacement (from home) as home address
 home_municipality_to_PC4 <- function(df, df_PC4) {
-  # take only the rows/agents that start the day from home
-  df <- df[df$disp_start_home==1,]
+  # filter agents in OViN that only start the day from home
+  df <- filter_start_day_from_home(df)
   
   # find the starting point of the first move, and set it as home
   df$hh_PC4=NA
-  df[df$disp_counter==1,]$hh_PC4 = df[df$disp_counter==1,]$disp_start_PC4
+  df[df$disp_counter==1,]$hh_PC4 = as.character(df[df$disp_counter==1,]$disp_start_PC4)
   
   # apply attribute to all the rows of the agent
-  df = df %>%
+  df <- df %>%
     group_by(agent_ID) %>% 
     mutate(hh_PC4 = zoo::na.locf(hh_PC4, na.rm=FALSE))
+  
+  # Remove useless column
+  df <- subset(df, select=-c(disp_counter))
+  return(df)
+}
+
+# Filter agents that only start the day from home
+filter_start_day_from_home <- function (df) {
+  # Filter agents starting the day from home
+  df <- df[df$disp_start_home==1,]
+  
+  # Remove useless column
+  df <- subset(df, select=-c(disp_start_home))
+  return(df)
+}
+
+# Format modal choices in English labels and simplify into groups. For ODiN only.
+format_modal_choice_ODiN <- function (df){
+  df <- df %>%
+    mutate(disp_modal_choice = recode(disp_modal_choice,
+                                      '1' = 'car',
+                                      '2' = 'train',
+                                      '3' = 'bus',
+                                      '4' = 'subway',
+                                      '5' = 'tram',
+                                      '6' = 'speed pedelec',
+                                      '7' = 'bike',
+                                      '8' = 'bike',
+                                      '9' = 'foot',
+                                      '10' = 'bus',
+                                      '11' = 'delivery van',
+                                      '12' = 'truck',
+                                      '13' = 'motorhome',
+                                      '14' = 'car',
+                                      '15' = 'agricultural vehicle',
+                                      '16' = 'motorbike',
+                                      '17' = 'moped',
+                                      '18' = 'moped',
+                                      '19' = 'disabled vehicle',
+                                      '20' = 'disabled vehicle',
+                                      '21' = 'skates',
+                                      '22' = 'boat',
+                                      '23' = 'other')) %>%
+    mutate(ride_modal_choice = recode(ride_modal_choice,
+                                      '1' = 'car',
+                                      '2' = 'train',
+                                      '3' = 'bus',
+                                      '4' = 'subway',
+                                      '5' = 'tram',
+                                      '6' = 'speed pedelec',
+                                      '7' = 'bike',
+                                      '8' = 'bike',
+                                      '9' = 'foot',
+                                      '10' = 'bus',
+                                      '11' = 'delivery van',
+                                      '12' = 'truck',
+                                      '13' = 'motorhome',
+                                      '14' = 'car',
+                                      '15' = 'agricultural vehicle',
+                                      '16' = 'motorbike',
+                                      '17' = 'moped',
+                                      '18' = 'moped',
+                                      '19' = 'disabled vehicle',
+                                      '20' = 'disabled vehicle',
+                                      '21' = 'skates',
+                                      '22' = 'boat',
+                                      '23' = 'other'))
+  df[is.na(df$disp_modal_choice) & is.na(df$disp_id),]$disp_modal_choice <- 'No move'
+  df[is.na(df$ride_modal_choice) & is.na(df$ride_id),]$ride_modal_choice <- 'No move'
   
   return(df)
 }
 
-filter_out_NA <- function(df){
-  return (df)
+# Format modal choices in English labels and simplify into groups. For OViN only.
+format_modal_choice_OViN <- function (df){
+  df <- df %>%
+    mutate(disp_modal_choice = recode(disp_modal_choice,
+                                      '1' = 'train',
+                                      '2' = 'bus (private)',
+                                      '3' = 'subway',
+                                      '4' = 'tram',
+                                      '5' = 'bus',
+                                      '6' = 'car',
+                                      '7' = 'delivery van',
+                                      '8' = 'truck',
+                                      '9' = 'motorhome',
+                                      '10' = 'car',
+                                      '11' = 'car', #taxi
+                                      '12' = 'motorbike',
+                                      '13' = 'moped',
+                                      '14' = 'moped',
+                                      '15' = 'bike',
+                                      '16' = 'bike',
+                                      '17' = 'agricultural vehicle',
+                                      '18' = 'boat',
+                                      '19' = 'plane',
+                                      '20' = 'skates',
+                                      '21' = 'disabled vehicle',
+                                      '22' = 'foot',
+                                      '23' = 'foot',
+                                      '24' = 'other')) %>%
+    mutate(ride_modal_choice = recode(ride_modal_choice,
+                                      '1' = 'train',
+                                      '2' = 'bus (private)',
+                                      '3' = 'subway',
+                                      '4' = 'tram',
+                                      '5' = 'bus',
+                                      '6' = 'car',
+                                      '7' = 'delivery van',
+                                      '8' = 'truck',
+                                      '9' = 'motorhome',
+                                      '10' = 'car',
+                                      '11' = 'car', #taxi
+                                      '12' = 'motorbike',
+                                      '13' = 'moped',
+                                      '14' = 'moped',
+                                      '15' = 'bike',
+                                      '16' = 'bike',
+                                      '17' = 'agricultural vehicle',
+                                      '18' = 'boat',
+                                      '19' = 'plane',
+                                      '20' = 'skates',
+                                      '21' = 'disabled vehicle',
+                                      '22' = 'foot',
+                                      '23' = 'foot',
+                                      '24' = 'other'))
+  
+  df[is.na(df$disp_modal_choice) & is.na(df$disp_id),]$disp_modal_choice <- 'No move'
+  df[is.na(df$ride_modal_choice) & is.na(df$ride_id),]$ride_modal_choice <- 'No move'
+  
+  return(df)
+}
+
+# Format roles in rides to English labels. For ODiN only.
+format_ride_role_ODiN <- function (df){
+  df$ride_role <- recode(df$ride_role,
+                         '1' = 'driver',
+                         '2' = 'passenger',
+                         '3' = 'unknown',
+                         '4' = 'does not apply. Nain means of transport is not a passenger or delivery van')
+  df[is.na(df$ride_role) & is.na(df$ride_id),]$ride_role <- 'No move'
+  
+  return(df)
+}
+
+# Format roles in rides to English labels. For OViN only.
+format_ride_role_OViN <- function (df){
+  df$ride_role <- recode(df$ride_role,
+                         '1' = 'driver',
+                         '2' = 'passenger',
+                         '3' = 'train',
+                         '4' = 'bus/tram/metro',
+                         '5' = 'moped',
+                         '6' = 'bike',
+                         '7' = 'foot',
+                         '8' = 'other')
+  df[is.na(df$ride_role) & is.na(df$ride_id),]$ride_role <- 'No move'
+  
+  return(df)
+}
+
+# Format the values of all the attributes in common between ODiN and OViN
+format_values <- function(df) {
+  df$hh_position <- recode(df$hh_position,
+                           '1' = 'single household',
+                           '2' = 'couple',
+                           '3' = 'couple + child(ren)',
+                           '4' = 'couple + child(ren) + other(s)',
+                           '5' = 'couple + other(s)',
+                           '6' = 'single-parent household + child(ren)',
+                           '7' = 'single-parent household + child(ren) + other(s)',
+                           '8' = 'other household',
+                           '9' = 'unknown')
+  
+  df$gender <- recode(df$gender,
+                      '1' =	'male',
+                      '2' =	'female')
+  
+  df$migration_background <- recode(df$migration_background,
+                                    '1' = 'Dutch',
+                                    '2' = 'Western',
+                                    '3' = 'Non_Western',
+                                    '4' = 'unknown')
+  
+  df$has_driving_license <- recode(df$has_driving_license,
+                                   '0' = 'no',
+                                   '1' =	'yes',
+                                   '3' =	'unknown')
+  
+  df$disp_reason <- recode(df$disp_reason,
+                           '1' = 'to home',
+                           '2' = 'to work',
+                           '3' = 'business visit',
+                           '4' = 'transport is the job',
+                           '5' = 'pick up / bring people',
+                           '6' = 'collection/delivery of goods',
+                           '7' = 'follow education',
+                           '8' = 'shopping',
+                           '9' = 'visit/stay',
+                           '10' =	'hiking',
+                           '11' =	'sports/hobby',
+                           '12' =	'other leisure activities',
+                           '13' =	'services/personal care',
+                           '14' =	'other')
+  df[is.na(df$disp_reason) & is.na(df$disp_id),]$disp_reason <- 'No move'
+  
+  return(df)
 }
