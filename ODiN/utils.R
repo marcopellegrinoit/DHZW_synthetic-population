@@ -541,3 +541,11 @@ format_values <- function(df) {
   
   return(df)
 }
+
+get_n_agents <- function(df) {
+  return(length(unique(df$agent_ID)))
+}
+
+get_n_displacements <- function(df) {
+  return(length(unique(df$disp_id)))
+}

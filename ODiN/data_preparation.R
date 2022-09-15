@@ -96,7 +96,7 @@ write.csv(df, 'df_DHZW.csv', row.names=FALSE)
 ################################################################################
 # Formatting of attributes and removal of incomplete
 
-# Load DHZW datasets
+# Load DHZW dataset
 setwd(paste0(this.path::this.dir(), "/data/Formatted"))
 df <- read_csv("df_DHZW.csv")
 
