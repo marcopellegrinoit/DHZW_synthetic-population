@@ -68,10 +68,12 @@ df_ODiN_agents <- df_ODiN %>%
   distinct() %>%
   rename(ODiN_ID = agent_ID)
 
+#############################################################################
 # Age, gender, migration background, PC4 home
 df_merged <- merge_ODiN_synthetic(df_synth_pop, df_ODiN_agents, cols = c('hh_PC4', 'age', 'gender', 'migration_background'))
 prop_unassigned = nrow(df_merged[is.na(df_merged$ODiN_ID),])/nrow(df_synth_pop)
 
+##############################################################################
 # Groupages (5 years), gender, migration background, PC4 home
 df_synth_pop$age_group = ""
 df_synth_pop$age_group[df_synth_pop$age %in% 0:4] = "age_0_5"
@@ -120,6 +122,7 @@ df_ODiN_agents$age_group[df_ODiN_agents$age %in% 95:104] =  "age_over_95"
 df_merged <- merge_ODiN_synthetic(df_synth_pop, df_ODiN_agents, cols = c('hh_PC4', 'age_group', 'gender', 'migration_background'))
 prop_unassigned = nrow(df_merged[is.na(df_merged$ODiN_ID),])/nrow(df_synth_pop)
 
+##############################################################################
 # Groupages (10 years), gender, migration background, PC4 home
 df_synth_pop$age_group = ""
 df_synth_pop$age_group[df_synth_pop$age %in% 0:9] = "age_0_10"
@@ -147,3 +150,42 @@ df_ODiN_agents$age_group[df_ODiN_agents$age %in% 90:104] =  "age_over_90"
 
 df_merged <- merge_ODiN_synthetic(df_synth_pop, df_ODiN_agents, cols = c('hh_PC4', 'age_group', 'gender', 'migration_background'))
 prop_unassigned = nrow(df_merged[is.na(df_merged$ODiN_ID),])/nrow(df_synth_pop)
+
+##############################################################################
+# Custom groupages, gender, migration background, PC4 home
+df_synth_pop$age_group = ""
+df_synth_pop$age_group[df_synth_pop$age %in% 0:9] = "age_0_9"
+df_synth_pop$age_group[df_synth_pop$age %in% 10:14] =  "age_10_14"
+df_synth_pop$age_group[df_synth_pop$age %in% 15:19] = "age_15_19"
+df_synth_pop$age_group[df_synth_pop$age %in% 20:24] =  "age_20_24" 
+df_synth_pop$age_group[df_synth_pop$age %in% 25:29] = "age_25_29"
+df_synth_pop$age_group[df_synth_pop$age %in% 30:39] =  "age_30_39"
+df_synth_pop$age_group[df_synth_pop$age %in% 40:49] =  "age_40_49" 
+df_synth_pop$age_group[df_synth_pop$age %in% 50:69] = "age_50_69"
+df_synth_pop$age_group[df_synth_pop$age >= 70] = "age_over_70"
+
+df_ODiN_agents$age_group = ""
+df_ODiN_agents$age_group[df_ODiN_agents$age %in% 0:9] = "age_0_9"
+df_ODiN_agents$age_group[df_ODiN_agents$age %in% 10:14] =  "age_10_14"
+df_ODiN_agents$age_group[df_ODiN_agents$age %in% 15:19] = "age_15_19"
+df_ODiN_agents$age_group[df_ODiN_agents$age %in% 20:24] =  "age_20_24" 
+df_ODiN_agents$age_group[df_ODiN_agents$age %in% 25:29] = "age_25_29"
+df_ODiN_agents$age_group[df_ODiN_agents$age %in% 30:39] =  "age_30_39"
+df_ODiN_agents$age_group[df_ODiN_agents$age %in% 40:49] =  "age_40_49" 
+df_ODiN_agents$age_group[df_ODiN_agents$age %in% 50:69] = "age_50_69"
+df_ODiN_agents$age_group[df_ODiN_agents$age >= 70] = "age_over_70"
+
+df_merged <- merge_ODiN_synthetic(df_synth_pop, df_ODiN_agents, cols = c('hh_PC4', 'age_group', 'gender', 'migration_background'))
+prop_unassigned = nrow(df_merged[is.na(df_merged$ODiN_ID),])/nrow(df_synth_pop)
+
+unassigned = df_merged[is.na(df_merged$ODiN_ID),]
+
+unassigned_unique <- unassigned %>%
+  select(hh_PC4, age_group, gender, migration_background) %>%
+  distinct() %>%
+  group_by(hh_PC4, age_group, gender, migration_background) %>%
+  summarise(frequency = n()) %>%
+  ungroup
+
+ggplot(unassigned_unique, aes(as.character(hh_PC4), y=age_group))+
+  geom_point()

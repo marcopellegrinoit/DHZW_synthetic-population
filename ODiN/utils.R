@@ -5,7 +5,8 @@ select_attributes_ODiN <- function (df) {
     tibble()    # without this, results will be cast as a list
 
   df <- df %>%
-    select(OPID,
+    select(OP,
+           OPID,
            HHPers,
            HHPlOP,
            WoPC,
@@ -56,7 +57,8 @@ select_attributes_ODiN <- function (df) {
            
            FactorP
     ) %>%
-    rename(agent_ID = OPID,
+    rename(agent_new = OP,
+           agent_ID = OPID,
            hh_size = HHPers,
            hh_position = HHPlOP,
            hh_PC4 = WoPC,
@@ -119,7 +121,8 @@ select_attributes_OViN <- function (df) {
     tibble()    # without this, results will be cast as a list
   
   df <- df %>%
-    select(OPID,
+    select(OP,
+           OPID,
            HHPers,
            HHPlOP,
            Wogem,
@@ -163,7 +166,8 @@ select_attributes_OViN <- function (df) {
            
            FactorP
     ) %>%
-    rename(agent_ID = OPID,
+    rename(agent_new = OP,
+           agent_ID = OPID,
            hh_size = HHPers,
            hh_position = HHPlOP,
            hh_municipality = Wogem,
@@ -217,7 +221,8 @@ select_attributes_OViN_2014 <- function (df) {
     tibble()    # without this, results will be cast as a list
   
   df <- df %>%
-    select(OPID,
+    select(OP,
+           OPID,
            HHPers,
            HHPlOP,
            Wogem,
@@ -259,7 +264,8 @@ select_attributes_OViN_2014 <- function (df) {
            
            FactorP
     ) %>%
-    rename(agent_ID = OPID,
+    rename(agent_new = OP,
+           agent_ID = OPID,
            hh_size = HHPers,
            hh_position = HHPlOP,
            hh_municipality = Wogem,
@@ -353,51 +359,51 @@ filter_start_day_from_home <- function (df) {
 format_modal_choice_ODiN <- function (df){
   df <- df %>%
     mutate(disp_modal_choice = recode(disp_modal_choice,
-                                      '1' = 'car',
+                                      '1' = 'private motorised vehicle', # car
                                       '2' = 'train',
                                       '3' = 'bus',
                                       '4' = 'subway',
                                       '5' = 'tram',
-                                      '6' = 'speed pedelec',
+                                      '6' = 'bike', # e-bike
                                       '7' = 'bike',
                                       '8' = 'bike',
                                       '9' = 'foot',
                                       '10' = 'bus',
-                                      '11' = 'delivery van',
-                                      '12' = 'truck',
-                                      '13' = 'motorhome',
-                                      '14' = 'car',
-                                      '15' = 'agricultural vehicle',
-                                      '16' = 'motorbike',
-                                      '17' = 'moped',
-                                      '18' = 'moped',
-                                      '19' = 'disabled vehicle',
-                                      '20' = 'disabled vehicle',
-                                      '21' = 'skates',
+                                      '11' = 'private motorised vehicle', # delivery van
+                                      '12' = 'private motorised vehicle', # truck
+                                      '13' = 'private motorised vehicle', # motorhome
+                                      '14' = 'private motorised vehicle', # taxi
+                                      '15' = 'private motorised vehicle', # agricultural vehicle
+                                      '16' = 'private motorised vehicle', # motorbike
+                                      '17' = 'private motorised vehicle', # moped
+                                      '18' = 'private motorised vehicle', # moped
+                                      '19' = 'private motorised vehicle', # disabled vehicle with motor
+                                      '20' = 'bike', # disabled vehicle without motor
+                                      '21' = 'foot', # skates
                                       '22' = 'boat',
                                       '23' = 'other')) %>%
     mutate(ride_modal_choice = recode(ride_modal_choice,
-                                      '1' = 'car',
+                                      '1' = 'private motorised vehicle', # car
                                       '2' = 'train',
                                       '3' = 'bus',
                                       '4' = 'subway',
                                       '5' = 'tram',
-                                      '6' = 'speed pedelec',
+                                      '6' = 'bike', # e-bike
                                       '7' = 'bike',
                                       '8' = 'bike',
                                       '9' = 'foot',
                                       '10' = 'bus',
-                                      '11' = 'delivery van',
-                                      '12' = 'truck',
-                                      '13' = 'motorhome',
-                                      '14' = 'car',
-                                      '15' = 'agricultural vehicle',
-                                      '16' = 'motorbike',
-                                      '17' = 'moped',
-                                      '18' = 'moped',
-                                      '19' = 'disabled vehicle',
-                                      '20' = 'disabled vehicle',
-                                      '21' = 'skates',
+                                      '11' = 'private motorised vehicle', # delivery van
+                                      '12' = 'private motorised vehicle', # truck
+                                      '13' = 'private motorised vehicle', # motorhome
+                                      '14' = 'private motorised vehicle', # taxi
+                                      '15' = 'private motorised vehicle', # agricultural vehicle
+                                      '16' = 'private motorised vehicle', # motorbike
+                                      '17' = 'private motorised vehicle', # moped
+                                      '18' = 'private motorised vehicle', # moped
+                                      '19' = 'private motorised vehicle', # disabled vehicle with motor
+                                      '20' = 'bike', # disabled vehicle without motor
+                                      '21' = 'foot', # skates
                                       '22' = 'boat',
                                       '23' = 'other'))
   df[is.na(df$disp_modal_choice) & is.na(df$disp_id),]$disp_modal_choice <- 'No move'
@@ -411,53 +417,53 @@ format_modal_choice_OViN <- function (df){
   df <- df %>%
     mutate(disp_modal_choice = recode(disp_modal_choice,
                                       '1' = 'train',
-                                      '2' = 'bus (private)',
+                                      '2' = 'private motorised vehicle', # bus (private)
                                       '3' = 'subway',
                                       '4' = 'tram',
                                       '5' = 'bus',
-                                      '6' = 'car',
-                                      '7' = 'delivery van',
-                                      '8' = 'truck',
-                                      '9' = 'motorhome',
-                                      '10' = 'car',
-                                      '11' = 'car', #taxi
-                                      '12' = 'motorbike',
-                                      '13' = 'moped',
-                                      '14' = 'moped',
+                                      '6' = 'private motorised vehicle', # car
+                                      '7' = 'private motorised vehicle', # delivery van
+                                      '8' = 'private motorised vehicle', # truck
+                                      '9' = 'private motorised vehicle', # motorhome
+                                      '10' = 'private motorised vehicle', # car
+                                      '11' = 'private motorised vehicle', # taxi
+                                      '12' = 'private motorised vehicle', # motorbike
+                                      '13' = 'private motorised vehicle', # moped
+                                      '14' = 'private motorised vehicle', # moped
                                       '15' = 'bike',
                                       '16' = 'bike',
-                                      '17' = 'agricultural vehicle',
+                                      '17' = 'private motorised vehicle', # agricultural vehicle
                                       '18' = 'boat',
                                       '19' = 'plane',
-                                      '20' = 'skates',
-                                      '21' = 'disabled vehicle',
+                                      '20' = 'foot', # skates
+                                      '21' = 'private motorised vehicle', # disabled vehicle
                                       '22' = 'foot',
-                                      '23' = 'foot',
+                                      '23' = 'foot', # pram
                                       '24' = 'other')) %>%
     mutate(ride_modal_choice = recode(ride_modal_choice,
                                       '1' = 'train',
-                                      '2' = 'bus (private)',
+                                      '2' = 'private motorised vehicle', # bus (private)
                                       '3' = 'subway',
                                       '4' = 'tram',
                                       '5' = 'bus',
-                                      '6' = 'car',
-                                      '7' = 'delivery van',
-                                      '8' = 'truck',
-                                      '9' = 'motorhome',
-                                      '10' = 'car',
-                                      '11' = 'car', #taxi
-                                      '12' = 'motorbike',
-                                      '13' = 'moped',
-                                      '14' = 'moped',
+                                      '6' = 'private motorised vehicle', # car
+                                      '7' = 'private motorised vehicle', # delivery van
+                                      '8' = 'private motorised vehicle', # truck
+                                      '9' = 'private motorised vehicle', # motorhome
+                                      '10' = 'private motorised vehicle', # car
+                                      '11' = 'private motorised vehicle', # taxi
+                                      '12' = 'private motorised vehicle', # motorbike
+                                      '13' = 'private motorised vehicle', # moped
+                                      '14' = 'private motorised vehicle', # moped
                                       '15' = 'bike',
                                       '16' = 'bike',
-                                      '17' = 'agricultural vehicle',
+                                      '17' = 'private motorised vehicle', # agricultural vehicle
                                       '18' = 'boat',
                                       '19' = 'plane',
-                                      '20' = 'skates',
-                                      '21' = 'disabled vehicle',
+                                      '20' = 'foot', # skates
+                                      '21' = 'private motorised vehicle', # disabled vehicle
                                       '22' = 'foot',
-                                      '23' = 'foot',
+                                      '23' = 'foot', # pram
                                       '24' = 'other'))
   
   df[is.na(df$disp_modal_choice) & is.na(df$disp_id),]$disp_modal_choice <- 'No move'
@@ -467,19 +473,26 @@ format_modal_choice_OViN <- function (df){
 }
 
 # Format roles in rides to English labels. For ODiN only.
-format_ride_role_ODiN <- function (df){
+format_role_ODiN <- function (df){
   df$ride_role <- recode(df$ride_role,
                          '1' = 'driver',
                          '2' = 'passenger',
                          '3' = 'unknown',
-                         '4' = 'does not apply. Nain means of transport is not a passenger or delivery van')
+                         '4' = 'no role')
   df[is.na(df$ride_role) & is.na(df$ride_id),]$ride_role <- 'No move'
+  
+  df$disp_role <- recode(df$disp_role,
+                         '1' = 'driver',
+                         '2' = 'passenger',
+                         '3' = 'unknown',
+                         '4' = 'no role')
+  df[is.na(df$disp_role) & is.na(df$disp_id),]$disp_role <- 'No move'
   
   return(df)
 }
 
 # Format roles in rides to English labels. For OViN only.
-format_ride_role_OViN <- function (df){
+format_role_OViN <- function (df){
   df$ride_role <- recode(df$ride_role,
                          '1' = 'driver',
                          '2' = 'passenger',
@@ -491,11 +504,22 @@ format_ride_role_OViN <- function (df){
                          '8' = 'other')
   df[is.na(df$ride_role) & is.na(df$ride_id),]$ride_role <- 'No move'
   
+  df$disp_role <- recode(df$disp_role,
+                         '0' = 'no role',
+                         '1' = 'driver',
+                         '2' = 'passenger',
+                         '3' = 'both driver and passenger')
+  df[is.na(df$disp_role) & is.na(df$disp_id),]$disp_role <- 'No move'
+  
   return(df)
 }
 
 # Format the values of all the attributes in common between ODiN and OViN
 format_values <- function(df) {
+  df$agent_new <- recode(df$agent_new,
+                      '0' =	'no',
+                      '1' =	'yes')
+  
   df$hh_position <- recode(df$hh_position,
                            '1' = 'single household',
                            '2' = 'couple',

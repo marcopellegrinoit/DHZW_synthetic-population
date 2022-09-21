@@ -16,8 +16,7 @@ df_PC6_neighb <- read_delim("CBS PC neighbourhoods/PC6_neighbourhoods_2019.csv",
 df_PC6_neighb <- df_PC6_neighb %>%
   filter(Gemeente2019==municipality_code) %>%
   select(PC6, Buurt2019) %>%  # start to filter the entire The Hague
-  rename(neighb_code = Buurt2019) %>%
-  distinct()
+  rename(neighb_code = Buurt2019)
 
 df_PC6_neighb$neighb_code <- paste0('BU0', df_PC6_neighb$neighb_code)
 
@@ -32,7 +31,7 @@ df_PC6_neighb <- read_csv("PC6_neighb.csv")
 df_PC6_neighb$PC4 = gsub('.{2}$', '', df_PC6_neighb$PC6)
 df_PC6_neighb <- subset(df_PC6_neighb, select=-c(PC6))
 
-# Filter DHZW area and calculate proportions PC4 - neighbourhoods
+# Filter DHZW area and calculate proportions PC4 - neighbourhoods. Since the rows are individual houses, the proportion is the amount oh houses of each PC4 in each neighbourhood code.
 df_PC6_neighb <- df_PC6_neighb %>%
   filter(neighb_code %in% DHZW_neighborhood_codes) %>%
   filter(PC4 %in% DHZW_PC4_codes) %>%
