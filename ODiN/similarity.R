@@ -39,7 +39,7 @@ df_synth_pop$gender_value <- recode(df_synth_pop$gender,
 df_synth_pop$migration_background_value <- recode(df_synth_pop$migration_background,
                                                            'Dutch' = 1.0,
                                                            'Western' = 0.5,
-                                                           'Non_Western' = 0.5)
+                                                           'Non_Western' = 0.0)
 
 df_synth_pop$age_value <- df_synth_pop$age/max(df_synth_pop$age)
 
