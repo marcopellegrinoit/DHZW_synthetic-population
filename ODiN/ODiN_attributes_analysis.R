@@ -94,3 +94,37 @@ ggplot(df_difference, aes(x=as.character(age_group), y=as.character(hh_PC4), siz
   xlab("Age group")+
   ylab("Home PC4")+
   labs(size='% missing agents in \n synthetic population') 
+
+
+
+###########################################################################
+
+library(readr)
+df_match_synthetic_ODiN <- read_csv("df_match_synthetic_ODiN.csv")
+df_ODiN_prototypes <- read_csv("df_ODiN_prototype.csv")
+df_synth_pop <- read_csv("~/DHZW_synthetic-population/synthetic-populations/synthetic_population_DHZW_2019_with_hh.csv")
+df_synth_pop$type='synthetic'
+df_synth_pop <- df_synth_pop %>%
+  select(agent_ID, age, gender, migration_background)
+  
+
+df_ODiN_prototypes <- df_ODiN_prototypes %>%
+  select(prototype_ID, age, gender, migration_background) %>%
+  distinct()
+
+df_match_synthetic_ODiN <- merge(df_match_synthetic_ODiN, df_ODiN_prototypes, by='prototype_ID')
+df_match_synthetic_ODiN$type='ODiN'
+
+df_match_synthetic_ODiN < - df_match_synthetic_ODiN %>%
+  select(prototype_ID, agent_ID, age, gender, migration_background)
+
+df_match_synthetic_ODiN <- merge(df_match_synthetic_ODiN, df_synth_pop, by=c('agent_ID', 'type'))
+
+df_match_synthetic_ODiN <- df_match_synthetic_ODiN %>%
+  select(agent_ID, prototype_ID, age, age_ODiN, gender, gender_ODiN, migration_background, migration_ODiN, perfect_match) %>%
+  filter(perfect_match==FALSE)
+
+df<-df_match_synthetic_ODiN %>%
+  pivot_longer(cols = -c(agent_ID, prototype_ID, perfect_match, age, gender, migration_background),
+               names_to = 'type',
+               values_to = c("age", "year", "migration_background"))
