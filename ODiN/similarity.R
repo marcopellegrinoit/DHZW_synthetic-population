@@ -7,70 +7,133 @@ library(readr)
 
 setwd(paste0(this.path::this.dir(), "/data/Formatted"))
 df_ODiN <- read_csv("df_DHZW.csv")
-df_synth_pop <- read_csv("~/DHZW_synthetic-population/synthetic-populations/synthetic_population_DHZW_2019_with_hh.csv")
+df_synth_pop <-
+  read_csv(
+    "~/DHZW_synthetic-population/synthetic-populations/synthetic_population_DHZW_2019_with_hh.csv"
+  )
 
 ################################################################################
-# I make each ODiN agents unique, representing the centroid of clusters
-df_unique_ODiN_agents <- df_ODiN %>%
+# Formatting of ODiN
+
+# Select agents from ODiN
+df_ODiN_agents <- df_ODiN %>%
   select(agent_ID, hh_PC4, age, gender, migration_background) %>%
-  distinct(across(-agent_ID), .keep_all = TRUE)
+  distinct()
 
-df_unique_ODiN_agents$gender_value <- recode(df_unique_ODiN_agents$gender,
-                                       'male' = 0,
-                                       'female' = 1)
+# Add ID to link each agent to its unique protoype
+df_ODiN_agents <- df_ODiN_agents %>%
+  mutate(prototype_ID = group_indices(., hh_PC4, age, gender, migration_background))
 
-df_unique_ODiN_agents$migration_background_value <- recode(df_unique_ODiN_agents$migration_background,
-                                                     'Dutch' = 1.0,
-                                                     'Western' = 0.5,
-                                                     'Non_Western' = 0.5)
+# For each ODiN agent, count how many have the same protoype
+df_ODiN_agents <- df_ODiN_agents %>%
+  group_by(prototype_ID) %>%
+  mutate(freq_same_prototype = n())
 
-df_unique_ODiN_agents$age_value <- df_unique_ODiN_agents$age/max(df_synth_pop$age)
+# Save dataset
+setwd(paste0(this.path::this.dir(), "/data/Formatted"))
+write.csv(df_ODiN_agents, 'df_ODiN_prototype.csv', row.names=FALSE)
 
+# Select each unique prototype, to be centroids of the vectorial space
+df_ODiN_prototypes <- df_ODiN_agents %>%
+  select(prototype_ID, hh_PC4, age, gender, migration_background) %>%
+  distinct()
 
-df_unique_ODiN_agents <- df_unique_ODiN_agents %>%
-  select(agent_ID, hh_PC4, gender, gender_value, migration_background, migration_background_value, age, age_value)
+# Transform values into vector coordinates
+df_ODiN_prototypes$gender <- recode(df_ODiN_prototypes$gender,
+                                   'male' = 0,
+                                   'female' = 1)
+
+df_ODiN_prototypes$migration_background <-
+  recode(
+    df_ODiN_prototypes$migration_background,
+    'Dutch' = 1.0,
+    'Western' = 0.5,
+    'Non_Western' = 0.0
+  )
+
+df_ODiN_prototypes$age <-
+  df_ODiN_prototypes$age / max(df_synth_pop$age)
 
 ################################################################################
+# Formatting of the synthetic population
 
-df_synth_pop$gender_value <- recode(df_synth_pop$gender,
-                                             'male' = 0,
-                                             'female' = 1)
+# Transform values into vector coordinates
+df_synth_pop$gender <- recode(df_synth_pop$gender,
+                              'male' = 0,
+                              'female' = 1)
 
-df_synth_pop$migration_background_value <- recode(df_synth_pop$migration_background,
-                                                           'Dutch' = 1.0,
-                                                           'Western' = 0.5,
-                                                           'Non_Western' = 0.0)
+df_synth_pop$migration_background <-
+  recode(
+    df_synth_pop$migration_background,
+    'Dutch' = 1.0,
+    'Western' = 0.5,
+    'Non_Western' = 0.0
+  )
 
-df_synth_pop$age_value <- df_synth_pop$age/max(df_synth_pop$age)
+df_synth_pop$age <- df_synth_pop$age / max(df_synth_pop$age)
 
 df_synth_pop <- df_synth_pop %>%
-  select(agent_ID, hh_PC4, gender, gender_value, migration_background, migration_background_value, age, age_value)
+  select(agent_ID, hh_PC4, gender, migration_background, age)
 
 ################################################################################
+# Matching of synthetic agents to the closest ODiN prototype
+df_match_synthetic_ODiN <- df_synth_pop
 
-df_synth_pop$ODiN_ID = NA
-df_synth_pop$perfect_match = NA
+df_match_synthetic_ODiN$prototype_ID = NA
+df_match_synthetic_ODiN$perfect_match = NA
 
-#df_synth_pop <- df_synth_pop [1:10,]
-for (i in 1:nrow(df_synth_pop)) {
-  print(i)
-  dist_table <- df_unique_ODiN_agents[df_unique_ODiN_agents$hh_PC4==df_synth_pop[i,]$hh_PC4,]
+#df_match_synthetic_ODiN <- df_match_synthetic_ODiN [1:10,]
+for (i in 1:nrow(df_match_synthetic_ODiN)) {
+  synthetic_agent <- df_match_synthetic_ODiN[i,]
   
+  # Filter agents in the same postal code area
+  dist_table <-
+    df_ODiN_prototypes[df_ODiN_prototypes$hh_PC4 == synthetic_agent$hh_PC4,]
+  
+  # Calculate distance to each prototype
   dist_table$dist = sqrt(
-    (dist_table$gender_value-df_synth_pop[i,]$gender_value)^2 +
-    (dist_table$migration_background_value-df_synth_pop[i,]$migration_background_value)^2 +
-    (dist_table$age_value-df_synth_pop[i,]$age_value)^2
-    )
+    (dist_table$gender - synthetic_agent$gender) ^ 2 +
+      (
+        dist_table$migration_background - synthetic_agent$migration_background
+      ) ^ 2 +
+      (dist_table$age - synthetic_agent$age) ^ 2
+  )
   
-  df_synth_pop[i,]$ODiN_ID <- dist_table[which.min(dist_table$dist),]$agent_ID
+  # Retrieve prototype ID of the closest match
+  prototype_ID <-
+    dist_table[which.min(dist_table$dist),]$prototype_ID
   
-  agent_ODiN <- dist_table[dist_table$agent_ID==df_synth_pop[i,]$ODiN_ID,]
-  if(df_synth_pop[i,]$hh_PC4==agent_ODiN$hh_PC4 &
-     df_synth_pop[i,]$gender==agent_ODiN$gender &
-     df_synth_pop[i,]$migration_background==agent_ODiN$migration_background &
-     df_synth_pop[i,]$age==agent_ODiN$age) {
-    df_synth_pop[i,]$perfect_match = TRUE
+  # assign prototype ID to the synthetic agent
+  df_match_synthetic_ODiN[i,]$prototype_ID <- prototype_ID
+  
+  # Retrieve the attributes of the ODiN prototype to check if the synthetic agent is exactly equal, or similar
+  agent_ODiN <-
+    dist_table[dist_table$prototype_ID == prototype_ID,]
+  
+  if (synthetic_agent$gender == agent_ODiN$gender &
+      synthetic_agent$migration_background == agent_ODiN$migration_background &
+      synthetic_agent$age == agent_ODiN$age) {
+    df_match_synthetic_ODiN[i,]$perfect_match = TRUE
   } else {
-    df_synth_pop[i,]$perfect_match = FALSE
+    df_match_synthetic_ODiN[i,]$perfect_match = FALSE
   }
 }
+
+df_match_synthetic_ODiN <- df_match_synthetic_ODiN %>%
+  select(agent_ID, prototype_ID, perfect_match)
+
+# Save dataset
+setwd(paste0(this.path::this.dir(), "/data/Formatted"))
+write.csv(df_match_synthetic_ODiN, 'df_match_synthetic_ODiN.csv', row.names=FALSE)
+
+# Analysis of exact matches
+table(df_match_synthetic_ODiN$perfect_match)
+
+# Analysis of how many ODiN agents are assigned to synthetic agents
+df_analysis <- df_ODiN_agents %>%
+  select(prototype_ID, freq_same_prototype) %>%
+  distinct()
+
+df_analysis = merge(df_match_synthetic_ODiN, df_analysis, by='prototype_ID')
+
+table(df_analysis$freq_same_prototype)
