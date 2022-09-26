@@ -4,6 +4,7 @@ library("rgdal")
 library('ggplot2')
 library("this.path")
 library('ggmap')
+library(readr)
 setwd(this.path::this.dir())
 
 ################################################################################
@@ -60,7 +61,8 @@ ggplot()+
 
 ################################################################################
 # With map
-register_google(key = "AIzaSyCpSLUZnBpl5M0SH2Zvb4tmXC3NNll3rro", write = TRUE)
+google_key <- read_file("data/google_key.txt")
+register_google(key = google_key, write = TRUE)
 
 map <- get_map(c(4.23, 52.02, 4.32, 52.07), source = "google", zoom=14)
 

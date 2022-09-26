@@ -104,7 +104,9 @@ ggmap_bbox <- function(map) {
 }
 
 # Download Google map
-register_google(key = "AIzaSyCpSLUZnBpl5M0SH2Zvb4tmXC3NNll3rro", write = TRUE)
+setwd(paste0(this.path::this.dir(), "/data"))
+google_key <- read_file("google_key.txt")
+register_google(key = google_key, write = TRUE)
 map <- get_map(c(4.23, 52.02, 4.32, 52.07), source = "google", zoom=14)
 map <- ggmap_bbox(map)
 
