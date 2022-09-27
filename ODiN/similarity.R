@@ -28,6 +28,8 @@ reformat_attributes_similarity <- function (df) {
 ################################################################################
 # Formatting of ODiN
 
+df_ODiN <- read_csv("df_DHZW.csv")
+
 # Select agents from ODiN
 df_ODiN_agents <- df_ODiN %>%
   select(agent_ID, hh_PC4, age, gender, migration_background) %>%
@@ -77,61 +79,65 @@ df_match_synthetic_ODiN$prototype_ID = NA
 df_match_synthetic_ODiN$perfect_match = NA
 df_match_synthetic_ODiN$dist = 0
 
-df_match_synthetic_ODiN <- df_match_synthetic_ODiN [1:100, ]
+start_time <- Sys.time()
+
 for (i in 1:nrow(df_match_synthetic_ODiN)) {
-  synthetic_agent <- df_match_synthetic_ODiN[i, ]
+  synthetic_agent <- df_match_synthetic_ODiN[i,]
   
   # Filter agents in the same postal code area
   dist_table <-
-    df_ODiN_prototypes[df_ODiN_prototypes$hh_PC4 == synthetic_agent$hh_PC4, ]
+    df_ODiN_prototypes[df_ODiN_prototypes$hh_PC4 == synthetic_agent$hh_PC4,]
   
-  if (FALSE) {
-    # Calculate distance to each prototype
-    dist_table$dist = sqrt(sum(
-      (dist_table$male - synthetic_agent$male) ^ 2,
-      (dist_table$female - synthetic_agent$female) ^ 2,
-      (
-        dist_table$migration_Dutch - synthetic_agent$migration_Dutch
-      ) ^ 2,
-      (
-        dist_table$migration_Western - synthetic_agent$migration_Western
-      ) ^ 2,
-      (
-        dist_table$migration_Non_Western - synthetic_agent$migration_Non_Western
-      ) ^ 2,
-      (dist_table$age_0_9 - synthetic_agent$age_0_9) ^ 2,
-      (dist_table$age_10_14 - synthetic_agent$age_10_14) ^ 2,
-      (dist_table$age_15_19 - synthetic_agent$age_15_19) ^ 2,
-      (dist_table$age_20_24 - synthetic_agent$age_20_24) ^ 2,
-      (dist_table$age_25_29 - synthetic_agent$age_25_29) ^ 2,
-      (dist_table$age_30_39 - synthetic_agent$age_30_39) ^ 2,
-      (dist_table$age_40_49 - synthetic_agent$age_40_49) ^ 2,
-      (dist_table$age_50_69 - synthetic_agent$age_50_69) ^ 2,
-      (dist_table$age_over_70 - synthetic_agent$age_over_70) ^ 2
-    ))
-  }
+  # Calculate distance to each prototype
+  dist_table$dist = sqrt(sum(
+    (dist_table$male - synthetic_agent$male) ^ 2,
+    (dist_table$female - synthetic_agent$female) ^ 2,
+    (
+      dist_table$migration_Dutch - synthetic_agent$migration_Dutch
+    ) ^ 2,
+    (
+      dist_table$migration_Western - synthetic_agent$migration_Western
+    ) ^ 2,
+    (
+      dist_table$migration_Non_Western - synthetic_agent$migration_Non_Western
+    ) ^ 2,
+    (dist_table$age_0_9 - synthetic_agent$age_0_9) ^ 2,
+    (dist_table$age_10_14 - synthetic_agent$age_10_14) ^ 2,
+    (dist_table$age_15_19 - synthetic_agent$age_15_19) ^ 2,
+    (dist_table$age_20_24 - synthetic_agent$age_20_24) ^ 2,
+    (dist_table$age_25_29 - synthetic_agent$age_25_29) ^ 2,
+    (dist_table$age_30_39 - synthetic_agent$age_30_39) ^ 2,
+    (dist_table$age_40_49 - synthetic_agent$age_40_49) ^ 2,
+    (dist_table$age_50_69 - synthetic_agent$age_50_69) ^ 2,
+    (dist_table$age_over_70 - synthetic_agent$age_over_70) ^ 2
+  ))
+  
   
   # Retrieve prototype ID of the closest match
   prototype_ID <-
-    dist_table[which.min(dist_table$dist), ]$prototype_ID
+    dist_table[which.min(dist_table$dist),]$prototype_ID
   
   # assign prototype ID to the synthetic agent
-  df_match_synthetic_ODiN[i, ]$prototype_ID <- prototype_ID
+  df_match_synthetic_ODiN[i,]$prototype_ID <- prototype_ID
   
-  df_match_synthetic_ODiN[i, ]$dist <- min(dist_table$dist)
+  df_match_synthetic_ODiN[i,]$dist <- min(dist_table$dist)
   
   # Retrieve the attributes of the ODiN prototype to check if the synthetic agent is exactly equal, or similar
   agent_ODiN <-
-    dist_table[dist_table$prototype_ID == prototype_ID, ]
+    dist_table[dist_table$prototype_ID == prototype_ID,]
   
   if (synthetic_agent$gender == agent_ODiN$gender &
       synthetic_agent$migration_background == agent_ODiN$migration_background &
       synthetic_agent$age == agent_ODiN$age) {
-    df_match_synthetic_ODiN[i, ]$perfect_match = TRUE
+    df_match_synthetic_ODiN[i,]$perfect_match = TRUE
   } else {
-    df_match_synthetic_ODiN[i, ]$perfect_match = FALSE
+    df_match_synthetic_ODiN[i,]$perfect_match = FALSE
   }
 }
+
+end_time <- Sys.time()
+difftime(end_time, start_time, units = "secs")
+difftime(end_time, start_time, units = "mins")
 
 df_match_synthetic_ODiN <- df_match_synthetic_ODiN %>%
   select(agent_ID, prototype_ID, perfect_match, dist)
@@ -180,11 +186,11 @@ df_match_synthetic_ODiN$age_diff = abs(df_match_synthetic_ODiN$synthetic_age - d
 mean(df_match_synthetic_ODiN$age_diff)
 
 # % corresponding genders
-nrow(df_match_synthetic_ODiN[df_match_synthetic_ODiN$synthetic_gender == df_match_synthetic_ODiN$ODiN_gender, ]) /
+nrow(df_match_synthetic_ODiN[df_match_synthetic_ODiN$synthetic_gender == df_match_synthetic_ODiN$ODiN_gender,]) /
   nrow(df_match_synthetic_ODiN)
 
 # % corresponding migration backgrounds
-nrow(df_match_synthetic_ODiN[df_match_synthetic_ODiN$synthetic_migration == df_match_synthetic_ODiN$ODiN_migration, ]) /
+nrow(df_match_synthetic_ODiN[df_match_synthetic_ODiN$synthetic_migration == df_match_synthetic_ODiN$ODiN_migration,]) /
   nrow(df_match_synthetic_ODiN)
 
 # Save dataset
