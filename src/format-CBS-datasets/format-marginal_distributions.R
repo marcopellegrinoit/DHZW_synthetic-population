@@ -81,7 +81,7 @@ df_marginal_dist$migration_Dutch = df_marginal_dist$tot_pop - (df_marginal_dist$
 # filter DHZW area
 if (filter_DHZW) {
   setwd(this.path::this.dir())
-  setwd("../../data")
+  setwd("../../data/codes")
   DHZW_neighborhood_codes <-
     read.csv("DHZW_neighbourhoods_codes.csv",
              sep = ";" ,

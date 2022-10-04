@@ -32,7 +32,7 @@ df_marginal_dist = read.csv("marginal_distributions_84583NED-formatted.csv", sep
 
 # filter DHZW area
 if (filter_DHZW) {
-  setwd(paste(this.path::this.dir(), 'data', sep = '/'))
+  setwd(paste(this.path::this.dir(), 'data/codes', sep = '/'))
   DHZW_neighborhood_codes <-
     read.csv("DHZW_neighbourhoods_codes.csv",
              sep = ";" ,
