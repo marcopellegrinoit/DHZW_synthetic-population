@@ -1,19 +1,56 @@
+################################################################################
+#
+# Purpose of script: group agents of a synthetic population into households.
+#
+# Author: Marco Pellegrino
+#
+# Year: 2022
+#
+################################################################################
+
 library("this.path")
-setwd(this.path::this.dir())
 library(dplyr)
 library (readr)
-source('utils-households.R')
+setwd(this.path::this.dir())
+source('config/config.R')
+source('src/utils-households.R')
 
 start_time <- Sys.time()
 
-municipality = "den_haag_2019"
-
 # Load marginal distribution
-setwd(paste(this.path::this.dir(), "/data/", municipality, sep = ""))
+setwd(
+  paste(
+    this.path::this.dir(),
+    "data/processed",
+    year,
+    municipality,
+    'individuals_demographics',
+    sep = '/'
+  )
+)
 df_marginal_dist = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 
-setwd(this.path::this.dir())
-setwd(paste0('data/', municipality, '/households/distributions'))
+# filter DHZW area
+if (filter_DHZW) {
+  setwd(paste(this.path::this.dir(), 'data', sep = '/'))
+  DHZW_neighborhood_codes <-
+    read.csv("DHZW_neighbourhoods_codes.csv",
+             sep = ";" ,
+             header = F)$V1
+  df_marginal_dist = df_marginal_dist[df_marginal_dist$neighb_code %in% DHZW_neighborhood_codes, ]
+}
+
+# Load datasets of the municipality for that year
+setwd(
+  paste(
+    this.path::this.dir(),
+    "data/processed",
+    year,
+    municipality,
+    'households',
+    sep = '/'
+  )
+)
 df_parents <-
   read_csv("couples_singleparents-71488NED-formatted.csv")
 df_individuals_nochildren <-
@@ -21,12 +58,20 @@ df_individuals_nochildren <-
 df_singleparents <-
   read_csv("singleparents_gender-71488NED-formatted.csv")
 
-setwd(paste0(this.path::this.dir(), '/data/'))
+# Load datasets on national level
+setwd(
+  paste(
+    this.path::this.dir(),
+    "data/processed",
+    sep = '/'
+  )
+)
 df_couples_genders <-
   read.csv("couples_gender_disparity_37772ENG-formatted.csv", sep = ',')
 df_couples_ages <- read.csv("couples_age_disparity.csv", sep = ',')
 
-setwd(paste0(this.path::this.dir(), "/synthetic-populations"))
+# Load synthetic population
+setwd(paste0(this.path::this.dir(), "/output/synthetic-population"))
 df_synth_pop = read.csv('synthetic_population_DHZW_2019.csv')
 df_synth_pop$hh_ID = NA
 df_synth_pop$hh_type = NA
@@ -37,12 +82,8 @@ colnames(df_households) <- c("hh_ID", "hh_size", "neighb_code")
 
 df_synth_pop$child_too_old <- FALSE
 
-
 # For each neighbourhood area
 for (neighb_code in unique(df_synth_pop$neighb_code)) {
-  
-  #df_synth_pop = df_synth_pop[df_synth_pop$neighb_code=='BU05181785',]
-  #neighb_code = 'BU05181785'
   
   # Retrieve how many households per children in households we need
   n_households = get_households_children(df_synth_pop, neighb_code)
@@ -377,8 +418,16 @@ end_time <- Sys.time()
 difftime(end_time, start_time, units = "secs")
 difftime(end_time, start_time, units = "mins")
 
-write.csv(df_synth_pop, 'synthetic_population_DHZW_2019_with_hh.csv', row.names = FALSE)
-
-setwd(this.path::this.dir())
-setwd(paste0('data/', municipality, '/households/output'))
-write.csv(df_households, 'df_households_DHZW_2019-new.csv', row.names = FALSE)
+setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep =
+              '/'))
+if (filter_DHZW) {
+  write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '_with_hh.csv'), row.names = FALSE)
+  write.csv(df_households, paste0('df_households_DHZW_', year, '.csv'), row.names = FALSE)
+} else {
+  write.csv(
+    df_synth_pop,
+    paste0('synthetic_population_', municipality, '_', year, '_with_hh.csv'),
+    row.names = FALSE
+  )
+  write.csv(df_households, paste0('df_households_DHZW_', municipality, '_', year, '.csv'), row.names = FALSE)
+}
