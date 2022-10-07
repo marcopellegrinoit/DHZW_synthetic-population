@@ -43,7 +43,7 @@ if (filter_DHZW) {
 ################################################################################
 # Initialise synthetic population with with neigbbourhoods
 
-# population_size = sum(df_marginal_dist['tot_pop']) # 78635
+# population_size = sum(df_marginal_dist['tot_pop']) # 84880
 
 # Distribute empty agents of neighbourhoods
 df_synth_pop <-
@@ -385,7 +385,7 @@ df_synth_pop[is.na(df_synth_pop$edu_attainment), ]$edu_attainment = sample(
 setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep =
               '/'))
 if (filter_DHZW) {
-  write.csv(df_synth_pop, paste0('DHZW_', year, '.csv'), row.names = FALSE)
+  write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
 } else {
   write.csv(
     df_synth_pop,
