@@ -418,6 +418,46 @@ end_time <- Sys.time()
 difftime(end_time, start_time, units = "secs")
 difftime(end_time, start_time, units = "mins")
 
+################################################################################
+# Locate households into PC6 codes
+
+# Load CBS dataset PC6 - neighbourhood conversion with proportions of PC6 per each neighbourhood code
+setwd(this.path::this.dir())
+setwd(paste("data/processed",
+            year,
+            municipality,
+            sep = '/'))
+df_PC6_neighb <- read_delim(
+  "PC6_neighbourhoods.csv",
+  delim = ",",
+  escape_double = FALSE,
+  trim_ws = TRUE
+)
+
+# Prepare PC6 attribute for the household dataset
+df_households$PC6 <- NA
+
+# For each neighbourhood
+for(neighb_code in unique(df_households$neighb_code)){
+  # Sample n PC6 codes from the PC6 distribution of this neighbourhood, where n is the number of synthetic households
+
+  df_unassigned_hh <- df_households[df_households$neighb_code==neighb_code,]
+  
+  hh_PC6 = sample(x = df_PC6_neighb[df_PC6_neighb$neighb_code==neighb_code,]$PC6, 
+                  size = nrow(df_unassigned_hh),
+                  replace = TRUE,
+                  prob = df_PC6_neighb[df_PC6_neighb$neighb_code==neighb_code,]$prop)
+  
+  # Apply the sampled PC6 code to the synthetic households
+  df_households[df_households$neighb_code == neighb_code,]$PC6 = hh_PC6
+}
+
+# Add the PC6 code also to the individual synthetic agents
+df_synth_pop <- merge(df_synth_pop, df_households)
+
+################################################################################
+# Save
+
 setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep =
               '/'))
 if (filter_DHZW) {
