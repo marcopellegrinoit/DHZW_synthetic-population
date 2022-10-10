@@ -32,7 +32,7 @@ df_marginal_dist = read.csv("marginal_distributions_84583NED-formatted.csv", sep
 
 # filter DHZW area
 if (filter_DHZW) {
-  setwd(paste(this.path::this.dir(), 'data', sep = '/'))
+  setwd(paste(this.path::this.dir(), 'data/codes', sep = '/'))
   DHZW_neighborhood_codes <-
     read.csv("DHZW_neighbourhoods_codes.csv",
              sep = ";" ,
@@ -457,6 +457,8 @@ df_synth_pop <- merge(df_synth_pop, df_households)
 
 ################################################################################
 # Save
+
+df_synth_pop <- subset(df_synth_pop, select=-c(child_too_old))
 
 setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep =
               '/'))

@@ -2,3 +2,4 @@
 .RData
 .DS_Store
 ._*
+/data/shapefiles/*
