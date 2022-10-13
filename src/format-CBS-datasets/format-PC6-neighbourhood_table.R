@@ -46,12 +46,6 @@ if (filter_DHZW) {
   df_PC6_neighb <- subset(df_PC6_neighb, select = -c(PC4))
 }
 
-# Calculate proportions PC6 - neighbourhoods. Since the rows are individual houses, the proportion is the amount oh houses of each PC4 in each neighbourhood code.
-df_PC6_neighb <- df_PC6_neighb %>%
-  group_by(neighb_code, PC6) %>%
-  summarise(freq = n()) %>%
-  mutate(prop = freq / sum(freq))
-
 setwd(this.path::this.dir())
 setwd(paste("../../data/processed",
             year,

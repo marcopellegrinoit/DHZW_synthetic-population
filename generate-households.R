@@ -423,12 +423,9 @@ difftime(end_time, start_time, units = "mins")
 
 # Load CBS dataset PC6 - neighbourhood conversion with proportions of PC6 per each neighbourhood code
 setwd(this.path::this.dir())
-setwd(paste("data/processed",
-            year,
-            municipality,
-            sep = '/'))
+setwd("data/processed/BAG")
 df_PC6_neighb <- read_delim(
-  "PC6_neighbourhoods.csv",
+  "proportions_PC6_neighbcode_BAG.csv",
   delim = ",",
   escape_double = FALSE,
   trim_ws = TRUE
