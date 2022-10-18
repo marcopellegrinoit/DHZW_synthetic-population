@@ -16,14 +16,15 @@ DHZW_PC4_codes <-
 # Load BAG The Hague
 setwd(this.path::this.dir())
 df_BAG <- st_read('../data/raw/BAG_The_Hague')
-
 # Translate columns and filter DHZW area
 df <- df_BAG %>%
-  select(gebrdoel,
+  select(status,
+         gebrdoel,
          woonfuncti,
          kantoor,
          sport,
          winkel,
+         onderwijs,
          a_huisnum,
          a_huislett,
          a_postcode
@@ -32,11 +33,13 @@ df <- df_BAG %>%
          residential = woonfuncti,
          office = kantoor,
          retail = winkel,
+         school = onderwijs,
          hh_number = a_huisnum,
          hh_letter = a_huislett,
          PC6 = a_postcode) %>%
   mutate(PC4 = gsub('.{2}$', '', PC6)) %>%
-  filter(PC4 %in% DHZW_PC4_codes)
+  filter(PC4 %in% DHZW_PC4_codes) %>%
+  filter(status == 'Verblijfsobject in gebruik') # Filter buildings that exist already, not future
 
 # Translate building uses into English
 df$use <- recode(df$use,
@@ -79,6 +82,16 @@ df_retails <- df %>%
   filter(use == 'retail')
 st_write(df_retails, '../data/processed/BAG/buildings_retail', driver = "ESRI Shapefile")
 
+# Filter schools
+df_schools <- df %>%
+  filter(use == 'school')
+st_write(df_schools, '../data/processed/BAG/buildings_school', driver = "ESRI Shapefile")
+
+# Filter schools
+df_offices <- df %>%
+  filter(use == 'office')
+st_write(df_offices, '../data/processed/BAG/buildings_office', driver = "ESRI Shapefile")
+
 ################################################################################
 # Assign neighb_code to each PC6 of BAG
 
@@ -114,3 +127,7 @@ df_residential <- df_residential %>%
 setwd(this.path::this.dir())
 setwd('../data/processed/BAG')
 write.csv(df_residential, 'proportions_PC6_neighbcode_BAG.csv', row.names = FALSE)
+
+
+df <- df_PC6_neighb %>%
+  filter(! (PC6 %in% unique(df_PC6_neighb$PC6)))

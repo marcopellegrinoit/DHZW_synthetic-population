@@ -41,7 +41,7 @@ if (filter_DHZW) {
 }
 
 ################################################################################
-# Initialise synthetic population with with neigbbourhoods
+# Initialise synthetic population with with neigbourhoods
 
 # population_size = sum(df_marginal_dist['tot_pop']) # 84880
 

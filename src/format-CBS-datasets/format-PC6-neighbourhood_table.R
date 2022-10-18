@@ -46,6 +46,15 @@ if (filter_DHZW) {
   df_PC6_neighb <- subset(df_PC6_neighb, select = -c(PC4))
 }
 
+# Remove duplicate and pick the neighbourhood per PC6 with most households
+df_PC6_neighb <- df_PC6_neighb %>%
+  group_by(neighb_code, PC6) %>%
+  mutate(freq = n()) %>%
+  select(neighb_code, PC6, freq) %>%
+  distinct() %>%
+  group_by(PC6) %>%
+  slice_max(order_by = freq, n = 1)
+
 setwd(this.path::this.dir())
 setwd(paste("../../data/processed",
             year,
