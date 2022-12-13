@@ -41,7 +41,7 @@ df$singles <- 0
 i = 1
 # Fill values from synthetic populations
 for (pc6 in df$PC6) {
-  #print(paste0('Calculating PC6: ', pc6, '. Work done: ', round(i/length(unique(df$PC6)))*100, 2), '%')
+  #print(paste0('Calculating PC6: ', pc6, '. Work done: ', round((i/length(unique(df$PC6)))*100), 2), '%')
   i = i + 1
   
   # Individuals per PC6
@@ -155,8 +155,8 @@ for (pc6 in df$PC6) {
     nrow(df_synth_pop[df_synth_pop$PC6 == pc6 &
                         df_synth_pop$hh_type == 'single', ])
 }
-
 df$no_children <- df$n_individuals - df$children
+
 
 ################################################################################
 # Add neighbourhood code based on PC6
@@ -191,49 +191,6 @@ colnames(DHZW_neighbourhoods_codes) <-
 
 df <- merge(df, DHZW_neighbourhoods_codes, by = 'neighb_code')
 
-#setwd(this.path::this.dir())
-#setwd('../output/ArcGIS')
-#write.csv(df, 'PC6_summary_ArcGIS_frequencies.csv', row.names = FALSE)
-
-################################################################################
-# Transform values into percentages
-
-df_perc <- df
-df_perc$age_0_15 <- paste0(round((df_perc$age_0_15 / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$age_15_25 <-
-  paste0(round((df_perc$age_15_25 / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$age_25_45 <-
-  paste0(round((df_perc$age_25_45 / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$age_45_65 <-
-  paste0(round((df_perc$age_45_65 / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$age_over65 <-
-  paste0(round((df_perc$age_over65 / df_perc$n_individuals) * 100, 1), ' %')
-
-df_perc$male <- paste0(round((df_perc$male / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$female <- paste0(round((df_perc$female / df_perc$n_individuals) * 100, 1), ' %')
-
-df_perc$Dutch <- paste0(round((df_perc$Dutch / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$Western <- paste0(round((df_perc$Western / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$Non_Western <-
-  paste0(round((df_perc$Non_Western / df_perc$n_individuals) * 100, 1), ' %')
-
-df_perc$education_low <-
-  paste0(round((df_perc$education_low / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$education_middle <-
-  paste0(round((df_perc$education_middle / df_perc$n_individuals) * 100, 1), ' %')
-df_perc$education_high <-
-  paste0(round((df_perc$education_high / df_perc$n_individuals) * 100, 1), ' %')
-
-df_perc$children <- paste0(round((df_perc$children / df_perc$n_individuals) * 100, 1), ' %')
-
-df_perc$couples_with_children <-
-  paste0(round((df_perc$couples_with_children / df_perc$n_households) * 100, 1), ' %')
-df_perc$couples_without_children <-
-  paste0(round((df_perc$couples_without_children / df_perc$n_households) * 100, 1), ' %')
-df_perc$singleparents <-
-  paste0(round((df_perc$singleparents / df_perc$n_households) * 100, 1), ' %')
-df_perc$singles <- paste0(round((df_perc$singles / df_perc$n_households) * 100, 1), ' %')
-
 ################################################################################
 # Add PC6 geometry
 
@@ -253,15 +210,15 @@ setwd('../data/shapefiles/processed')
 shp_DHZW_PC6 <- st_read('DHZW_PC6_shapefiles')
 
 # Merge PC6 geometry
-df_perc <- merge(df_perc, shp_DHZW_PC6, by = 'PC6')
+df <- merge(df, shp_DHZW_PC6, by = 'PC6')
 
 ################################################################################
 # Write SHP
 setwd(this.path::this.dir())
 setwd('../output/ArcGIS')
-st_write(df_perc, 'PC6_summary_ArcGIS_percentages', driver = "ESRI Shapefile")
+st_write(df, 'PC6_summary_ArcGIS_frequencies', driver = "ESRI Shapefile")
 
 # Write CSV
-df_perc <- as.data.frame(df_perc)
-df_perc <- subset(df_perc, select = -c(geometry))
-write.csv(df_perc, 'PC6_summary_ArcGIS_percentages.csv', row.names = FALSE)
+df <- as.data.frame(df)
+df <- subset(df, select = -c(geometry))
+write.csv(df, 'PC6_summary_ArcGIS_frequencies.csv', row.names = FALSE)
