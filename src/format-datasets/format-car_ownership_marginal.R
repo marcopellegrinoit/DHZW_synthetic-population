@@ -73,4 +73,4 @@ colnames(df_DHZW) <- c('neighbourhood_code', 'n_cars')
 setwd(this.dir())
 setwd('../../data/processed')
 
-write.csv(df_DHZW, 'car_ownership_marginals_neighbourhoods_2017-formatted.csv')
+write.csv(df_DHZW, 'car_ownership_marginals_neighbourhoods_2017-formatted.csv', row.names = FALSE)

@@ -77,8 +77,8 @@ df_synth_pop$hh_ID = NA
 df_synth_pop$hh_type = NA
 
 # Empty container of households
-df_households <- data.frame(matrix(ncol = 3, nrow = 0))
-colnames(df_households) <- c("hh_ID", "hh_size", "neighb_code")
+df_households <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(df_households) <- c("hh_ID", "hh_size", "neighb_code", "hh_type")
 
 df_synth_pop$child_too_old <- FALSE
 
@@ -285,7 +285,8 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
       
       df_households[hh_ID, ] = c(hh_ID,
                                  as.numeric(hh_size),
-                                 neighb_code)
+                                 neighb_code,
+                                 hh_type)
       
       counter_houses = counter_houses + 1
     }
@@ -314,7 +315,8 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
     
     df_households[hh_ID, ] = c(hh_ID,
                                as.numeric(hh_size),
-                               neighb_code)
+                               neighb_code,
+                               'couple_without_children')
     
     # generate genders of the couple
     couple_gender = sample(df_couples_genders$genders,
@@ -399,7 +401,8 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
     # create household
     df_households[hh_ID, ] = c(hh_ID,
                                as.numeric(hh_size),
-                               neighb_code)
+                               neighb_code,
+                               'single')
     
     # get new single
     single_ID = remaining_agents[counter_singles, 'agent_ID']
@@ -451,6 +454,41 @@ for(neighb_code in unique(df_households$neighb_code)){
 
 # Add the PC6 code also to the individual synthetic agents
 df_synth_pop <- merge(df_synth_pop, df_households)
+
+################################################################################
+# Household income
+# todo
+
+################################################################################
+# Can ownership
+
+setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep='/'))
+df_households = read.csv("df_households_DHZW_2019.csv")
+
+# Load dataset of percentage of car ownership in the NL in 2015 based on households characteristics
+setwd(paste(this.path::this.dir(),'data/processed', sep='/'))
+df_strat_cars = read.csv("car_ownership_NL_2015-formatted.csv")
+
+df_households$car_ownership <- NA
+for(neighb_code in unique(df_households$neighb_code)){
+  # for each neighbourhood
+  df_strat_cars$n_hh = 0
+  for (i in 1:nrow(df_strat_cars)){
+    # for each combination of household income and type
+    
+    # count how many households there are in this neighbourhood with these demographics
+    df_strat_cars[i,]$n_hh <- nrow(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type & df_households$hh_income == df_strat_cars[i,]$hh_income,]) 
+    
+    # sample household IDs
+    hh_IDs <- sample_n(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type & df_households$hh_income == df_strat_cars[i,]$hh_income,]$hh_ID,
+                     df_strat_cars[i,]$n_hh * df_strat_cars[i,]$percentage_combined
+                     )
+    
+    # Apply attribute
+    df_households[df_households$neighb_code == neighb_code,]$car_ownership = 0
+    df_households[df_households$hh_ID %in% hh_IDs,]$car_ownership = 1
+  }
+}
 
 ################################################################################
 # Save
