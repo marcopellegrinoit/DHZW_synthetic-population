@@ -283,6 +283,11 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
         }
       }
       
+      if (hh_type=='singleparents') {
+        hh_type <- 'single-parent'
+      } else {
+        hh_type <- 'couple_with_children'
+      }
       df_households[hh_ID, ] = c(hh_ID,
                                  as.numeric(hh_size),
                                  neighb_code,
@@ -457,13 +462,59 @@ df_synth_pop <- merge(df_synth_pop, df_households)
 
 ################################################################################
 # Household income
-# todo
+
+setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep='/'))
+df_households = read.csv("df_households_DHZW_2019.csv")
+
+# Load stratified dataset
+setwd(
+  paste(
+    this.path::this.dir(),
+    "data/processed",
+    year,
+    municipality,
+    'households',
+    sep = '/'
+  ))
+
+df_strat_income = read.csv("household_income_85064NED-formatted.csv")
+df_strat_income <- df_strat_income[df_strat_income$type %in% unique(df_households$hh_type),]
+
+df_households$income_group <- NA
+for(neighb_code in unique(df_households$neighb_code)){
+  # for each neighbourhood
+  for (hh_type in unique(df_households$hh_type)){
+    # for each combination of household income and type
+    # for each income group, except the last one
+    
+    n_hh <- nrow(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == hh_type,])
+    
+    for (income_group in colnames(df_strat_income[2:10])) {
+      # count how many households still unassigned
+      sample_n_hh <- ceiling(n_hh * df_strat_income[df_strat_income$type == hh_type, income_group])
+      print(paste(hh_type, sample_n_hh, n_hh, sep=' - '))
+      if(sample_n_hh > 0 ) {
+        # sample household IDs
+        hh_IDs <- sample(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == hh_type & is.na(df_households$income_group),]$hh_ID,
+                         sample_n_hh
+        )
+        
+        df_households[df_households$hh_ID %in% hh_IDs,]$income_group <- income_group 
+      }
+    }
+    
+    print(paste(hh_type, nrow(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == hh_type & is.na(df_households$income_group),]), sep=' - '))
+    if (nrow(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == hh_type & is.na(df_households$income_group),] > 0)) {
+      df_households[df_households$neighb_code == neighb_code & df_households$hh_type == hh_type & is.na(df_households$income_group),]$income_group = 'income_10_10'
+    }
+  }
+}
 
 ################################################################################
 # Can ownership
 
 setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep='/'))
-df_households = read.csv("df_households_DHZW_2019.csv")
+#df_households = read.csv("df_households_DHZW_2019.csv")
 
 # Load dataset of percentage of car ownership in the NL in 2015 based on households characteristics
 setwd(paste(this.path::this.dir(),'data/processed', sep='/'))
@@ -477,11 +528,11 @@ for(neighb_code in unique(df_households$neighb_code)){
     # for each combination of household income and type
     
     # count how many households there are in this neighbourhood with these demographics
-    df_strat_cars[i,]$n_hh <- nrow(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type & df_households$hh_income == df_strat_cars[i,]$hh_income,]) 
+    n_hh <- nrow(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type,]) 
     
     # sample household IDs
-    hh_IDs <- sample_n(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type & df_households$hh_income == df_strat_cars[i,]$hh_income,]$hh_ID,
-                     df_strat_cars[i,]$n_hh * df_strat_cars[i,]$percentage_combined
+    hh_IDs <- sample_n(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type,]$hh_ID,
+                     n_hh * df_strat_cars[i,]$percentage_combined
                      )
     
     # Apply attribute

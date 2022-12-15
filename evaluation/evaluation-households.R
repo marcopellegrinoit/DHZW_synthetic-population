@@ -711,3 +711,43 @@ ggplot(df_mother_children_plot, aes(diff_group, as.numeric(prop))) +
   labs(fill = "Population")+
   theme(legend.title=element_text(size=20),
         legend.text=element_text(size=15))
+
+
+################################################################################
+# Income 
+
+# Load stratified dataset
+setwd(this.path::this.dir())
+setwd(
+  paste(
+    "../data/processed",
+    year,
+    municipality,
+    'households',
+    sep = '/'
+  ))
+
+df_strat_income = read.csv("household_income_85064NED-formatted.csv")
+df_strat_income <- df_strat_income[df_strat_income$type %in% unique(df_households$hh_type),]
+
+df_strat_income <- pivot_longer(df_strat_income, cols = colnames(df_strat_income[2:11]), names_to = 'income_group', values_to = 'proportion_real')
+df_strat_income$proportion_synthetic <- 0
+for (i in 1:nrow(df_strat_income)) {
+  df_strat_income[i,]$proportion_synthetic <- nrow(df_households[df_households$hh_type == df_strat_income[i,]$type & df_households$income_group == df_strat_income[i,]$income_group,])
+}
+
+df_strat_income <- df_strat_income %>%
+  group_by(type) %>%
+  mutate(proportion_synthetic = proportion_synthetic/sum(proportion_synthetic)) %>%
+  ungroup
+
+df_strat_income$group <- paste(df_strat_income$type, df_strat_income$income_group, sep = ' - ')
+
+df_strat_income <- pivot_longer(df_strat_income, cols = c('proportion_synthetic', 'proportion_real'), names_to = 'dataset', values_to = 'proportion')
+
+ggplot(df_strat_income, aes(group, as.numeric(proportion))) +
+  geom_bar(aes(fill = dataset),
+           position = "dodge",
+           stat = "identity",
+           width=0.4) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
