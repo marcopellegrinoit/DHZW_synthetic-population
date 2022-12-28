@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:02c92d0bfd58b8c8de7375ba0aaaf08d7ad5c8c898913c828c47162df2e96bfa
-size 230
+﻿gap;gender_older;prob
+0;none;0.099
+1_4;male;0.411
+1_4;female;0.143
+5_9;male;0.207
+5_9;female;0.035
+10_14;male;0.06
+10_14;female;0.008
+15_19;male;0.02
+15_19;female;0.002
+20_or_more;male;0.014
+20_or_more;female;0.001

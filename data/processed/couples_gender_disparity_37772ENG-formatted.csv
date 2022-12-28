@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d985cec59b26db9fefe86ab8b103df972980fc8953a3c1546e311c80ae235143
-size 142
+"genders","freq","prob"
+"male_female",83322,0.975096547688707
+"male_male",1023,0.0119719133996489
+"female_female",1105,0.0129315389116442

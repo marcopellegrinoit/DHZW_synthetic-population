@@ -71,7 +71,7 @@ df_couples_genders <-
 df_couples_ages <- read.csv("couples_age_disparity.csv", sep = ',')
 
 # Load synthetic population
-setwd(paste0(this.path::this.dir(), "/output/synthetic-population"))
+setwd(paste0(this.path::this.dir(), "/output/synthetic-population/7_car_license_2022-12-26_13-26"))
 df_synth_pop = read.csv('synthetic_population_DHZW_2019.csv')
 df_synth_pop$hh_ID = NA
 df_synth_pop$hh_type = NA
@@ -422,9 +422,18 @@ for (neighb_code in unique(df_synth_pop$neighb_code)) {
   
 }
 
+df_synth_pop <- subset(df_synth_pop, select=-c(child_too_old))
+
 end_time <- Sys.time()
 difftime(end_time, start_time, units = "secs")
-difftime(end_time, start_time, units = "mins")
+
+# Save snapshot
+dir_name <- paste0('1_households_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+write.csv(df_households, paste0('df_households_DHZW_', year, '.csv'), row.names = FALSE)
 
 ################################################################################
 # Locate households into PC6 codes
@@ -458,13 +467,20 @@ for(neighb_code in unique(df_households$neighb_code)){
 }
 
 # Add the PC6 code also to the individual synthetic agents
-df_synth_pop <- merge(df_synth_pop, df_households)
+tmp <- df_households %>%
+  select(hh_ID, PC6, hh_size)
+df_synth_pop <- merge(df_synth_pop, tmp, by = 'hh_ID')
+
+# Save snapshot
+dir_name <- paste0('2_PC6_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+write.csv(df_households, paste0('df_households_DHZW_', year, '.csv'), row.names = FALSE)
 
 ################################################################################
 # Household income
-
-setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep='/'))
-df_households = read.csv("df_households_DHZW_2019.csv")
 
 # Load stratified dataset
 setwd(
@@ -493,7 +509,7 @@ for(neighb_code in unique(df_households$neighb_code)){
       # count how many households still unassigned
       sample_n_hh <- ceiling(n_hh * df_strat_income[df_strat_income$type == hh_type, income_group])
       print(paste(hh_type, sample_n_hh, n_hh, sep=' - '))
-      if(sample_n_hh > 0 ) {
+      if(sample_n_hh > 0 & nrow(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == hh_type & is.na(df_households$income_group),] > 0)) {
         # sample household IDs
         hh_IDs <- sample(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == hh_type & is.na(df_households$income_group),]$hh_ID,
                          sample_n_hh
@@ -510,11 +526,23 @@ for(neighb_code in unique(df_households$neighb_code)){
   }
 }
 
+table(df_households$income_group)
+
+# Add the income attribute also to the individual synthetic agents
+tmp <- df_households %>%
+  select(hh_ID, income_group)
+df_synth_pop <- merge(df_synth_pop, tmp, by = 'hh_ID')
+
+# Save snapshot
+dir_name <- paste0('3_income_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+write.csv(df_households, paste0('df_households_DHZW_', year, '.csv'), row.names = FALSE)
+
 ################################################################################
 # Can ownership
-
-setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep='/'))
-#df_households = read.csv("df_households_DHZW_2019.csv")
 
 # Load dataset of percentage of car ownership in the NL in 2015 based on households characteristics
 setwd(paste(this.path::this.dir(),'data/processed', sep='/'))
@@ -523,7 +551,6 @@ df_strat_cars = read.csv("car_ownership_NL_2015-formatted.csv")
 df_households$car_ownership <- NA
 for(neighb_code in unique(df_households$neighb_code)){
   # for each neighbourhood
-  df_strat_cars$n_hh = 0
   for (i in 1:nrow(df_strat_cars)){
     # for each combination of household income and type
     
@@ -531,31 +558,25 @@ for(neighb_code in unique(df_households$neighb_code)){
     n_hh <- nrow(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type,]) 
     
     # sample household IDs
-    hh_IDs <- sample_n(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type,]$hh_ID,
+    hh_IDs <- sample(df_households[df_households$neighb_code == neighb_code & df_households$hh_type == df_strat_cars[i,]$hh_type,]$hh_ID,
                      n_hh * df_strat_cars[i,]$percentage_combined
                      )
     
     # Apply attribute
-    df_households[df_households$neighb_code == neighb_code,]$car_ownership = 0
+    df_households[df_households$neighb_code == neighb_code & is.na(df_households$car_ownership),]$car_ownership = 0
     df_households[df_households$hh_ID %in% hh_IDs,]$car_ownership = 1
   }
 }
 
-################################################################################
-# Save
+# Add the car ownership attribute also to the individual synthetic agents
+tmp <- df_households %>%
+  select(hh_ID, car_ownership)
+df_synth_pop <- merge(df_synth_pop, tmp, by = 'hh_ID')
 
-df_synth_pop <- subset(df_synth_pop, select=-c(child_too_old))
-
-setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep =
-              '/'))
-if (filter_DHZW) {
-  write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '_with_hh.csv'), row.names = FALSE)
-  write.csv(df_households, paste0('df_households_DHZW_', year, '.csv'), row.names = FALSE)
-} else {
-  write.csv(
-    df_synth_pop,
-    paste0('synthetic_population_', municipality, '_', year, '_with_hh.csv'),
-    row.names = FALSE
-  )
-  write.csv(df_households, paste0('df_households_DHZW_', municipality, '_', year, '.csv'), row.names = FALSE)
-}
+# Save snapshot
+dir_name <- paste0('4_car_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population-households', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+write.csv(df_households, paste0('df_households_DHZW_', year, '.csv'), row.names = FALSE)

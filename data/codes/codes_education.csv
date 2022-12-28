@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:563d7f17572be8719bcb15ad6a2ba38afa9ab726f4365c007a4e2069948ebf77
-size 709
+education_code;education_title;education_level
+T001345;Totaal voortgezet onderwijs;
+A041919;Vo algemene leerjaren 1-3;low
+A041920;Vwo 3-6;middle
+A041921;Havo 3-5;middle
+A041922;Vmbo theoretische-gemengde leerweg 3-4;low
+A041923;Vmbo basis-kaderberoeps 3-4;low
+A025289;Praktijkonderwijs;low
+A025300;Vavo;middle
+A041867;Totaal middelbaar beroepsonderwijs;
+A041868;Mbo bol;
+A025293;Mbo bbl;
+A041751;Assistentopleiding (niveau 1);low
+A041755;Basisberoepsopleiding (niveau 2);middle
+A041759;Vakopleiding (niveau 3);middle
+A041924;Middenkaderopleiding (niveau 4a);middle
+A041925;Specialistenopleiding (niveau 4b);middle
+A025294;Hoger beroepsonderwijs;high
+A025297;Wetenschappelijk onderwijs;high

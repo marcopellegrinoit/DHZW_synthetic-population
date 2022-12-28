@@ -1,3 +1,21 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ac458bb5d0026016e97f2d3a55a69327c4d3a0c00a2178d36b20e9fe2f8edac0
-size 1331
+"hh_income","hh_type","percentage_hh_type","percentage_hh_income","percentage_combined"
+"1 income group 20%","couple with children",0.0936,0.0475,0.1411
+"1 income group 20%","couple without children",0.0873,0.0475,0.1348
+"1 income group 20%","single",0.0451,0.0475,0.0926
+"1 income group 20%","single-parent",0.0642,0.0475,0.1117
+"2 income group 20%","single-parent",0.0642,0.075625,0.139825
+"2 income group 20%","couple with children",0.0936,0.075625,0.169225
+"2 income group 20%","couple without children",0.0873,0.075625,0.162925
+"2 income group 20%","single",0.0451,0.075625,0.120725
+"3 income group 20%","single",0.0451,0.09875,0.14385
+"3 income group 20%","single-parent",0.0642,0.09875,0.16295
+"3 income group 20%","couple with children",0.0936,0.09875,0.19235
+"3 income group 20%","couple without children",0.0873,0.09875,0.18605
+"4 income group 20%","couple without children",0.0873,0.11,0.1973
+"4 income group 20%","single",0.0451,0.11,0.1551
+"4 income group 20%","single-parent",0.0642,0.11,0.1742
+"4 income group 20%","couple with children",0.0936,0.11,0.2036
+"5 income group 20%","couple with children",0.0936,0.116,0.2096
+"5 income group 20%","couple without children",0.0873,0.116,0.2033
+"5 income group 20%","single",0.0451,0.116,0.1611
+"5 income group 20%","single-parent",0.0642,0.116,0.1802

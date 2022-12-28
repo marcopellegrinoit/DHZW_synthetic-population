@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:262ba6d026661d856732fe50bde05d0da1cdf24dfc0489d399ef5a273dbcdcf6
-size 809
+﻿"Aantal voertuigen in huishouden";"Huishoudkenmerken";"Perioden";"Huishoudens in bezit van auto/% Huishoudens in bezit van auto  (%)"
+"Minimaal één voertuig";"Type: Eenpersoonshuishouden";"2015*";45,1
+"Minimaal één voertuig";"Type: Eenoudergezin";"2015*";64,2
+"Minimaal één voertuig";"Type: Paar, met kind(eren)";"2015*";93,6
+"Minimaal één voertuig";"Type: Paar, zonder kind";"2015*";87,3
+"Minimaal één voertuig";"Gestandaardiseerd inkomen: 1e 20%-groep";"2015*";38
+"Minimaal één voertuig";"Gestandaardiseerd inkomen: 2e 20%-groep";"2015*";60,5
+"Minimaal één voertuig";"Gestandaardiseerd inkomen: 3e 20%-groep";"2015*";79
+"Minimaal één voertuig";"Gestandaardiseerd inkomen: 4e 20%-groep";"2015*";88
+"Minimaal één voertuig";"Gestandaardiseerd inkomen: 5e 20%-groep";"2015*";92,8

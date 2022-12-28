@@ -10,6 +10,7 @@
 
 library(GenSynthPop)
 library(dplyr)
+library(readr)
 library("this.path")
 setwd(this.path::this.dir())
 source('src/utils-synthetic-population.R')
@@ -95,6 +96,13 @@ for (group_age in group_ages) {
 }
 df_synth_pop$age = as.numeric(df_synth_pop$age)
 
+# Save snapshot
+dir_name <- paste0('1_age_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+
 ################################################################################
 # Gender generation based on age
 
@@ -120,6 +128,13 @@ df_synth_pop = distr_attr_strat_neigh_stats_binary(
 
 # Remove extra columns
 df_synth_pop = subset(df_synth_pop, select = -c(prop_female, random_scores, age_group))
+
+# Save snapshot
+dir_name <- paste0('2_gender_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
 
 ################################################################################
 # Migration background generation based on age and gender
@@ -200,6 +215,13 @@ df_synth_pop = subset(
   )
 )
 
+# Save snapshot
+dir_name <- paste0('3_migration_background_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+
 ################################################################################
 # Generate attribute is_child (if the agent is a child)
 
@@ -260,6 +282,13 @@ df_synth_pop <-
 # Remove extra columns
 df_synth_pop = subset(df_synth_pop, select = -c(age_group))
 
+# Save snapshot
+dir_name <- paste0('4_child_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+
 ################################################################################
 # Generate current education based on group age, gender and migration
 
@@ -307,8 +336,15 @@ df_synth_pop[df_synth_pop$age <= 5, ]$current_education = 'no_current_edu'
 # Remove age group column
 df_synth_pop = subset(df_synth_pop, select = -c(age_group))
 
+# Save snapshot
+dir_name <- paste0('5_current_education_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+
 ################################################################################
-# Generate education attainment: not finished yet
+# Generate education attainment
 
 df_synth_pop$edu_attainment = NA
 
@@ -379,17 +415,90 @@ df_synth_pop[is.na(df_synth_pop$edu_attainment), ]$edu_attainment = sample(
   prob = df_edu_attainment$df_synth_pop[is.na(df_synth_pop$edu_attainment), ]$neighb_code
 )
 
-################################################################################
-# Save synthetic population
+# Save snapshot
+dir_name <- paste0('6_education_attainment_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
 
-setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep =
-              '/'))
-if (filter_DHZW) {
-  write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
-} else {
-  write.csv(
-    df_synth_pop,
-    paste0('synthetic_population_', municipality, '_', year, '.csv'),
-    row.names = FALSE
+################################################################################
+# Car and moped license ownership
+
+# Load stratified dataset over age groups
+setwd(
+  paste(
+    this.path::this.dir(),
+    "data/processed",
+    year,
+    sep = '/'
   )
+)
+df_strat_car_license = read.csv("car_license-83488NED-formatted.csv", sep = ",")
+
+df_synth_pop$age_group <- NA
+# Create groupages in the synthetic population to match the stratified dataset
+df_synth_pop$age_group[df_synth_pop$age < 16] = NA
+df_synth_pop$age_group[df_synth_pop$age %in% 16:17] = "age_16_17"
+df_synth_pop$age_group[df_synth_pop$age %in% 18:19] = "age_18_19"
+df_synth_pop$age_group[df_synth_pop$age %in% 20:24] = "age_20_24"
+df_synth_pop$age_group[df_synth_pop$age %in% 25:29] = "age_25_29"
+df_synth_pop$age_group[df_synth_pop$age %in% 30:39] = "age_30_39"
+df_synth_pop$age_group[df_synth_pop$age %in% 40:49] = "age_40_49"
+df_synth_pop$age_group[df_synth_pop$age %in% 50:59] = "age_50_59"
+df_synth_pop$age_group[df_synth_pop$age %in% 60:64] = "age_60_64"
+df_synth_pop$age_group[df_synth_pop$age %in% 65:69] = "age_65_69"
+df_synth_pop$age_group[df_synth_pop$age %in% 70:74] = "age_70_74"
+df_synth_pop$age_group[df_synth_pop$age >= 75] = "age_over_75"
+
+# Distribute car license ownership from the stratified dataset based on its proportions
+df_synth_pop$car_license <- 0
+for(neighb_code in unique(df_synth_pop$neighb_code)){
+  # for each neighbourhood
+  for (age_group in unique(df_strat_car_license$age_group)){
+    # for each age group
+        # count how many people there are in this neighbourhood with these demographics
+    n_pp <- nrow(df_synth_pop[df_synth_pop$neighb_code == neighb_code & df_synth_pop$age_group == age_group,]) 
+    
+    # sample household IDs
+    agent_IDs <- sample(df_synth_pop[df_synth_pop$neighb_code == neighb_code & df_synth_pop$age_group == age_group,]$agent_ID,
+                          n_pp * df_strat_car_license[df_strat_car_license$age_group == age_group,]$car
+    )
+
+    # Apply attribute
+    df_synth_pop[df_synth_pop$neighb_code == neighb_code & is.na(df_synth_pop$car_license),]$car_license = 0
+    df_synth_pop[df_synth_pop$agent_ID %in% agent_IDs,]$car_license = 1
+  }
 }
+
+# Distribute moped license ownership from the stratified dataset based on its proportions
+df_synth_pop$moped_license <- 0
+for(neighb_code in unique(df_synth_pop$neighb_code)){
+  # for each neighbourhood
+  for (age_group in unique(df_strat_car_license$age_group)){
+    # for each age group
+    # count how many people there are in this neighbourhood with these demographics
+    n_pp <- nrow(df_synth_pop[df_synth_pop$neighb_code == neighb_code & df_synth_pop$age_group == age_group,]) 
+    
+    # sample household IDs
+    agent_IDs <- sample(df_synth_pop[df_synth_pop$neighb_code == neighb_code & df_synth_pop$age_group == age_group,]$agent_ID,
+                        n_pp * df_strat_car_license[df_strat_car_license$age_group == age_group,]$moped
+    )
+    
+    # Apply attribute
+    df_synth_pop[df_synth_pop$neighb_code == neighb_code & is.na(df_synth_pop$car_license),]$moped_license = 0
+    df_synth_pop[df_synth_pop$agent_ID %in% agent_IDs,]$moped_license = 1
+  }
+}
+  
+table(df_synth_pop$age_group, df_synth_pop$car_license)
+table(df_synth_pop$age_group, df_synth_pop$moped_license)
+
+# Remove age group column
+df_synth_pop = subset(df_synth_pop, select = -c(age_group))
+  
+# Save snapshot
+dir_name <- paste0('7_car_license_', format(Sys.time(), "%F_%H-%M"))
+setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
+dir.create(dir_name)
+setwd(dir_name)
+write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
