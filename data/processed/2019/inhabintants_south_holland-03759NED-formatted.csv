@@ -1,12 +1,3 @@
-"age_group","n_people"
-"age_16_17",84707
-"age_18_19",91662
-"age_20_24",238293
-"age_25_29",255067
-"age_30_39",476405
-"age_40_49",486206
-"age_50_59",512038
-"age_60_64",221047
-"age_65_69",196463
-"age_70_74",182325
-"age_over_75",282364
+version https://git-lfs.github.com/spec/v1
+oid sha256:add75e214d72810fc0f70f86e374a3826492aad2a235573004407d3e9ffebefb
+size 232

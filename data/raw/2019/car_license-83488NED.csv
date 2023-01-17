@@ -1,23 +1,3 @@
-﻿"Rijbewijscategorie";"Leeftijd rijbewijshouder";"Regio's";"Perioden";"Personen met rijbewijs (aantal)"
-"Autorijbewijs excl. aanhangerrijbewijs";"16 tot 18 jaar";"Zuid-Holland (PV)";"2019";3073
-"Autorijbewijs excl. aanhangerrijbewijs";"18 tot 20 jaar";"Zuid-Holland (PV)";"2019";37783
-"Autorijbewijs excl. aanhangerrijbewijs";"20 tot 25 jaar";"Zuid-Holland (PV)";"2019";152328
-"Autorijbewijs excl. aanhangerrijbewijs";"25 tot 30 jaar";"Zuid-Holland (PV)";"2019";181685
-"Autorijbewijs excl. aanhangerrijbewijs";"30 tot 40 jaar";"Zuid-Holland (PV)";"2019";358589
-"Autorijbewijs excl. aanhangerrijbewijs";"40 tot 50 jaar";"Zuid-Holland (PV)";"2019";374770
-"Autorijbewijs excl. aanhangerrijbewijs";"50 tot 60 jaar";"Zuid-Holland (PV)";"2019";232422
-"Autorijbewijs excl. aanhangerrijbewijs";"60 tot 65 jaar";"Zuid-Holland (PV)";"2019";29214
-"Autorijbewijs excl. aanhangerrijbewijs";"65 tot 70 jaar";"Zuid-Holland (PV)";"2019";16630
-"Autorijbewijs excl. aanhangerrijbewijs";"70 tot 75 jaar";"Zuid-Holland (PV)";"2019";8597
-"Autorijbewijs excl. aanhangerrijbewijs";"75 jaar of ouder";"Zuid-Holland (PV)";"2019";19226
-"Bromfietsrijbewijs";"16 tot 18 jaar";"Zuid-Holland (PV)";"2019";11189
-"Bromfietsrijbewijs";"18 tot 20 jaar";"Zuid-Holland (PV)";"2019";41988
-"Bromfietsrijbewijs";"20 tot 25 jaar";"Zuid-Holland (PV)";"2019";159704
-"Bromfietsrijbewijs";"25 tot 30 jaar";"Zuid-Holland (PV)";"2019";193118
-"Bromfietsrijbewijs";"30 tot 40 jaar";"Zuid-Holland (PV)";"2019";387805
-"Bromfietsrijbewijs";"40 tot 50 jaar";"Zuid-Holland (PV)";"2019";420772
-"Bromfietsrijbewijs";"50 tot 60 jaar";"Zuid-Holland (PV)";"2019";449423
-"Bromfietsrijbewijs";"60 tot 65 jaar";"Zuid-Holland (PV)";"2019";189682
-"Bromfietsrijbewijs";"65 tot 70 jaar";"Zuid-Holland (PV)";"2019";164650
-"Bromfietsrijbewijs";"70 tot 75 jaar";"Zuid-Holland (PV)";"2019";143848
-"Bromfietsrijbewijs";"75 jaar of ouder";"Zuid-Holland (PV)";"2019";143435
+version https://git-lfs.github.com/spec/v1
+oid sha256:e89e857bb04b6aef45d048d6169aedce9f21f23bd9d5a0103261ce22b810c2cb
+size 1927

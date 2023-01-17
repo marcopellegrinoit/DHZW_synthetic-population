@@ -126,3 +126,94 @@ plot_syth_strat_age_density = function(df_synt_pop, df_stratified_age) {
     labs(x = 'Age',
          y = 'Normalised age frequencies')
 }
+
+
+
+
+
+get_proportions_over_marginal_old = function(df_real_distr, df_synt_pop, join_var, list_real_df_var, var_pred_df, list_values, age_limits, join_var2){
+  df = expand.grid(unique(df_real_distr[,join_var]), list_values)
+  colnames(df) = c(join_var, var_pred_df)
+  
+  df$pred = NA
+  df$real = NA
+  
+  if (missing(age_limits)){
+    # the values in the marginal distribution are not restricted to some ages
+    for (i in 1:nrow(df)) {
+      # count the ones predicted peer neighbourhood and variable
+      df[i,]$pred = nrow(df_synt_pop[df_synt_pop[,join_var]==df[i, join_var] &
+                                       df_synt_pop[,var_pred_df]==df[i,var_pred_df],])
+    }
+  } else {
+    # the values in the marginal distribution are restricted to some ages
+    for (i in 1:nrow(df)) {
+      # count the ones predicted peer neighbourhood and variable
+      df[i,]$pred = nrow(df_synt_pop[df_synt_pop[,join_var]==df[i, join_var] &
+                                       df_synt_pop[,var_pred_df]==df[i,var_pred_df] &
+                                       df_synt_pop['age'] %in% age_limits,])
+    }
+  }
+  
+  # extract the true labels from the marginal
+  for (a in 1:length(list_real_df_var)) {
+    for (i in unique(df_real_distr[,join_var])) {
+      df[df[,join_var]==i & df[,var_pred_df]==list_values[a],]$real = df_real_distr[df_real_distr[,join_var]==i, list_real_df_var[a]]
+    }
+  }
+  
+  df <- df %>%
+    group_by({{join_var2}}) %>%
+    mutate(prop = sum(pred))
+  
+  return(df)
+}
+
+
+
+get_proportions_over_marginal <- function(df_marginal_dist, df_synth_pop, aggregation_var, cols_marginal, var_str, values, age_limits) {
+  # compute the real ones
+  
+  df_real = df_marginal_dist %>%
+    select({{aggregation_var}}, {{cols_marginal}})
+  
+  colnames (df_real) <- c(deparse(substitute(aggregation_var)), values)
+  
+  df_real <- df_real %>%
+    pivot_longer(cols=values, names_to = var_str, values_to = 'real_freq')
+  
+  # compute the generated ones
+  
+  if (!missing(age_limits)){
+    df_synth_pop <- df_synth_pop[df_synth_pop$age %in% age_limits,]
+  }
+  
+  df_generated <- as.data.frame(table(df_synth_pop[,deparse(substitute(aggregation_var))], df_synth_pop[,var_str]))
+  colnames(df_generated) <- colnames(df_real)
+  
+  # compute proportions over aggregation areas
+  
+  df_real <- df_real %>%
+    group_by({{aggregation_var}}) %>%
+    mutate(real_prop = real_freq / sum(real_freq))
+  
+  df_generated <- df_generated %>%
+    rename(generated_freq = real_freq) %>%
+    group_by({{aggregation_var}}) %>%
+    mutate(generated_prop = generated_freq / sum(generated_freq))
+  
+  # merge together
+  df <- merge(df_generated, df_real)
+  
+  df <- df %>%
+    select({{aggregation_var}}, !!var_str, real_prop, generated_prop) %>%
+    pivot_longer(cols = c(real_prop, generated_prop), names_to = 'dataset', values_to = 'proportion')
+  
+  # rename dataset names
+  df$dataset <- recode(df$dataset,
+                       'real_prop' = 'marginal distribution',
+                       'generated_prop' = 'synthetic population')
+  
+  return(df)
+}
+

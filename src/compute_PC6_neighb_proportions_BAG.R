@@ -87,10 +87,15 @@ df_schools <- df %>%
   filter(use == 'school')
 st_write(df_schools, '../data/processed/BAG/buildings_school', driver = "ESRI Shapefile")
 
-# Filter schools
+# Filter offices
 df_offices <- df %>%
   filter(use == 'office')
 st_write(df_offices, '../data/processed/BAG/buildings_office', driver = "ESRI Shapefile")
+
+# Filter sport
+df_sport <- df %>%
+  filter(use == 'sport')
+st_write(df_sport, '../data/processed/BAG/buildings_sport', driver = "ESRI Shapefile")
 
 ################################################################################
 # Assign neighb_code to each PC6 of BAG
