@@ -37,7 +37,9 @@ df_marginal_dist = df_marginal_dist %>%
          GemiddeldeHuishoudensgrootte_32,
          OpleidingsniveauLaag_64,
          OpleidingsniveauMiddelbaar_65,
-         OpleidingsniveauHoog_66
+         OpleidingsniveauHoog_66,
+         PersonenautoSTotaal_99,
+         PersonenautoSPerHuishouden_102
   )%>%
   rename(neighb_code = Codering_3,
          tot_pop = AantalInwoners_5,
@@ -57,7 +59,9 @@ df_marginal_dist = df_marginal_dist %>%
          hh_avg_size = GemiddeldeHuishoudensgrootte_32,
          education_absolved_low = OpleidingsniveauLaag_64,
          education_absolved_middle = OpleidingsniveauMiddelbaar_65,
-         education_absolved_high = OpleidingsniveauHoog_66
+         education_absolved_high = OpleidingsniveauHoog_66,
+         n_cars = PersonenautoSTotaal_99,
+         n_cars_per_hh = PersonenautoSPerHuishouden_102
   )
 df_marginal_dist[df_marginal_dist$education_absolved_low=='       .',]$education_absolved_low=0
 df_marginal_dist[df_marginal_dist$education_absolved_middle=='       .',]$education_absolved_middle=0
@@ -68,9 +72,6 @@ df_marginal_dist$education_absolved_high=as.numeric(df_marginal_dist$education_a
 
 # Calculate the missing Dutch migration background in the overall marginal distribution
 df_marginal_dist$migration_Dutch = df_marginal_dist$tot_pop - (df_marginal_dist$migration_west + df_marginal_dist$migration_non_west)
-
-
-
 
 
 ################################################################################
@@ -131,6 +132,10 @@ df_marginal_dist[df_marginal_dist$neighb_code %in% neighb_code_to_correct,]$prop
 
 df_marginal_dist[df_marginal_dist$neighb_code %in% neighb_code_to_correct,]$hh_avg_size = mean(as.numeric(df_marginal_dist[!(df_marginal_dist$neighb_code %in% neighb_code_to_correct),]$hh_avg_size))
 
+#df_marginal_dist[df_marginal_dist$neighb_code %in% neighb_code_to_correct,]$n_cars = round(mean(as.numeric(df_marginal_dist[!(df_marginal_dist$neighb_code %in% neighb_code_to_correct),]$n_cars)))
+
+#df_marginal_dist[df_marginal_dist$neighb_code %in% neighb_code_to_correct,]$n_cars_per_hh = df_marginal_dist[!(df_marginal_dist$neighb_code %in% neighb_code_to_correct),]$n_cars/
+
 for (neighb_code in neighb_code_to_correct) {
   # genders
   df_marginal_dist[df_marginal_dist$neighb_code == neighb_code,]$gender_male = round(df_marginal_dist[df_marginal_dist$neighb_code == neighb_code,]$tot_pop * df_marginal_dist[df_marginal_dist$neighb_code == neighb_code,]$prop_male)
@@ -173,6 +178,9 @@ df_marginal_dist = subset(df_marginal_dist, select=-c(prop_male,
                                                       prop_education_absolved_middle,
                                                       prop_hh_single,
                                                       prop_hh_no_children))
+
+df_marginal_dist[df_marginal_dist$n_cars_per_hh=='       .', ] <- 0
+df_marginal_dist$n_cars_per_hh <- as.numeric(df_marginal_dist$n_cars_per_hh)
 
 setwd(this.path::this.dir())
 setwd(
