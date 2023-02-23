@@ -2,7 +2,6 @@
 .RData
 .DS_Store
 ._*
-/data/shapefiles/*
-/data/raw/BAG_The_Hague/*
-/data/processed/BAG/*
+/data/*
 /keys/*
+/evaluation/synthetic_population/data_comparison/*
