@@ -28,8 +28,8 @@ df_synth_pop = read.csv("synthetic_population_DHZW_2019.csv", sep = ",")
 # With marginal distribution
 df_gender_marginal <- get_proportions_over_marginal(df_marginal_dist = df_marginal_dist,
                                                     df_synth_pop = df_synth_pop,
-                                                    aggregation_var = neighb_code,
-                                                    cols_marginal = c(gender_male, gender_female),
+                                                    aggregation_var = 'neighb_code',
+                                                    cols_marginal = c('gender_male', 'gender_female'),
                                                     var_str = 'gender',
                                                     values = c('male', 'female')
 )
@@ -65,6 +65,10 @@ df_gender_strat <- df_gender_strat %>%
 df_gender_strat$dataset <- recode(df_gender_strat$dataset,
                                   'real' = 'stratified dataset',
                                   'pred' = 'synthetic population')
+
+setwd(this.dir())
+setwd('data_comparison')
+write.csv(df_gender_strat, 'gender.csv', row.names = FALSE)
 
 df_gender_strat <- df_gender_strat %>%
   group_by(age, dataset) %>%

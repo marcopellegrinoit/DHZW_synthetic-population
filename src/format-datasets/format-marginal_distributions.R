@@ -179,7 +179,7 @@ df_marginal_dist = subset(df_marginal_dist, select=-c(prop_male,
                                                       prop_hh_single,
                                                       prop_hh_no_children))
 
-df_marginal_dist[df_marginal_dist$n_cars_per_hh=='       .', ] <- 0
+df_marginal_dist[df_marginal_dist$n_cars_per_hh=='       .', ]$n_cars_per_hh <- 0
 df_marginal_dist$n_cars_per_hh <- as.numeric(df_marginal_dist$n_cars_per_hh)
 
 setwd(this.path::this.dir())

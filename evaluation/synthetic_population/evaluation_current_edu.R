@@ -60,21 +60,25 @@ df_edu_current_strat$dataset <- recode(df_edu_current_strat$dataset,
                                        'real' = 'stratified dataset',
                                        'pred' = 'synthetic population')
 df_edu_current_strat$age_group <- recode(df_edu_current_strat$age_group,
-                                         'age_10_15' = '[10, 14]',
-                                         'age_15_20' = '[15, 19]',
-                                         'age_20_25' = '[20, 24]',
-                                         'age_25_30' = '[25, 29]',
-                                         'age_30_35' = '[30, 34]',
-                                         'age_35_40' = '[35, 39]',
-                                         'age_40_45' = '[40, 44]',
-                                         'age_over_50' = 'over 45'
+                                         'age_10_15' = '10 - 14',
+                                         'age_15_20' = '15 - 19',
+                                         'age_20_25' = '20 - 24',
+                                         'age_25_30' = '25 - 29',
+                                         'age_30_35' = '30 - 34',
+                                         'age_35_40' = '35 - 39',
+                                         'age_40_45' = '40 - 44',
+                                         'age_over_50' = '>= 45'
 )
 df_edu_current_strat$current_education <- recode(df_edu_current_strat$current_education,
                                                  'no_current_edu' = 'no current education'
 )
 df_edu_current_strat$migration_background <- recode(df_edu_current_strat$migration_background,
-                                                    'Non_Western' = 'Non Western'
+                                                    'Non_Western' = 'Non-Western'
 )
+
+setwd(this.dir())
+setwd('data_comparison')
+write.csv(df_edu_current_strat, 'current_education.csv', row.names = FALSE)
 
 df_edu_current_strat <- df_edu_current_strat %>%
   group_by(gender, age_group, migration_background, dataset) %>%

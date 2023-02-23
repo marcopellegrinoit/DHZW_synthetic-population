@@ -174,10 +174,9 @@ get_proportions_over_marginal_old = function(df_real_distr, df_synt_pop, join_va
 get_proportions_over_marginal <- function(df_marginal_dist, df_synth_pop, aggregation_var, cols_marginal, var_str, values, age_limits) {
   # compute the real ones
   
-  df_real = df_marginal_dist %>%
-    select({{aggregation_var}}, {{cols_marginal}})
+  df_real <- df_marginal_dist[c(aggregation_var, cols_marginal)]
   
-  colnames (df_real) <- c(deparse(substitute(aggregation_var)), values)
+  colnames (df_real) <- c(aggregation_var, values)
   
   df_real <- df_real %>%
     pivot_longer(cols=values, names_to = var_str, values_to = 'real_freq')
@@ -188,25 +187,25 @@ get_proportions_over_marginal <- function(df_marginal_dist, df_synth_pop, aggreg
     df_synth_pop <- df_synth_pop[df_synth_pop$age %in% age_limits,]
   }
   
-  df_generated <- as.data.frame(table(df_synth_pop[,deparse(substitute(aggregation_var))], df_synth_pop[,var_str]))
-  colnames(df_generated) <- colnames(df_real)
+  df_generated <- as.data.frame(table(df_synth_pop[,aggregation_var], df_synth_pop[,var_str]))
+  colnames(df_generated) <- c(aggregation_var, var_str, 'generated_freq')
   
   # compute proportions over aggregation areas
   
   df_real <- df_real %>%
-    group_by({{aggregation_var}}) %>%
+    group_by_at(aggregation_var) %>%
     mutate(real_prop = real_freq / sum(real_freq))
   
   df_generated <- df_generated %>%
-    rename(generated_freq = real_freq) %>%
-    group_by({{aggregation_var}}) %>%
+    group_by_at(aggregation_var) %>%
     mutate(generated_prop = generated_freq / sum(generated_freq))
   
   # merge together
   df <- merge(df_generated, df_real)
   
+  df <- df[c(aggregation_var, var_str, 'real_prop', 'generated_prop')]
+  
   df <- df %>%
-    select({{aggregation_var}}, !!var_str, real_prop, generated_prop) %>%
     pivot_longer(cols = c(real_prop, generated_prop), names_to = 'dataset', values_to = 'proportion')
   
   # rename dataset names

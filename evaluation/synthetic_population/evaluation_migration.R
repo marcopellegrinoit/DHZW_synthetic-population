@@ -114,8 +114,13 @@ df_migration_strat$age_group <- recode(df_migration_strat$age_group,
                                        'age_over_95' = 'over 95'
 )
 df_migration_strat$migration_background <- recode(df_migration_strat$migration_background,
-                                                  'Non_Western' = 'Non Western'
+                                                  'Non_Western' = 'Non-Western'
 )
+
+
+setwd(this.dir())
+setwd('data_comparison')
+write.csv(df_migration_strat, 'migration_background.csv', row.names = FALSE)
 
 df_migration_strat <- df_migration_strat %>%
   group_by(gender, age_group, dataset) %>%
