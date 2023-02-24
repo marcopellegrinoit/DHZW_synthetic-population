@@ -1,4 +1,7 @@
-# Data
+![GitHub](https://img.shields.io/badge/license-GPL--3.0-blue)
+
+# Generating a Spatially Explicit Synthetic Population of Individuals and Households
+## Data
 
 #### *Utrecht University, The Netherlands. 2022 - 2023*
 #### *Author: Marco Pellegrino*
