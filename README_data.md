@@ -1,6 +1,8 @@
 # Data
 
-#### *Author: Marco Pellegrino, Utrecht University*
+#### *Utrecht University, The Netherlands. 2022 - 2023*
+#### *Author: Marco Pellegrino*
+#### *Contribution: Jan de Mooij, Tabea Sonnenschein, Mehdi Dastani, Dick Ettema, Brian Logan, Judith A. Verstegen*
 
 All the data sets for this case study are openly available from the Dutch statistics institute CBS.
 

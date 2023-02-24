@@ -1,8 +1,8 @@
 # DHZW synthetic population script
 
-#### *Author: Marco Pellegrino, Utrecht University, The Netherlands.*
-
-*2022 - 2023*
+#### *Utrecht University, The Netherlands. 2022 - 2023*
+#### *Author: Marco Pellegrino*
+#### *Contribution: Jan de Mooij, Tabea Sonnenschein, Mehdi Dastani, Dick Ettema, Brian Logan, Judith A. Verstegen*
 
 ## Description
 
