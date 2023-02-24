@@ -12,7 +12,7 @@ The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnen
 
 ## Usage
 
-*   Scripts in [/format-CBS-datasets](/src/format-CBS-datasets) are used to convert the input CBS demographic information into more convenient data frames.
+*   Scripts in [/src/format-datasets](/src/format-datasets) are used to convert the input CBS demographic information into more convenient data frames.
 *   [_**generate\_synthetic\_population.R**_](generate-synthetic-population.R)**:** it generates a synthetic population of individuals with demographic attributes. In detail:
     *   Gender: male, female
     *   Age: integer value
@@ -30,10 +30,10 @@ The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnen
 *   _**Root folder**_: script to generate a synthetic population and group the latter into households.
 *   [_**/config**_](/config): configuration files. [_**config.R**_](config/config.R) specifies the municipality, year and filtering of the DHZW area.
 *   [_**/src**_](/src): helper functions.
-    *   [_**/format-CBS-datasets**_](src/format-CBS-datasets) contains scripts to convert the raw dataset into the processed dataset ready-to-use.
-*   [_**/data**_](/data):
-    *   [_**/raw**_](/data/raw)_**:** CBS data sets to be processed by the scripts in_ [_/src_](/src)
-    *   [_**/processed**_](/data/processed)_**:** data sets ready-to-use. Outputs of the scripts in_ [_/format-CBS-datasets_](/src/format-CBS-datasets)
+    *   [_**/format-datasets**_](/src/format-datasets) contains scripts to convert the raw dataset into the processed dataset ready-to-use.
+*   **/data**:
+    *   **/raw**: CBS data sets to be processed by the scripts in_ [_/src_](/src)
+    *   **/processed**: data sets ready-to-use. Outputs of the scripts in_ [_/src/format-datasets_](/src/format-datasets)
     *   Note: datasets are divided by municipality and year. The configuration file ([/config/config.R](config/config.R)) allows all the scripts to automatically refer to the correct data folders.
 
 ### Other resources
