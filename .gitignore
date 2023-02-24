@@ -4,6 +4,6 @@
 ._*
 /data/*
 /keys/*
-/evaluation/synthetic_population/data_comparison/*
+/evaluation/data_comparison/*
 /visualisation-ArcGIS/*
 /output/ArcGIS/*
