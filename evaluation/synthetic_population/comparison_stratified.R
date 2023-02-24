@@ -72,14 +72,8 @@ df_gender <- df_gender %>%
 # Migration background
 
 # Calculate proportions over the conditional variables
-# df_migration <- df_migration %>%
-#   group_by(gender, age_group, dataset) %>%
-#   mutate(proportion = proportion / sum(proportion)) %>%
-#   ungroup
-
-# # Calculate proportions over the entire dataset, not by conditional variables
 df_migration <- df_migration %>%
-  group_by(dataset) %>%
+  group_by(gender, age_group, dataset) %>%
   mutate(proportion = proportion / sum(proportion)) %>%
   ungroup
 
@@ -323,14 +317,13 @@ df_plot_ischild <- do_analysis(df_child)
 df_plot_car_license <- do_analysis(df_car_license)
 df_plot_hh_type <- do_analysis(df_hh_type)
 
-plot <- df_plot_car_license %>%
+plot <- df_plot_migration %>%
   ggplot(aes(x = attribute)) +
   geom_point(aes(y = perc_diff, color = 'Point'), size = 2) +
   geom_errorbar(aes(ymin = perc_25, ymax = perc_75), width = .2, color = 'black', size = 1.2) +
   geom_point(aes(y = median, color = 'Median'), size = 3, shape = 4, stroke = 2) +
   facet_grid(~variable, switch = "x", scales = "free_x", space = "free_x") +
-  xlab("attribute") +
-  ylab("percentage difference (%)") +
+  labs(x = NULL, y = NULL) +
   scale_color_manual(name = 'Legend', 
                      values = c('Point' = '#00BA38', 'Median' = '#F8766D', 'Error bar' = 'black'),
                      labels = c('percentage\ndifference', 'median', '25% and 75%\npercentiles')) +
@@ -347,5 +340,15 @@ plot <- df_plot_car_license %>%
         text = element_text(size = 14),
         plot.margin = unit(c(0, 0, 0.5, 0), "lines"),  # increase bottom margin
         axis.title.x = element_text(margin = margin(t = 10))) +
-  theme(legend.position = c(0.91, 0.68))
+  theme(legend.position = c(0.76, 0.68))
 plot
+
+
+setwd(this.dir())
+setwd('plots')
+png("migration_background_stratified_paper.png", width = 850, height = 1000, units='px', res = 250)
+plot
+dev.off()
+
+
+

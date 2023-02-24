@@ -1,54 +1,42 @@
-# DHZW synthetic population script
+## DHZW synthetic population script
 
-#### *Author: Marco Pellegrino, Utrecht University*
+#### _Author: Marco Pellegrino, Utrecht University, The Netherlands._
+
+_2022 - 2023_
 
 ## Description
 
-Repository of scripts to geneate the synthetic population for the district of Den Haag Zuid-West.
+Repository of scripts to generate the synthetic population for the district of Den Haag Zuid-West for the year 2019.
 
-The code makes use of the library [GenSynthPop](https://github.com/TabeaSonnenschein/Spatial-Agent-based-Modeling-of-Urban-Health-Interventions/tree/main/GenSynthPop) by Tabea Sonnenschein.
+The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnenschein/Spatial-Agent-based-Modeling-of-Urban-Health-Interventions/tree/main/GenSynthPop) by Tabea Sonnenschein.
 
 ## Usage
 
--   Scripts in [/format-CBS-datasets](https://github.com/mr-marco/DHZW_synthetic-population/tree/main/format-CBS-datasets "format-CBS-datasets") are used to convert the input CBS demographic information into more convinient dataframes.
--   ***generate_synthetic_population.R*****:** it generates a synthetic population of individuals with demographic attributes. In detail:
-    -   gender: male, female
-    -   age: integer value
-    -   migration background: Dutch, Western and non-Western
-    -   current education level: low/middle/high
-    -   education attainment: low/middle/high Note: Dutch education level based on [CBS classification](https://www.cbs.nl/nl-nl/nieuws/2019/33/verschil-levensverwachting-hoog-en-laagopgeleid-groeit/opleidingsniveau)
--   ***generate_households.R*****:** it groups agents of a synthetic population into households.
+*   Scripts in [/format-CBS-datasets](format-CBS-datasets) are used to convert the input CBS demographic information into more convenient data frames.
+*   [_**generate\_synthetic\_population.R**_](generate-synthetic-population.R)**:** it generates a synthetic population of individuals with demographic attributes. In detail:
+    *   Gender: male, female
+    *   Age: integer value
+    *   Migration background: Dutch, Western and non-Western
+    *   Current education level: low/middle/high
+    *   Education attainment: low/middle/high Note: Dutch education level based on [CBS classification](https://www.cbs.nl/nl-nl/nieuws/2019/33/verschil-levensverwachting-hoog-en-laagopgeleid-groeit/opleidingsniveau)
+    *   Individual living with at least one parent: true/false
+    *   Car license ownership: true/false
+*   [_**generate\_households.R**_](generate-households.R)**:** it groups agents of a synthetic population into households. Also, it generates the following household-level attributes:
+    *   Standardized 10% income group
+    *   Car ownership
 
 ## Project structure
 
--   ***Root folder***: script to generate a synthetic population and grouping the latter into households.
--   ***/config***: configuration files. ***config.R*** specifies the municipality, year and filtering of the DHZW area.
--   ***/data***: all the data. Subdivided in ***/raw*** and ***/processed***. Again, datasets are divided by municipality and year. The condiguration file allows all the script to automatically refer to the correct data folders.
--   ***/src***: helper functions. In addition, the subfolder ***/format-CBS-datasets*** contains script to convert the raw dataset into the processed dataset read-to-use.
+*   _**Root folder**_: script to generate a synthetic population and group the latter into households.
+*   [_**/config**_](config): configuration files. [_**config.R**_](config/config.R) specifies the municipality, year and filtering of the DHZW area.
+*   [_**/src**_](src): helper functions.
+    *   [_**/format-CBS-datasets**_](format-CBS-datasets) contains scripts to convert the raw dataset into the processed dataset ready-to-use.
+*   [_**/data**_](data):
+    *   [_**/raw**_](data/raw)_**:** CBS data sets to be processed by the scripts in_ [_/src_](src)
+    *   [_**/processed**_](data/processed)_**:** data sets ready-to-use. Outputs of the scripts in_ [_/format-CBS-datasets_](format-CBS-datasets)
+    *   Note: datasets are divided by municipality and year. The configuration file ([/config/config.R](config/config.R)) allows all the scripts to automatically refer to the correct data folders.
 
-## Data required
+### Other resources
 
-All the dataset are already included in the ***/data*** folder. Internally, case-studies are divided into cities and years.
-
-### Synthetic population generation:
-
--   **Marginal distributions.**
-    -   Aggregation level: neighbourhoods
-    -   Dataset: [marginal_distributions_84583NED.csv](https://github.com/mr-marco/DHZW_synthetic-population/blob/main/data/den_haag_2019/marginal_distributions_84583NED.csv "marginal_distributions_84583NED.csv")
-    -   Source: [CBS](https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=84583NED&_theme=236)
-    -   Used for: gender, age, migration background, education attainment
--   **Gender, integer age**. Stratified.
-    -   Aggregation level: municipality
-    -   Dataset: [gender_age-03759NED.csv](https://github.com/mr-marco/DHZW_synthetic-population/blob/main/data/den_haag_2019/stratified-datasets/gender_age-03759NED.csv "gender_age-03759NED.csv")
-    -   Source: [CBS](https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=03759ned&_theme=267)
-    -   Used for: gender, age
--   **Migration background**, gender and groupages. Stratified.
-    -   Aggregation level: municipality
-    -   Dataset: [gender_age_migration-84910NED.csv](https://github.com/mr-marco/DHZW_synthetic-population/blob/main/data/den_haag_2019/stratified-datasets/gender_age_migration-84910NED.csv "gender_age_migration-84910NED.csv")
-    -   Source: [CBS](https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=84910NED&_theme=267)
-    -   Used for: migration background, current education
--   **Current education**, migration background, gender, groupages. Stratified.
-    -   Aggregation level: municipality
-    -   Dataset: [edu_current-71450NED.csv](https://github.com/mr-marco/DHZW_synthetic-population/blob/main/data/den_haag_2019/stratified-datasets/edu_current-71450NED.csv "edu_current-71450NED.csv")
-    -   Source: [CBS](https://opendata.cbs.nl/statline/portal.html?_la=nl&_catalog=CBS&tableId=71450ned&_theme=341)
-    -   Used for: current education
+*   Section [**data**](README_data.md) explains the used data sets in detail.  
+    Section [**plots**](README_plots.md) contains evaluation plots and maps.

@@ -251,6 +251,16 @@ df_scatter$attribute <- recode(
   'hh_single' =	'single'
 )
 
+df_scatter <- df_scatter[df_scatter$variable != 'age group',]
+df_scatter <- df_scatter[df_scatter$variable != 'gender',]
+
+# Order age groups
+age_order <- c("0 - 14", "15 - 24", "25 - 44", "45 - 64", ">= 65")
+df_scatter$attribute <- fct_relevel(df_scatter$attribute, age_order)
+
+# Order current education
+edu_order <- c("low", "middle", "high")
+df_scatter$attribute <- fct_relevel(df_scatter$attribute, edu_order)
 
 plot <- df_scatter %>%
   ggplot(aes(x = attribute)) +
@@ -258,7 +268,6 @@ plot <- df_scatter %>%
   geom_errorbar(aes(ymin = perc_25, ymax = perc_75), width = .2, color = 'black', size = 1.2) +
   geom_point(aes(y = median, color = 'Median'), size = 3, shape = 4, stroke = 2) +
   facet_grid(~variable, switch = "x", scales = "free_x", space = "free_x") +
-  xlab("attribute") +
   ylab("percentage difference (%)") +
   scale_color_manual(name = 'Legend', 
                      values = c('Point' = '#00BA38', 'Median' = '#F8766D', 'Error bar' = 'black'),
@@ -273,14 +282,15 @@ plot <- df_scatter %>%
         theme(panel.background = element_blank(),
         panel.grid = element_line(colour = alpha('grey', 0.2)),
         panel.border = element_rect(colour = "black", fill = NA),
-        text = element_text(size = 14),
+        text = element_text(size = 15),
         plot.margin = unit(c(0, 0, 0.5, 0), "lines"),  # increase bottom margin
         axis.title.x = element_text(margin = margin(t = 10))) +
-  theme(legend.position = c(0.91, 0.68))
+  theme(legend.position = c(0.85, 0.65))+
+  labs(x = NULL)
 plot
 
 setwd(this.dir())
 setwd('plots')
-png("plot_marginal_percentage_diff.png", width = 2560, height = 1000, units='px', res = 250)
+png("plot_marginal_percentage_diff_paper.png", width = 1500, height = 1000, units='px', res = 250)
 plot
 dev.off()
