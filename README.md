@@ -32,9 +32,8 @@ The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnen
 *   [_**/src**_](/src): helper functions.
     *   [_**/format-datasets**_](/src/format-datasets) contains scripts to convert the raw dataset into the processed dataset ready-to-use.
 *   **/data**:
-    *   **/raw**: CBS data sets to be processed by the scripts in_ [_/src_](/src)
-    *   **/processed**: data sets ready-to-use. Outputs of the scripts in_ [_/src/format-datasets_](/src/format-datasets)
-    *   Note: datasets are divided by municipality and year. The configuration file ([/config/config.R](config/config.R)) allows all the scripts to automatically refer to the correct data folders.
+    *   **/raw**: CBS data sets to be processed by the scripts in_ [/src](/src)
+    *   **/processed**: data sets ready-to-use. Outputs of the scripts in_ [/src/format-datasets](/src/format-datasets)
 
 ### Other resources
 
