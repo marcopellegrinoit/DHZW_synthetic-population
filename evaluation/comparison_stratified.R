@@ -286,8 +286,16 @@ do_analysis <- function(df) {
 }
 
 df_plot_gender <- do_analysis(df_gender)
+
 df_plot_migration <- do_analysis(df_migration)
+
 df_plot_ischild <- do_analysis(df_child)
+df_plot_ischild$attribute <- recode(
+  df_plot_ischild$attribute,
+  'child' = 'is child',
+  'non_child' = 'is not child'
+)
+
 df_plot_income <- do_analysis(df_income)
 df_plot_income$attribute <- recode(
   df_plot_income$attribute,
@@ -304,9 +312,30 @@ df_plot_income$attribute <- recode(
 )
 
 df_plot_car_ownership <- do_analysis(df_car_ownership)
+df_plot_car_ownership$attribute <- recode(
+  df_plot_car_ownership$attribute,
+  'no_car' = 'has not car',
+  'with_car' = 'has car'
+)
+
 df_plot_car_license <- do_analysis(df_car_license)
+df_plot_car_license$attribute <- recode(
+  df_plot_car_license$attribute,
+  'no_car_license' = 'has not car license',
+  'with_car_license' = 'has car license'
+)
+
+
 df_plot_hh_type <- do_analysis(df_hh_type)
+df_plot_hh_type$attribute <- recode(
+  df_plot_hh_type$attribute,
+  'single_parent' = 'single-parent'
+)
+
+
 df_plot_current_edu <- do_analysis(df_current_edu)
+edu_order <- c("low", "middle", "high", "no current education")
+df_plot_current_edu$attribute <- fct_relevel(df_plot_current_edu$attribute, edu_order)
 
 plot_save_results <- function(df) {
   plot <- df %>%
