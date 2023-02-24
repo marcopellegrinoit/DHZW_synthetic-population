@@ -1,3 +1,5 @@
+![GitHub](https://img.shields.io/badge/license-GPL--3.0-blue)  
+
 # DHZW synthetic population script
 
 #### *Utrecht University, The Netherlands. 2022 - 2023*
@@ -32,10 +34,10 @@ The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnen
 *   [_**/src**_](/src): helper functions.
     *   [_**/format-datasets**_](/src/format-datasets) contains scripts to convert the raw dataset into the processed dataset ready-to-use.
 *   **/data**:
-    *   **/raw**: CBS data sets to be processed by the scripts in_ [/src](/src)
-    *   **/processed**: data sets ready-to-use. Outputs of the scripts in_ [/src/format-datasets](/src/format-datasets)
+    *   **/raw**: CBS data sets to be processed by the scripts in [/src](/src)
+    *   **/processed**: data sets ready-to-use. Outputs of the scripts in [/src/format-datasets](/src/format-datasets)
 
 ### Other resources
 
 *   Section [**data**](README_data.md) explains the used data sets in detail.  
-    Section [**plots**](README_plots.md) contains evaluation plots and maps.
+*   Section [**plots**](README_plots.md) contains evaluation plots and maps.
