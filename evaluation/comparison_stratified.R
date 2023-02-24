@@ -263,16 +263,16 @@ do_analysis <- function(df) {
   df_analysis$variable <- ifelse(df_analysis$attribute == "with_car", 'household car ownership', df_analysis$variable)
   df_analysis$variable <- ifelse(df_analysis$attribute == "no_car", 'household car ownership', df_analysis$variable)
   
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_1_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_2_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_3_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_4_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_5_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_6_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_7_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_8_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_9_10", 'household income group', df_analysis$variable)
-  df_analysis$variable <- ifelse(df_analysis$attribute == "income_group_10_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_1_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_2_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_3_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_4_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_5_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_6_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_7_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_8_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_9_10", 'household income group', df_analysis$variable)
+  df_analysis$variable <- ifelse(df_analysis$attribute == "income_10_10", 'household income group', df_analysis$variable)
   
   df_analysis$variable <- ifelse(df_analysis$attribute == "couple", 'positition in household', df_analysis$variable)
   df_analysis$variable <- ifelse(df_analysis$attribute == "single", 'positition in household', df_analysis$variable)
@@ -289,6 +289,20 @@ df_plot_gender <- do_analysis(df_gender)
 df_plot_migration <- do_analysis(df_migration)
 df_plot_ischild <- do_analysis(df_child)
 df_plot_income <- do_analysis(df_income)
+df_plot_income$attribute <- recode(
+  df_plot_income$attribute,
+  'income_1_10' = '0% - 10%',
+  'income_2_10' = '10% - 20%',
+  'income_3_10' = '20% - 30%',
+  'income_4_10' = '30% - 40%',
+  'income_5_10' = '40% - 50%',
+  'income_6_10' = '50% - 60%',
+  'income_7_10' = '60% - 70%',
+  'income_8_10' = '70% - 80%',
+  'income_9_10' = '80% - 90%',
+  'income_10_10' = '90% - 100%'
+)
+
 df_plot_car_ownership <- do_analysis(df_car_ownership)
 df_plot_car_license <- do_analysis(df_car_license)
 df_plot_hh_type <- do_analysis(df_hh_type)
