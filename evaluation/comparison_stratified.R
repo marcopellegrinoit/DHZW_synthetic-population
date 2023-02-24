@@ -332,7 +332,7 @@ plot_save_results <- function(df) {
           text = element_text(size = 14),
           plot.margin = unit(c(0, 0, 0.5, 0), "lines"),  # increase bottom margin
           axis.title.x = element_text(margin = margin(t = 10))) +
-    theme(legend.position = c(0.76, 0.68))
+    theme(legend.position = 'right')
   return(plot)
   
 }
@@ -341,42 +341,42 @@ setwd(this.dir())
 setwd('plots/stratified')
 
 plot_gender <- plot_save_results(df_plot_gender)
-png(paste0("gender.png"), width = 850, height = 1000, units='px', res = 250)
+png(paste0("gender.png"), width = 1000, height = 1000, units='px', res = 250)
 plot_gender
 dev.off()
 
 plot_migration <- plot_save_results(df_plot_migration)
-png(paste0("migration.png"), width = 850, height = 1000, units='px', res = 250)
+png(paste0("migration.png"), width = 1000, height = 1000, units='px', res = 250)
 plot_migration
 dev.off()
 
 plot_ischild <- plot_save_results(df_plot_ischild)
-png(paste0("ischild.png"), width = 850, height = 1000, units='px', res = 250)
+png(paste0("ischild.png"), width = 1000, height = 1000, units='px', res = 250)
 plot_ischild
 dev.off()
 
 plot_income <- plot_save_results(df_plot_income)
-png(paste0("income_group.png"), width = 850, height = 1000, units='px', res = 250)
+png(paste0("income_group.png"), width = 1000, height = 1000, units='px', res = 250)
 plot_income
 dev.off()
 
 plot_car_ownership <- plot_save_results(df_plot_car_ownership)
-png(paste0("car_ownership.png"), width = 850, height = 1000, units='px', res = 250)
+png(paste0("car_ownership.png"), width = 1000, height = 1000, units='px', res = 250)
 plot_car_ownership
 dev.off()
 
 plot_car_license <- plot_save_results(df_plot_car_license)
-png(paste0("license_car_ownership.png"), width = 850, height = 1000, units='px', res = 250)
+png(paste0("license_car_ownership.png"), width = 1000, height = 1000, units='px', res = 250)
 plot_car_license
 dev.off()
 
 plot_hh_type <- plot_save_results(df_plot_hh_type)
-png(paste0("household_position.png"), width = 850, height = 1000, units='px', res = 250)
+png(paste0("household_position.png"), width = 1000, height = 1000, units='px', res = 250)
 plot_hh_type
 dev.off()
 
 plot_current_edu <- plot_save_results(df_plot_current_edu)
-png(paste0("current_education.png"), width = 850, height = 1000, units='px', res = 250)
+png(paste0("current_education.png"), width = 1000, height = 1000, units='px', res = 250)
 plot_current_edu
 dev.off()
 
