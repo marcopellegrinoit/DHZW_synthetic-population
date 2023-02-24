@@ -12,7 +12,7 @@ The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnen
 
 ## Usage
 
-*   Scripts in [/format-CBS-datasets](/format-CBS-datasets) are used to convert the input CBS demographic information into more convenient data frames.
+*   Scripts in [/format-CBS-datasets](/src/format-CBS-datasets) are used to convert the input CBS demographic information into more convenient data frames.
 *   [_**generate\_synthetic\_population.R**_](generate-synthetic-population.R)**:** it generates a synthetic population of individuals with demographic attributes. In detail:
     *   Gender: male, female
     *   Age: integer value
