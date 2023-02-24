@@ -43,14 +43,8 @@ df_hh_type <- read.csv('hh_type.csv')
 df_gender <- df_gender[df_gender$age < 103,]
 
 # Calculate proportions over the conditional variables
-# df_gender <- df_gender %>%
-#   group_by(age, dataset) %>%
-#   mutate(proportion = proportion / sum(proportion)) %>%
-#   ungroup
-
-#Calculate proportions over the entire dataset, not by conditional variables
 df_gender <- df_gender %>%
-  group_by(dataset) %>%
+  group_by(age, dataset) %>%
   mutate(proportion = proportion / sum(proportion)) %>%
   ungroup
 
@@ -95,14 +89,8 @@ df_migration <- df_migration %>%
 # Current education
 
 # Calculate proportions over the conditional variables
-# df_current_edu <- df_current_edu %>%
-#   group_by(gender, age_group, migration_background, dataset) %>%
-#   mutate(proportion = proportion / sum(proportion)) %>%
-#   ungroup
-
-# Calculate proportions over the entire dataset, not by conditional variables
 df_current_edu <- df_current_edu %>%
-  group_by(dataset) %>%
+  group_by(gender, age_group, migration_background, dataset) %>%
   mutate(proportion = proportion / sum(proportion)) %>%
   ungroup
 
@@ -124,14 +112,8 @@ df_current_edu <- df_current_edu %>%
 # Child living at home with parents
 
 # Calculate proportions over the conditional variables
-# df_child <- df_child %>%
-#   group_by(gender, age_group, dataset) %>%
-#   mutate(proportion = proportion / sum(proportion)) %>%
-#   ungroup
-
-# # Calculate proportions over the entire dataset, not by conditional variables
 df_child <- df_child %>%
-  group_by(dataset) %>%
+  group_by(gender, age_group, dataset) %>%
   mutate(proportion = proportion / sum(proportion)) %>%
   ungroup
 
@@ -216,17 +198,11 @@ df_car_ownership <- df_car_ownership %>%
 # Household type
 
 # Calculate proportions over the conditional variables
-# df_hh_type <- df_hh_type %>%
-#   group_by(gender, age_group, dataset) %>%
-#   mutate(proportion = proportion / sum(proportion)) %>%
-#   ungroup
-df_hh_type$proportion[is.nan(df_hh_type$proportion)]<-0
-
-# # Calculate proportions over the entire dataset, not by conditional variables
 df_hh_type <- df_hh_type %>%
-  group_by(dataset) %>%
+  group_by(gender, age_group, dataset) %>%
   mutate(proportion = proportion / sum(proportion)) %>%
   ungroup
+df_hh_type$proportion[is.nan(df_hh_type$proportion)]<-0
 
 df_hh_type <- df_hh_type %>%
   pivot_wider(names_from = 'dataset', values_from = 'proportion')
@@ -312,43 +288,81 @@ do_analysis <- function(df) {
 df_plot_gender <- do_analysis(df_gender)
 df_plot_migration <- do_analysis(df_migration)
 df_plot_ischild <- do_analysis(df_child)
-#df_plot_income <- do_analysis(df_income)
-#df_plot_car_ownership <- do_analysis(df_car_ownership)
+df_plot_income <- do_analysis(df_income)
+df_plot_car_ownership <- do_analysis(df_car_ownership)
 df_plot_car_license <- do_analysis(df_car_license)
 df_plot_hh_type <- do_analysis(df_hh_type)
+df_plot_current_edu <- do_analysis(df_current_edu)
 
-plot <- df_plot_migration %>%
-  ggplot(aes(x = attribute)) +
-  geom_point(aes(y = perc_diff, color = 'Point'), size = 2) +
-  geom_errorbar(aes(ymin = perc_25, ymax = perc_75), width = .2, color = 'black', size = 1.2) +
-  geom_point(aes(y = median, color = 'Median'), size = 3, shape = 4, stroke = 2) +
-  facet_grid(~variable, switch = "x", scales = "free_x", space = "free_x") +
-  labs(x = NULL, y = NULL) +
-  scale_color_manual(name = 'Legend', 
-                     values = c('Point' = '#00BA38', 'Median' = '#F8766D', 'Error bar' = 'black'),
-                     labels = c('percentage\ndifference', 'median', '25% and 75%\npercentiles')) +
-  theme(panel.spacing = unit(0.5, "lines"), 
-        strip.placement = "outside",
+plot_save_results <- function(df) {
+  plot <- df %>%
+    ggplot(aes(x = attribute)) +
+    geom_point(aes(y = perc_diff, color = 'Point'), size = 2) +
+    geom_errorbar(aes(ymin = perc_25, ymax = perc_75), width = .2, color = 'black', size = 1.2) +
+    geom_point(aes(y = median, color = 'Median'), size = 3, shape = 4, stroke = 2) +
+    facet_grid(~variable, switch = "x", scales = "free_x", space = "free_x") +
+    labs(x = NULL, y = NULL) +
+    scale_color_manual(name = 'Legend', 
+                       values = c('Point' = '#00BA38', 'Median' = '#F8766D', 'Error bar' = 'black'),
+                       labels = c('percentage\ndifference', 'median', '25% and 75%\npercentiles')) +
+    theme(panel.spacing = unit(0.5, "lines"), 
+          strip.placement = "outside",
           axis.text.x = element_text(
             angle = 45,
             hjust = 1,
           )
-        )+
-        theme(panel.background = element_blank(),
-        panel.grid = element_line(colour = alpha('grey', 0.2)),
-        panel.border = element_rect(colour = "black", fill = NA),
-        text = element_text(size = 14),
-        plot.margin = unit(c(0, 0, 0.5, 0), "lines"),  # increase bottom margin
-        axis.title.x = element_text(margin = margin(t = 10))) +
-  theme(legend.position = c(0.76, 0.68))
-plot
-
+    )+
+    theme(panel.background = element_blank(),
+          panel.grid = element_line(colour = alpha('grey', 0.2)),
+          panel.border = element_rect(colour = "black", fill = NA),
+          text = element_text(size = 14),
+          plot.margin = unit(c(0, 0, 0.5, 0), "lines"),  # increase bottom margin
+          axis.title.x = element_text(margin = margin(t = 10))) +
+    theme(legend.position = c(0.76, 0.68))
+  return(plot)
+  
+}
 
 setwd(this.dir())
-setwd('plots')
-png("migration_background_stratified_paper.png", width = 850, height = 1000, units='px', res = 250)
-plot
+setwd('plots/stratified')
+
+plot_gender <- plot_save_results(df_plot_gender)
+png(paste0("gender.png"), width = 850, height = 1000, units='px', res = 250)
+plot_gender
 dev.off()
 
+plot_migration <- plot_save_results(df_plot_migration)
+png(paste0("migration.png"), width = 850, height = 1000, units='px', res = 250)
+plot_migration
+dev.off()
 
+plot_ischild <- plot_save_results(df_plot_ischild)
+png(paste0("ischild.png"), width = 850, height = 1000, units='px', res = 250)
+plot_ischild
+dev.off()
+
+plot_income <- plot_save_results(df_plot_income)
+png(paste0("income_group.png"), width = 850, height = 1000, units='px', res = 250)
+plot_income
+dev.off()
+
+plot_car_ownership <- plot_save_results(df_plot_car_ownership)
+png(paste0("car_ownership.png"), width = 850, height = 1000, units='px', res = 250)
+plot_car_ownership
+dev.off()
+
+plot_car_license <- plot_save_results(df_plot_car_license)
+png(paste0("license_car_ownership.png"), width = 850, height = 1000, units='px', res = 250)
+plot_car_license
+dev.off()
+
+plot_hh_type <- plot_save_results(df_plot_hh_type)
+png(paste0("household_position.png"), width = 850, height = 1000, units='px', res = 250)
+plot_hh_type
+dev.off()
+
+plot_current_edu <- plot_save_results(df_plot_current_edu)
+png(paste0("current_education.png"), width = 850, height = 1000, units='px', res = 250)
+plot_current_edu
+dev.off()
 
