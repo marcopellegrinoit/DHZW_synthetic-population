@@ -1,6 +1,6 @@
 ![GitHub](https://img.shields.io/badge/license-GPL--3.0-blue)
 
-## Generating a Spatially Explicit Synthetic Population of Individuals and Households
+# Generating a Spatially Explicit Synthetic Population of Individuals and Households
 
 ## Evaluation plots
 
