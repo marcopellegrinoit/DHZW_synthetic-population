@@ -41,5 +41,5 @@ The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnen
 
 ### Other resources
 
--   Section [**data**](README_data.md) explains the used data sets in detail.\
+-   Section [**data**](README_data.md) explains the used data sets in detail.
 -   Section [**plots**](README_plots.md) contains evaluation plots and maps.
