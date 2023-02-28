@@ -12,11 +12,11 @@
 
 Sections:
 
--   [Comparison with neighbourhood marginal data set](#comparison-with-neighbourhood-marginal-data-set)
+-   [Comparison with neighbourhood marginal data set]
 
--   [Spatially-detailed comparison with neighbourhood marginal data set](#spatially-detailed-comparison-with-neighbourhood-marginal-data-set)
+-   [Spatially-detailed comparison with neighbourhood marginal data set]
 
--   [Comparison with jointly distributed data sets](#comparison-with-jointly-distributed-data-sets)
+-   [Comparison with jointly distributed data sets]
 
 ## Comparison with neighbourhood marginal data set {#comparison-with-neighbourhood-marginal-data-set}
 
