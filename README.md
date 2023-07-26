@@ -59,7 +59,7 @@ The script [`generate_households.R`](generate-households.R) groups agents of the
 
 ## Contributors
 
-This project was made possible thanks to the hard work and contributions from the following individuals:
+This project was made possible thanks to the hard work and contributions from:
 
 *   Marco Pellegrino (Author)
 *   Jan de Mooij
