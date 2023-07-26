@@ -74,5 +74,3 @@ This project was made possible thanks to the hard work and contributions from th
 ## License
 
 This repository is licensed under the GNU General Public License v3.0 (GPL-3.0). For more details, see the [LICENSE](LICENSE) file.
-
-For more information about the data sets used in this project, refer to the [Data](README_data.md) section. For evaluation plots and maps, please check the [Evaluation Plots](README_plots.md) section.
