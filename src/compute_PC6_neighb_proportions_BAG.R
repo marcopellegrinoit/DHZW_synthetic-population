@@ -3,11 +3,9 @@ library(dplyr)
 library (readr)
 library(sf)
 
-setwd(this.path::this.dir())
-source('../config/config.R')
-
 # Load PC4 DHZW
-setwd('../data/codes')
+setwd(this.path::this.dir())
+setwd('../../DHZW_shapefiles/data/codes')
 DHZW_PC4_codes <-
   read.csv("DHZW_PC4_codes.csv",
            sep = ";" ,
@@ -75,43 +73,22 @@ df <- st_zm(df)
 # Filter residential addresses
 df_residential <- df %>%
   filter(residential == 1)
-st_write(df_residential, '../data/processed/BAG/buildings_residential', driver = "ESRI Shapefile")
-
-# Filter retail shops
-df_retails <- df %>%
-  filter(use == 'retail')
-st_write(df_retails, '../data/processed/BAG/buildings_retail', driver = "ESRI Shapefile")
-
-# Filter schools
-df_schools <- df %>%
-  filter(use == 'school')
-st_write(df_schools, '../data/processed/BAG/buildings_school', driver = "ESRI Shapefile")
-
-# Filter offices
-df_offices <- df %>%
-  filter(use == 'office')
-st_write(df_offices, '../data/processed/BAG/buildings_office', driver = "ESRI Shapefile")
-
-# Filter sport
-df_sport <- df %>%
-  filter(use == 'sport')
-st_write(df_sport, '../data/processed/BAG/buildings_sport', driver = "ESRI Shapefile")
 
 ################################################################################
 # Assign neighb_code to each PC6 of BAG
 
 # Load CBS matching between PC6 and neighb_code
 setwd(this.path::this.dir())
-setwd(paste("../data/processed",
-            year,
-            municipality,
-            sep = '/'))
+setwd("../data/processed")
+
 df_PC6_neighb <- read_delim(
   "PC6_neighbourhoods.csv",
   delim = ",",
   escape_double = FALSE,
   trim_ws = TRUE
 )
+
+
 df_PC6_neighb <- df_PC6_neighb %>%
   select(PC6, neighb_code)
 
@@ -132,7 +109,3 @@ df_residential <- df_residential %>%
 setwd(this.path::this.dir())
 setwd('../data/processed/BAG')
 write.csv(df_residential, 'proportions_PC6_neighbcode_BAG.csv', row.names = FALSE)
-
-
-df <- df_PC6_neighb %>%
-  filter(! (PC6 %in% unique(df_PC6_neighb$PC6)))

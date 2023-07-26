@@ -1,36 +1,22 @@
 library("this.path")
 library(dplyr)
 library (readr)
-setwd(this.path::this.dir())
-source('../config/config.R')
 
-# Load datasets of the municipality for that year
-setwd(
-  paste(
-    "../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+
+# Load datasets
+setwd(this.path::this.dir())
+setwd("../data/processed/households")
 df_children_aggregated <- read_csv("children_71486NED-formatted.csv")
 df_mother_children <- read.csv("mother_children_age_37201-formatted.csv")
 
-setwd(this.path::this.dir())
 # Load datasets on national level
-setwd(
-  paste(
-    "../data/processed",
-    sep = '/'
-  )
-)
+setwd(this.path::this.dir())
+setwd("../data/processed")
 df_age_couples <- read.csv("couples_age_disparity.csv", sep=',')
 df_age_couples_heterosexual <- read_delim("couples_age_disparity_heterosexual-formatted.csv", 
                                                            delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
-
-## Implementation of Jan's Methods 2
+## Return a distribution of how many households per children size
 get_households_children <- function(df_synth_pop, neighb_code) {
   n_children = nrow(df_synth_pop[df_synth_pop$is_child==1 & df_synth_pop$neighb_code==neighb_code,])
   
@@ -80,7 +66,7 @@ get_households_children <- function(df_synth_pop, neighb_code) {
 }
 
 
-
+# get the agent ID of the mother
 get_mother <- function(df_synth_pop, neighb_code, avg_children_age, oldest_child_age) {
   # list of all unassigned mothers
   df_mothers = df_synth_pop[is.na(df_synth_pop$hh_ID) & df_synth_pop$gender=='female' & df_synth_pop$is_child==0 & df_synth_pop$neighb_code==neighb_code,]
@@ -125,6 +111,7 @@ get_mother <- function(df_synth_pop, neighb_code, avg_children_age, oldest_child
   
 }
 
+# get the age of the ideal mother. used to find a father
 get_age_fake_mother <- function(df_synth_pop, avg_children_age, oldest_child_age) {
   # sample age difference of the ideal mother
   age_fake_mother_group = sample(df_mother_children$diff_group,
@@ -158,6 +145,7 @@ get_age_fake_mother <- function(df_synth_pop, avg_children_age, oldest_child_age
   return(age_fake_mother)
 }
 
+# get agent ID of the partner given age and gender of the already assigned agent
 get_second_partner <- function(df_synth_pop, neighb_code, age_first_partner, genders) {
   # get all the remaining second_partners
   if(genders=='male_female') {

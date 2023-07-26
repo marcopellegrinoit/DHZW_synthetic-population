@@ -1,7 +1,5 @@
 library(dplyr)
 library (readr)
-setwd(this.path::this.dir())
-source('../../config/config.R')
 
 setwd(this.path::this.dir())
 setwd("../../data/raw")

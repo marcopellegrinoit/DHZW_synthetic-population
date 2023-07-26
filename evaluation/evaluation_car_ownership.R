@@ -3,24 +3,18 @@ library(dplyr)
 library(tidyr)
 library("this.path")
 setwd(this.path::this.dir())
-source('../../src/utils-evaluation-synthetic-population.R')
-source('../../config/config.R')
+source('../src/utils-evaluation-synthetic-population.R')
 
 # Load datasets
 
 
 # Load synthetic population
 setwd(this.path::this.dir())
-setwd(paste("../../output/synthetic-population-households/4_car_2022-12-26_15-50", sep = ""))
+setwd(paste("../../output/synthetic-population-households/", sep = ""))
 df_households = read.csv("df_households_DHZW_2019.csv", sep = ",")
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    sep = '/'
-  )
-)
+setwd("../data/processed")
 df_car_ownership = read.csv("car_ownership_NL_2015-formatted.csv")
 df_car_ownership <- df_car_ownership[df_car_ownership$hh_type %in% unique(df_households$hh_type),]
 

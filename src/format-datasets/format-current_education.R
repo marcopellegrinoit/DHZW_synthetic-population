@@ -14,27 +14,13 @@ codes_ages_education = read.csv("codes_ages_current_education.csv", fileEncoding
 codes_education = read.csv("codes_education.csv", sep=';', fileEncoding="UTF-8-BOM")
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../../data/raw/individuals_demographics")
+
 df_StratEduCurrent = read.csv("edu_current-71450NED.csv", sep = ";")
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/individuals")
+
 df_StratMigration = read.csv("gender_age_migration-84910NED-formatted.csv", sep = ",")
 
 df_StratEduCurrent = df_StratEduCurrent %>%
@@ -119,13 +105,6 @@ df_StratEduCurrent$prob_high = df_StratEduCurrent$high/df_StratEduCurrent$total
 
 # Save formatted dataset
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/individuals")
+
 write.csv(df_StratEduCurrent, 'edu_current-71450NED-formatted.csv', row.names=FALSE)

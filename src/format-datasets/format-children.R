@@ -2,18 +2,9 @@ library(dplyr)
 library (readr)
 library("this.path")
 setwd(this.path::this.dir())
-source('../../config/config.R')
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/raw/households")
 
 df_children <- read_delim("children_71486NED.csv", 
                                 delim = ";", escape_double = FALSE, trim_ws = TRUE)
@@ -42,14 +33,8 @@ df_children_aggregated$children_in_house = c(1, 2, 3)
 df_children_aggregated$total_children = rowSums(df_children_aggregated)
 df_children_aggregated$prob = df_children_aggregated$total_children / sum(df_children_aggregated$total_children)
 
+# save
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/households")
+
 write.csv(df_children_aggregated, 'children_71486NED-formatted.csv', row.names=FALSE)

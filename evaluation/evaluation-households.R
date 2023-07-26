@@ -3,38 +3,20 @@ library('readr')
 library('tidyr')
 library('dplyr')
 library('ggplot2')
-setwd(this.path::this.dir())
-source('../config/config.R')
 
 # Load marginal distribution
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../data/processed/individuals")
 df_marginal_dist = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 
 # Load households size distribution (municipality aggregated)
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../data/processed/households")
 df_household_size = read.csv('household_size_71486NED-formatted.csv')
 
 setwd(this.path::this.dir())
 setwd(paste0("../output/synthetic-population-households"))
-df_synth_pop = read.csv('synthetic_population_DHZW_2019_with_hh.csv')
+df_synth_pop = read.csv('synthetic_population_DHZW_2019.csv')
 df_households = read.csv('df_households_DHZW_2019.csv')
 
 setwd(this.path::this.dir())
@@ -595,15 +577,7 @@ ggplot(df_age_couples_heterosexual_gender, aes(group, as.numeric(prop))) +
 # Age difference mother - child
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../data/processed/households")
 df_mother_children <- read.csv("mother_children_age_37201-formatted.csv")
 
 list_mother_older_child <- c()
@@ -718,14 +692,7 @@ ggplot(df_mother_children_plot, aes(diff_group, as.numeric(prop))) +
 
 # Load stratified dataset
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  ))
+setwd("../data/processed/households")
 
 df_strat_income = read.csv("household_income_85064NED-formatted.csv")
 df_strat_income <- df_strat_income[df_strat_income$type %in% unique(df_households$hh_type),]

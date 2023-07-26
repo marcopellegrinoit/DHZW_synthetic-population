@@ -1,4 +1,4 @@
-library(ggplot2)
+library(dplyr)
 library(tidyr)
 library(splitstackshape)
 
@@ -63,28 +63,28 @@ refactor_migration = function(df){
 # In addition, the distribution is done within neighbourhood areas, for a more uniform distribution, since the stratified dataset is municipality level.
 # 
 # @df_synt_pop: synthetic population dataframe
-# @df_strat: stratified dataset
+# @df_joint: joint distribution dataset
 # @new_attribute: new attribute (column name) to add to the synthetic population
-# @attributes_to_match: attributes to use to match the stratified dataset to the synthetic population
+# @attributes_to_match: attributes to use to match the joint distribution dataset to the synthetic population
 # @values_new_attribute: values/classes of the new attribute
-# @probabilities: column names of the values of the new attribute in the stratified dataset. The order must correspond to the @values_new_attribute. The probability of the last class can be avoided.
-distribute_attribute_stratified <- function(df_synth_pop, df_strat, new_attribute, attributes_to_match, values_new_attribute, probabilities) {
+# @probabilities: column names of the values of the new attribute in the joint distribution dataset. The order must correspond to the @values_new_attribute. The probability of the last class can be avoided.
+distribute_attribute_joint_dist <- function(df_synth_pop, df_joint, new_attribute, attributes_to_match, values_new_attribute, probabilities) {
   # Initialise new attribute
   df_synth_pop[new_attribute] = ''
   
   # For each neighbourhood
   for (neighb_code in unique(df_synth_pop$neighb_code)) {
-    # For each combination of demographics of the stratified dataset
-    for (i in 1:nrow(df_strat)) {
+    # For each combination of demographics of the joint distribution dataset
+    for (i in 1:nrow(df_joint)) {
       agents_neighbourhood <- df_synth_pop[df_synth_pop$neighb_code==neighb_code,]
       
-      # Get current combination from the stratified dataset
-      df_strat_tmp <- df_strat %>%
+      # Get current combination from the joint distribution dataset
+      df_joint_tmp <- df_joint %>%
         slice(i) %>%
         select(attributes_to_match)
       
       # Get agents in that neighbourhood with such demographics combination
-      agents_neighbourhood = merge(df_strat_tmp, agents_neighbourhood, by=attributes_to_match)
+      agents_neighbourhood = merge(df_joint_tmp, agents_neighbourhood, by=attributes_to_match)
       n_agents = nrow(agents_neighbourhood)
       
       # For each value class sample agents with its proportion
@@ -92,7 +92,7 @@ distribute_attribute_stratified <- function(df_synth_pop, df_strat, new_attribut
       for (class_index in 1:length(values_new_attribute)) {
         class = values_new_attribute[class_index]
         
-        # Calculate the number of synthetic agent for this class based on the proportions of the stratified dataset
+        # Calculate the number of synthetic agent for this class based on the proportions of the joint distribution dataset
         if (class_index != length(values_new_attribute)) {
           n_agents_class = round(n_agents * df_strat[i, probabilities[class_index]])
           n_agents_accumulated = n_agents_accumulated + n_agents_class
@@ -131,7 +131,7 @@ distribute_attribute_stratified <- function(df_synth_pop, df_strat, new_attribut
 # @df_marginal_dist: marginal distribution
 # @col_neighb_code: coloumn name if the neighbourhood codes
 # @col_tot: coloumn name which the amount of inhabintas per each neighbouhood
-get_synthetic_population_neighborhoods <- function (df_marginal_dist, col_neighb_code, col_tot) {
+initialise_with_neighbourhood_codes <- function (df_marginal_dist, col_neighb_code, col_tot) {
   # Select coloumns
   df_synth_pop <- df_marginal_dist %>%
     select(!!col_neighb_code, !!col_tot)

@@ -3,27 +3,17 @@ library(dplyr)
 library(tidyr)
 library("this.path")
 setwd(this.path::this.dir())
-source('../../src/utils-evaluation-synthetic-population.R')
-source('../../config/config.R')
+source('../src/utils-evaluation-synthetic-population.R')
 
 # Load datasets
 
-
 # Load synthetic population
 setwd(this.path::this.dir())
-setwd(paste("../../output/synthetic-population-households/4_car_2022-12-26_15-50", sep = ""))
+setwd(paste("../output/synthetic-population-households/", sep = ""))
 df_households = read.csv("df_households_DHZW_2019.csv", sep = ",")
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../data/processed/households")
 df_strat_income = read.csv("household_income_85064NED-formatted.csv")
 df_strat_income <- df_strat_income[df_strat_income$type %in% unique(df_households$hh_type),]
 

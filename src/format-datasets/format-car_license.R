@@ -4,18 +4,11 @@ library(this.path)
 library(stringr)
 library(tidyr)
 setwd(this.path::this.dir())
-source('../../config/config.R')
 
 # Load dataset
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    sep = '/'
-  )
-)
-df <- read.csv('car_license-83488NED.csv', sep=';')
+setwd("../../data/raw")
+df <- read.csv('car_license-83488NED.csv', sep=';', fileEncoding = "UTF-8-BOM")
 
 df <- df %>%
   select(Rijbewijscategorie,
@@ -47,18 +40,11 @@ df$age_group <- recode(
 df <- df %>%
   pivot_wider(names_from = 'category', values_from = 'n_people')
 
-# Compute proportions
-# Load number of inhabitants per age group
+# Add total number of inhabitants per age group
 
 # Load dataset
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    sep = '/'
-  )
-)
+setwd("../../data/processed")
 df_inhabitants <- read.csv('inhabintants_south_holland-03759NED-formatted.csv')
 
 df <- merge(df, df_inhabitants, by = 'age_group')
@@ -66,14 +52,5 @@ df <- merge(df, df_inhabitants, by = 'age_group')
 df$car <- df$car/df$n_people
 df$moped <- df$moped/df$n_people
 
-# Save dataset
-setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    sep = '/'
-  )
-)
 
 write.csv(df, 'car_license-83488NED-formatted.csv', row.names = FALSE)

@@ -12,15 +12,8 @@ codes_agegroup20 = read.csv("codes_agegroup20.csv", fileEncoding="UTF-8-BOM")
 
 # Load dataset
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../../data/raw/individuals_demographics")
+
 df_StratMigration = read.csv("gender_age_migration-84910NED.csv", sep = ";")
 
 # Select interesting attributes
@@ -51,13 +44,6 @@ df_StratMigration = df_StratMigration %>%
   rename(age_group = age_group_20)
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/individuals")
+
 write.csv(df_StratMigration, 'gender_age_migration-84910NED-formatted.csv', row.names=FALSE)

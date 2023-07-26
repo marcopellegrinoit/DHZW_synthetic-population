@@ -1,17 +1,9 @@
 library(dplyr)
 library("this.path")
-setwd(this.path::this.dir())
-source('../../config/config.R')
 
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd(this.path::this.dir())
+setwd("../../data/raw/households")
+
 setwd(paste("../data/", municipality, "/households/distributions", sep = ""))
 
 # Load and reformat household size distributions
@@ -30,13 +22,6 @@ df_HouseholdSize <- cbind(size = rownames(df_HouseholdSize), df_HouseholdSize)
 rownames(df_HouseholdSize) <- 1:nrow(df_HouseholdSize)
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/households")
+
 write.csv(df_HouseholdSize, 'household_size_71486NED-formatted.csv', row.names = FALSE)

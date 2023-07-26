@@ -5,15 +5,7 @@ setwd(this.path::this.dir())
 source('../../config/config.R')
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/raw/households")
 
 df_parents <- read_delim("couples_singleparents-71488NED.csv", 
                           delim = ";", escape_double = FALSE, trim_ws = TRUE)
@@ -34,14 +26,8 @@ colnames(df_parents) = c('hh_type', 'freq')
 rownames(df_parents) <- 1:nrow(df_parents)
 df_parents$prob = df_parents$freq/sum(df_parents$freq)
 
+# save
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/households")
+
 write.csv(df_parents, 'couples_singleparents-71488NED-formatted.csv', row.names=FALSE)

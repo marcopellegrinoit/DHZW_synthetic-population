@@ -1,18 +1,10 @@
 library(dplyr)
 library (readr)
 library("this.path")
-setwd(this.path::this.dir())
-source('../../config/config.R')
 
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd(this.path::this.dir())
+setwd("../../data/raw/households")
+
 df_mother_children <- read_delim("mother_children_age_37201.csv",
                                  delim = ";", escape_double = FALSE, trim_ws = TRUE)
 df_mother_children = subset(df_mother_children, select=-c(Perioden, `Regio's`))
@@ -36,13 +28,6 @@ rownames(df_mother_children) <- 1:nrow(df_mother_children)
 df_mother_children$prob = df_mother_children$freq/sum(df_mother_children$freq)
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/households")
+
 write.csv(df_mother_children, 'mother_children_age_37201-formatted.csv', row.names=FALSE)

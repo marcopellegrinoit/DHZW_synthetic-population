@@ -2,10 +2,8 @@ library(GenSynthPop)
 library(dplyr)
 library("this.path")
 setwd(this.path::this.dir())
-source('../../config/config.R')
 source('../utils-synthetic-population.R')
 
-# Load age conversion codes
 # Load age conversion codes
 setwd(this.path::this.dir())
 setwd("../../data/codes")
@@ -13,15 +11,8 @@ codes_age = read.csv("codes_age.csv", sep=",")
 
 # Load dataset
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../../data/raw/individuals_demographics")
+
 df_StratGender = read.csv("gender_age-03759NED.csv", sep = ";") # count of people per lifeyear and gender in all of Amsterdam
 
 # Select and translate useful attributes
@@ -58,14 +49,7 @@ df_StratGender = df_StratGender %>%
   group_by(age_group) %>%
   mutate(group_propensity = total/sum(total))
 
+# save
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/individuals")
 write.csv(df_StratGender, 'gender_age-03759NED-formatted.csv', row.names=FALSE)

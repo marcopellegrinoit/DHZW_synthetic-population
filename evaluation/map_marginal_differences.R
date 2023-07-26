@@ -5,9 +5,6 @@ library(sf)
 library(ggplot2)
 library(shadowtext)
 
-setwd(this.dir())
-source('../config/config.R')
-
 ################################################################################
 # Read neighbourhood differences
 
@@ -22,15 +19,7 @@ df <- df %>%
 # Add the density of neighbourhoods
 
 setwd(this.dir())
-setwd(
-  paste(
-    "../data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../data/processed/individuals")
 df_marginal_dist = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 
 df <- right_join(df, df_marginal_dist, by='neighb_code')
@@ -39,7 +28,7 @@ df <- right_join(df, df_marginal_dist, by='neighb_code')
 # add geometries
 
 setwd(this.path::this.dir())
-setwd('../data/shapefiles/processed')
+setwd('../../DHZW_shapefiles/data/processed/shapefiles')
 shp_DHZW_neighb <- st_read('DHZW_neighbs_shapefiles')
 shp_DHZW_neighb <- shp_DHZW_neighb %>%
   rename(neighb_code = BU_CODE) %>%

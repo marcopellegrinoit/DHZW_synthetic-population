@@ -1,19 +1,9 @@
 library(readr)
 library(dplyr)
 library(this.path)
-setwd(this.path::this.dir())
-source('../../config/config.R')
 
 setwd(this.dir())
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/raw/households")
 
 df <- read.csv('household_income_85064NED.csv', sep = ';')
 
@@ -59,71 +49,6 @@ df[c('income_1_10', 'income_2_10', 'income_3_10', 'income_4_10', 'income_5_10', 
 
 # save
 setwd(this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/households")
+
 write.csv(df, 'household_income_85064NED-formatted.csv', row.names = FALSE)
-
-
-# not used
-df_combined <- expand.grid(c('single', 'single-parent', 'couple with children', 'couple without children'),
-                           c('breadwinner_migration_Dutch', 'breadwinner_migration_Western', 'breadwinner_migration_Non_Western'))
-colnames(df_combined) <- c('hh_type', 'hh_migration_background')
-
-
-df_combined <- merge(df_combined, df, by.x = 'hh_type', by.y = 'type')
-df_combined <- df_combined %>%
-  rename('income_1_10_type' = 'income_1_10',
-         'income_2_10_type' = 'income_2_10',
-         'income_3_10_type' = 'income_3_10',
-         'income_4_10_type' = 'income_4_10',
-         'income_5_10_type' = 'income_5_10',
-         'income_6_10_type' = 'income_6_10',
-         'income_7_10_type' = 'income_7_10',
-         'income_8_10_type' = 'income_8_10',
-         'income_9_10_type' = 'income_9_10',
-         'income_10_10_type' = 'income_10_10')
-
-df_combined <- merge(df_combined, df, by.x = 'hh_migration_background', by.y = 'type')
-df_combined <- df_combined %>%
-  rename('income_1_10_migration' = 'income_1_10',
-         'income_2_10_migration' = 'income_2_10',
-         'income_3_10_migration' = 'income_3_10',
-         'income_4_10_migration' = 'income_4_10',
-         'income_5_10_migration' = 'income_5_10',
-         'income_6_10_migration' = 'income_6_10',
-         'income_7_10_migration' = 'income_7_10',
-         'income_8_10_migration' = 'income_8_10',
-         'income_9_10_migration' = 'income_9_10',
-         'income_10_10_migration' = 'income_10_10')
-
-df_combined$income_1_10 <- df_combined$income_1_10_type * df_combined$income_1_10_migration
-df_combined$income_2_10 <- df_combined$income_2_10_type * df_combined$income_2_10_migration
-df_combined$income_3_10 <- df_combined$income_3_10_type * df_combined$income_3_10_migration
-df_combined$income_4_10 <- df_combined$income_4_10_type * df_combined$income_4_10_migration
-df_combined$income_5_10 <- df_combined$income_5_10_type * df_combined$income_5_10_migration
-df_combined$income_6_10 <- df_combined$income_6_10_type * df_combined$income_6_10_migration
-df_combined$income_7_10 <- df_combined$income_7_10_type * df_combined$income_7_10_migration
-df_combined$income_8_10 <- df_combined$income_8_10_type * df_combined$income_8_10_migration
-df_combined$income_9_10 <- df_combined$income_9_10_type * df_combined$income_9_10_migration
-df_combined$income_10_10 <- df_combined$income_10_10_type * df_combined$income_10_10_migration
-
-df_combined <- df_combined %>%
-  select(hh_type,
-         hh_migration_background,
-         income_1_10,
-         income_2_10,
-         income_3_10,
-         income_4_10,
-         income_5_10,
-         income_6_10,
-         income_7_10,
-         income_8_10,
-         income_9_10,
-         income_10_10)

@@ -3,18 +3,10 @@ library(dplyr)
 library(this.path)
 library(stringr)
 library(tidyr)
-setwd(this.path::this.dir())
-source('../../config/config.R')
 
 # Load dataset
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    sep = '/'
-  )
-)
+setwd("../../data/raw")
 df <- read.csv('inhabintants_south_holland-03759NED.csv', sep=';')
 
 df <- df %>%
@@ -124,11 +116,5 @@ df_groups[df_groups$age_group == 'age_over_75',]$n_people <- sum(df[df$age %in% 
 
 # Save dataset
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    sep = '/'
-  )
-)
+setwd("../../data/processed")
 write.csv(df_groups, 'inhabintants_south_holland-03759NED-formatted.csv', row.names = FALSE)

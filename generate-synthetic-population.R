@@ -14,43 +14,27 @@ library(readr)
 library("this.path")
 setwd(this.path::this.dir())
 source('src/utils-synthetic-population.R')
-source('config/config.R')
 
 ################################################################################
 # Load marginal distribution
 
-setwd(
-  paste(
-    this.path::this.dir(),
-    "data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd(this.path::this.dir())
+setwd('data/processed/individuals')
 df_marginal_dist = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 
-# filter DHZW area
-if (filter_DHZW) {
-  setwd(paste(this.path::this.dir(), 'data/codes', sep = '/'))
-  DHZW_neighborhood_codes <-
-    read.csv("DHZW_neighbourhoods_codes.csv",
-             sep = ";" ,
-             header = F)$V1
-  df_marginal_dist = df_marginal_dist[df_marginal_dist$neighb_code %in% DHZW_neighborhood_codes, ]
-}
+# how many individuals in total
+sum(df_marginal_dist['tot_pop'])
 
 ################################################################################
-# Initialise synthetic population with with neigbourhoods
 
-# population_size = sum(df_marginal_dist['tot_pop']) # 84880
-
-# Distribute empty agents of neighbourhoods
+# Initialise the synthetic population with the given number of agents per neighbourhood
 df_synth_pop <-
-  get_synthetic_population_neighborhoods(df_marginal_dist, 'neighb_code' , 'tot_pop')
+  initialise_with_neighbourhood_codes(df_marginal_dist, 'neighb_code' , 'tot_pop')
 
-# Distribute group ages over neighbourhoods
+
+################################################################################
+
+# Assign the age group attribute by using the age group marginal distribution of each neighbourhood
 group_ages <-
   c('age_0_15',
     'age_15_25',
@@ -66,56 +50,43 @@ df_synth_pop <-
                                 'tot_pop')
 
 ################################################################################
-# Translate age groups into interger age
-# Note: since the dataset is municipality aggregated, I can only calculate each age proportion and then use it to sample
+# Assign precise age (integer)
 
 # Load dataset
-setwd(
-  paste(
-    this.path::this.dir(),
-    "data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
-df_strat_gender = read.csv("gender_age-03759NED-formatted.csv", sep = ",")
+setwd(this.path::this.dir())
+setwd('data/processed/individuals')
+df_joint_gender = read.csv("gender_age-03759NED-formatted.csv", sep = ",")
 
 # for each group age of the synthetic population, sample the age from stratified dataset following the the frequency distribution
+# future improvement: instead of sampling, it could be better to actually partition, but the table management is non-trivial
 df_synth_pop$age = ''
 for (group_age in group_ages) {
   sample <- sample(
-    x = df_strat_gender[df_strat_gender$age_group == group_age, ]$age,
+    x = df_joint_gender[df_joint_gender$age_group == group_age, ]$age,
     size = nrow(df_synth_pop[df_synth_pop$age_group == group_age, ]),
     replace = TRUE,
-    prob = df_strat_gender[df_strat_gender$age_group == group_age, ]$group_propensity
+    prob = df_joint_gender[df_joint_gender$age_group == group_age, ]$group_propensity
   ) # sample from age frequency distribution
   
   df_synth_pop[df_synth_pop$age_group == group_age, ]$age = sample # apply to synthetic population dataset
 }
 df_synth_pop$age = as.numeric(df_synth_pop$age)
 
-# Save snapshot
-dir_name <- paste0('1_age_', format(Sys.time(), "%F_%H-%M"))
-setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
-dir.create(dir_name)
-setwd(dir_name)
-write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
-
 ################################################################################
 # Gender generation based on age
 
-# Compute conditional propensities
+# Compute proportions within joint distribution
 df_synth_pop = calc_propens_agents(
-  dataframe = df_strat_gender,
+  dataframe = df_joint_gender,
   variable = "female",
   total_population = "total",
   agent_df = df_synth_pop,
   list_conditional_var = c("age")
 )
 
-# Distribute attributes
+# For each neighborhood, update the joint distribution using its marginal distribution. Then, assign the attribute
+# Future work: rewrite the function with partitioning instead
+
 df_synth_pop = distr_attr_strat_neigh_stats_binary(
   agent_df = df_synth_pop,
   neigh_df = df_marginal_dist,
@@ -129,30 +100,15 @@ df_synth_pop = distr_attr_strat_neigh_stats_binary(
 # Remove extra columns
 df_synth_pop = subset(df_synth_pop, select = -c(prop_female, random_scores, age_group))
 
-# Save snapshot
-dir_name <- paste0('2_gender_', format(Sys.time(), "%F_%H-%M"))
-setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
-dir.create(dir_name)
-setwd(dir_name)
-write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
-
 ################################################################################
 # Migration background generation based on age and gender
 
-# Load stratified dataset
-setwd(
-  paste(
-    this.path::this.dir(),
-    "data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
-df_strat_migration = read.csv("gender_age_migration-84910NED-formatted.csv", sep = ",")
+# Load joint distribution between age groups, gender, and migration background
+setwd(this.path::this.dir())
+setwd('data/processed/individuals')
+df_joint_migration = read.csv("gender_age_migration-84910NED-formatted.csv", sep = ",")
 
-# Classify synthetic population ages into age groups to link to the stratified dataset
+# Categorise the age groups of the synthetic population into the corresponding age groups of the joint distribution
 df_synth_pop$age_group = ""
 df_synth_pop$age_group[df_synth_pop$age %in% 0:4] = "age_0_5"
 df_synth_pop$age_group[df_synth_pop$age %in% 5:9] = "age_5_10"
@@ -175,24 +131,25 @@ df_synth_pop$age_group[df_synth_pop$age %in% 85:89] = "age_85_90"
 df_synth_pop$age_group[df_synth_pop$age %in% 90:94] =  "age_90_95"
 df_synth_pop$age_group[df_synth_pop$age %in% 95:104] =  "age_over_95"
 
-# Calculate conditional propensities
-df_synth_pop = calc_propens_agents(df_strat_migration,
+# Compute proportions within joint distribution
+df_synth_pop = calc_propens_agents(df_joint_migration,
                                    "Dutch",
                                    "total",
                                    df_synth_pop,
                                    c("age_group", "gender"))
-df_synth_pop = calc_propens_agents(df_strat_migration,
+df_synth_pop = calc_propens_agents(df_joint_migration,
                                    "Western",
                                    "total",
                                    df_synth_pop,
                                    c("age_group", "gender"))
-df_synth_pop = calc_propens_agents(df_strat_migration,
+df_synth_pop = calc_propens_agents(df_joint_migration,
                                    "Non_Western",
                                    "total",
                                    df_synth_pop,
                                    c("age_group", "gender"))
 
-# Distribute values
+# For each neighborhood, update the joint distribution using its marginal distribution. Then, assign the attribute with sampling.
+# Future work: rewrite the function with partitioning instead
 df_synth_pop = distr_attr_strat_neigh_stats_3plus(
   agent_df =  df_synth_pop,
   neigh_df =  df_marginal_dist,
@@ -215,34 +172,20 @@ df_synth_pop = subset(
   )
 )
 
-# Save snapshot
-dir_name <- paste0('3_migration_background_', format(Sys.time(), "%F_%H-%M"))
-setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
-dir.create(dir_name)
-setwd(dir_name)
-write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
-
 ################################################################################
-# Generate attribute is_child (if the agent is a child)
+# Generate attribute is_child (if the agent is a child living with parents)
 
 # Load formatted stratified dataset about household position, gender and groupages (municipality aggregated)
-setwd(
-  paste(
-    this.path::this.dir(),
-    "data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
-df_strat_household = read.csv(
+setwd(this.path::this.dir())
+setwd('data/processed/households')
+
+df_joint_household = read.csv(
   "household_gender_age-71488NED-formatted.csv",
   sep = ",",
   fileEncoding = "UTF-8-BOM"
 )
 
-# Create group ages to match the stratified dataset
+# Categorise the age groups of the synthetic population into the corresponding age groups of the joint distribution
 df_synth_pop$age_group = ""
 df_synth_pop$age_group[df_synth_pop$age %in% 0:4] = "age_0_5"
 df_synth_pop$age_group[df_synth_pop$age %in% 5:9] = "age_5_10"
@@ -265,14 +208,14 @@ df_synth_pop$age_group[df_synth_pop$age %in% 85:89] = "age_85_90"
 df_synth_pop$age_group[df_synth_pop$age %in% 90:94] = "age_90_95"
 df_synth_pop$age_group[df_synth_pop$age %in% 95:105] = "age_over_95"
 
-# In the stratified dataset calculate proportions based on frequencies
-df_strat_household$prob_child = df_strat_household$child / df_strat_household$total
+# Compute proportions within the joint distribution
+df_joint_household$prob_child = df_joint_household$child / df_joint_household$total
 
-# Distribute being a child from the stratified dataset based on its proportions
+# Assign the attribute based on the joint distribution proportions
 df_synth_pop <-
-  distribute_attribute_stratified(
+  distribute_attribute_joint_dist(
     df_synth_pop = df_synth_pop,
-    df_strat = df_strat_household,
+    df_joint = df_joint_household,
     new_attribute = 'is_child',
     attributes_to_match = c('age_group', 'gender'),
     values_new_attribute = c(1, 0),
@@ -282,30 +225,15 @@ df_synth_pop <-
 # Remove extra columns
 df_synth_pop = subset(df_synth_pop, select = -c(age_group))
 
-# Save snapshot
-dir_name <- paste0('4_child_', format(Sys.time(), "%F_%H-%M"))
-setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
-dir.create(dir_name)
-setwd(dir_name)
-write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
-
 ################################################################################
 # Generate current education based on group age, gender and migration
 
 # Load stratified dataset
-setwd(
-  paste(
-    this.path::this.dir(),
-    "data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
-df_strat_edu_current = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
+setwd(this.path::this.dir())
+setwd('data/processed/individuals')
+df_joint_edu_current = read.csv("edu_current-71450NED-formatted.csv", sep = ",")
 
-# Create groupages in the synthetic population to match the stratified dataset
+# Categorise the age groups of the synthetic population into the corresponding age groups of the joint distribution
 df_synth_pop$age_group[df_synth_pop$age < 10] = NA
 df_synth_pop$age_group[df_synth_pop$age %in% 10:14] = "age_10_15"
 df_synth_pop$age_group[df_synth_pop$age %in% 15:19] = "age_15_20"
@@ -317,11 +245,11 @@ df_synth_pop$age_group[df_synth_pop$age %in% 40:44] = "age_40_45"
 df_synth_pop$age_group[df_synth_pop$age %in% 45:49] = "age_45_50"
 df_synth_pop$age_group[df_synth_pop$age >= 50] = "age_over_50"
 
-# Distribute current education from the stratified dataset based on its proportions
+# Assign the attribute based on the joint distribution proportions
 df_synth_pop <-
-  distribute_attribute_stratified(
+  distribute_attribute_joint_dist(
     df_synth_pop = df_synth_pop,
-    df_strat = df_strat_edu_current,
+    df_joint = df_joint_edu_current,
     new_attribute = 'current_education',
     attributes_to_match = c('age_group', 'gender', 'migration_background'),
     values_new_attribute = c('low', 'middle', 'high', 'no_current_edu'),
@@ -335,13 +263,6 @@ df_synth_pop[df_synth_pop$age <= 5, ]$current_education = 'no_current_edu'
 
 # Remove age group column
 df_synth_pop = subset(df_synth_pop, select = -c(age_group))
-
-# Save snapshot
-dir_name <- paste0('5_current_education_', format(Sys.time(), "%F_%H-%M"))
-setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
-dir.create(dir_name)
-setwd(dir_name)
-write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
 
 ################################################################################
 # Generate education attainment
@@ -408,6 +329,8 @@ df_edu_attainment[df_edu_attainment$edu_attainment == 'education_absolved_middle
 df_edu_attainment[df_edu_attainment$edu_attainment == 'education_absolved_high', ]$edu_attainment =
   'high'
 
+# For each neighbourhood, sample the education attainment of the unassigned agents using the its neighbourhood marginal distribution
+# future improvement: instead of sampling, use a partion approach
 df_synth_pop[is.na(df_synth_pop$edu_attainment), ]$edu_attainment = sample(
   x = df_edu_attainment$edu_attainment,
   size = nrow(df_synth_pop[is.na(df_synth_pop$edu_attainment), ]),
@@ -415,29 +338,16 @@ df_synth_pop[is.na(df_synth_pop$edu_attainment), ]$edu_attainment = sample(
   prob = df_edu_attainment$df_synth_pop[is.na(df_synth_pop$edu_attainment), ]$neighb_code
 )
 
-# Save snapshot
-dir_name <- paste0('6_education_attainment_', format(Sys.time(), "%F_%H-%M"))
-setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
-dir.create(dir_name)
-setwd(dir_name)
-
 ################################################################################
 # Car and moped license ownership
 
 # Load stratified dataset over age groups
-setwd(
-  paste(
-    this.path::this.dir(),
-    "data/processed",
-    year,
-    sep = '/'
-  )
-)
-df_strat_car_license = read.csv("car_license-83488NED-formatted.csv", sep = ",")
+setwd(this.path::this.dir())
+setwd('data/processed')
+df_joint_car_license = read.csv("car_license-83488NED-formatted.csv", sep = ",")
 
+# Categorise the age groups of the synthetic population into the corresponding age groups of the joint distribution
 df_synth_pop$age_group <- NA
-# Create groupages in the synthetic population to match the stratified dataset
-df_synth_pop$age_group[df_synth_pop$age < 16] = NA
 df_synth_pop$age_group[df_synth_pop$age %in% 16:17] = "age_16_17"
 df_synth_pop$age_group[df_synth_pop$age %in% 18:19] = "age_18_19"
 df_synth_pop$age_group[df_synth_pop$age %in% 20:24] = "age_20_24"
@@ -450,55 +360,39 @@ df_synth_pop$age_group[df_synth_pop$age %in% 65:69] = "age_65_69"
 df_synth_pop$age_group[df_synth_pop$age %in% 70:74] = "age_70_74"
 df_synth_pop$age_group[df_synth_pop$age >= 75] = "age_over_75"
 
-# Distribute car license ownership from the stratified dataset based on its proportions
-df_synth_pop$car_license <- 0
-for(neighb_code in unique(df_synth_pop$neighb_code)){
-  # for each neighbourhood
-  for (age_group in unique(df_strat_car_license$age_group)){
-    # for each age group
-        # count how many people there are in this neighbourhood with these demographics
-    n_pp <- nrow(df_synth_pop[df_synth_pop$neighb_code == neighb_code & df_synth_pop$age_group == age_group,]) 
-    
-    # sample household IDs
-    agent_IDs <- sample(df_synth_pop[df_synth_pop$neighb_code == neighb_code & df_synth_pop$age_group == age_group,]$agent_ID,
-                          n_pp * df_strat_car_license[df_strat_car_license$age_group == age_group,]$car
-    )
+# Assign the car license attribute based on the joint distribution proportions
+df_synth_pop <-
+  distribute_attribute_joint_dist(
+    df_synth_pop = df_synth_pop,
+    df_joint = df_joint_car_license,
+    new_attribute = 'car_license',
+    attributes_to_match = c('age_group'),
+    values_new_attribute = c(1, 0),
+    probabilities = c('car')
+  )
 
-    # Apply attribute
-    df_synth_pop[df_synth_pop$neighb_code == neighb_code & is.na(df_synth_pop$car_license),]$car_license = 0
-    df_synth_pop[df_synth_pop$agent_ID %in% agent_IDs,]$car_license = 1
-  }
-}
+# Agents younger than 16 years old cannot have a license
+df_synth_pop[df_synth_pop$age < 16,]$car_license <- 0
 
-# Distribute moped license ownership from the stratified dataset based on its proportions
-df_synth_pop$moped_license <- 0
-for(neighb_code in unique(df_synth_pop$neighb_code)){
-  # for each neighbourhood
-  for (age_group in unique(df_strat_car_license$age_group)){
-    # for each age group
-    # count how many people there are in this neighbourhood with these demographics
-    n_pp <- nrow(df_synth_pop[df_synth_pop$neighb_code == neighb_code & df_synth_pop$age_group == age_group,]) 
-    
-    # sample household IDs
-    agent_IDs <- sample(df_synth_pop[df_synth_pop$neighb_code == neighb_code & df_synth_pop$age_group == age_group,]$agent_ID,
-                        n_pp * df_strat_car_license[df_strat_car_license$age_group == age_group,]$moped
-    )
-    
-    # Apply attribute
-    df_synth_pop[df_synth_pop$neighb_code == neighb_code & is.na(df_synth_pop$car_license),]$moped_license = 0
-    df_synth_pop[df_synth_pop$agent_ID %in% agent_IDs,]$moped_license = 1
-  }
-}
-  
-table(df_synth_pop$age_group, df_synth_pop$car_license)
-table(df_synth_pop$age_group, df_synth_pop$moped_license)
+# Assign the moped license attribute based on the joint distribution proportions
+df_synth_pop <-
+  distribute_attribute_joint_dist(
+    df_synth_pop = df_synth_pop,
+    df_joint = df_joint_car_license,
+    new_attribute = 'moped_license',
+    attributes_to_match = c('age_group'),
+    values_new_attribute = c(1, 0),
+    probabilities = c('moped')
+  )
+
+# Agents younger than 16 years old cannot have a license
+df_synth_pop[df_synth_pop$age < 16,]$moped_license <- 0
 
 # Remove age group column
 df_synth_pop = subset(df_synth_pop, select = -c(age_group))
   
-# Save snapshot
-dir_name <- paste0('7_car_license_', format(Sys.time(), "%F_%H-%M"))
-setwd(paste(this.path::this.dir(), 'output/synthetic-population', sep = '/'))
-dir.create(dir_name)
-setwd(dir_name)
-write.csv(df_synth_pop, paste0('synthetic_population_DHZW_', year, '.csv'), row.names = FALSE)
+################################################################################
+# Save the output synthetic population
+setwd(this.path::this.dir())
+setwd('output/synthetic-population')
+write.csv(df_synth_pop, 'synthetic_population_DHZW_2019.csv', row.names = FALSE)

@@ -1,17 +1,8 @@
 library(dplyr)
 library("this.path")
-setwd(this.path::this.dir())
-source('../../config/config.R')
 
-setwd(
-  paste(
-    "../../data/raw",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd(this.path::this.dir())
+setwd("../../data/raw/households")
 df_StratHousehold = read.csv("household_gender_age-71488ned.csv", sep = ";", fileEncoding="UTF-8-BOM")
 
 # Rename, translate and reorganise dataset
@@ -61,13 +52,6 @@ df_StratHousehold[is.na(df_StratHousehold )] <- 0
 df_StratHousehold$total = df_StratHousehold$child + df_StratHousehold$single + df_StratHousehold$couple + df_StratHousehold$single_parent
 
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'households',
-    sep = '/'
-  )
-)
+setwd("../../data/processed/households")
+
 write.csv(df_StratHousehold, 'household_gender_age-71488NED-formatted.csv', row.names=FALSE)

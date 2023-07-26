@@ -2,25 +2,15 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library("this.path")
-setwd(this.path::this.dir())
-source('../../config/config.R')
 
 # Load synthetic households
 setwd(this.path::this.dir())
-setwd(paste("../../output/synthetic-population-households/4_car_2022-12-26_15-50", sep = ""))
+setwd(paste("../output/synthetic-population-households/", sep = ""))
 df_households = read.csv("df_households_DHZW_2019.csv", sep = ",")
 
 # Load car datasets
 setwd(this.path::this.dir())
-setwd(
-  paste(
-    "../../data/processed",
-    year,
-    municipality,
-    'individuals_demographics',
-    sep = '/'
-  )
-)
+setwd("../data/processed/individuals")
 df_marginal_dist = read.csv("marginal_distributions_84583NED-formatted.csv", sep = ",")
 
 ################################################################################
