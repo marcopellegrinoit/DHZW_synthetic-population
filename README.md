@@ -2,44 +2,77 @@
 
 # Generating a Spatially Explicit Synthetic Population of Individuals and Households
 
-#### *Utrecht University, The Netherlands. 2022 - 2023*
+![Utrecht University, The Netherlands](https://www.uu.nl/sites/default/files/styles/image_290_193/public/campus%20madurodam.jpg)
 
-#### *Author: Marco Pellegrino*
+## Table of Contents
 
-#### *Contribution: Jan de Mooij, Tabea Sonnenschein, Mehdi Dastani, Dick Ettema, Brian Logan, Judith A. Verstegen*
+1.  [Description](#description)
+2.  [Usage](#usage)
+3.  [Project Structure](#project-structure)
+4.  [Data](README_data.md)
+5.  [Evaluation Plots](README_plots.md)
+6.  [Contributors](#contributors)
+7.  [License](#license)
 
 ## Description
 
-Repository of scripts to generate the synthetic population for the district of Den Haag Zuid-West for the year 2019.
+Repository for the generation of a synthetic population for the district of Den Haag Zuid-West in the year 2019. This project was undertaken at Utrecht University, The Netherlands, during 2022-2023 by Marco Pellegrino and a team of contributors.
 
-The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnenschein/Spatial-Agent-based-Modeling-of-Urban-Health-Interventions/tree/main/GenSynthPop) by Tabea Sonnenschein.
+The code in this repository utilizes the R library [GenSynthPop](https://github.com/TabeaSonnenschein/Spatial-Agent-based-Modeling-of-Urban-Health-Interventions/tree/main/GenSynthPop) created by Tabea Sonnenschein.
+
+The work has been presented at the [C-MAS workshop conference in London, 2023](https://figshare.com/articles/conference_contribution/Generating_a_Spatially_Explicit_Synthetic_Population_from_Aggregated_Data/22821914).
 
 ## Usage
 
--   Scripts in [`/src/format-datasets`](/src/format-datasets) are used to convert the input CBS demographic information into more convenient data frames.
--   [`generate_synthetic_population.R`](generate-synthetic-population.R): it generates a synthetic population of individuals with demographic attributes. In detail:
-    -   Gender: male, female
-    -   Age: integer value
-    -   Migration background: Dutch, Western and non-Western
-    -   Current education level: low/middle/high
-    -   Education attainment: low/middle/high Note: Dutch education level based on [CBS classification](https://www.cbs.nl/nl-nl/nieuws/2019/33/verschil-levensverwachting-hoog-en-laagopgeleid-groeit/opleidingsniveau)
-    -   Individual living with at least one parent: true/false
-    -   Car license ownership: true/false
--   [`generate_households.R`](generate-households.R): it groups agents of a synthetic population into households. Also, it generates the following household-level attributes:
-    -   Standardized 10% income group
-    -   Car ownership
+The repository provides the following functionalities:
 
-## Project structure
+### 1\. Data Preparation
 
--   ***Root folder***: script to generate a synthetic population and group the latter into households.
--   [`/src`](/src): helper functions.
-    -   [`/format-datasets`](/src/format-datasets) contains scripts to convert the raw dataset into the processed dataset ready-to-use.
--   `/data`:
-    -   `/raw`: CBS data sets to be processed by the scripts in [`/src`](/src)
-    -   `/processed`: data sets ready-to-use. Outputs of the scripts in [`/src/format-datasets`](/src/format-datasets)
-    -   `/evaluation`. It contains scripts to aggregate data for plots and tools to plot different distributions and their comparisons.
+Scripts in [`/src/format-datasets`](/src/format-datasets) are used to convert the input CBS demographic information into more convenient data frames, which are stored in the `/data/processed` folder.
 
-### Other resources
+### 2\. Generating a Synthetic Population
 
--   Section [**data**](README_data.md) explains the used data sets in detail.
--   Section [**plots**](README_plots.md) contains evaluation plots and maps.
+The script [`generate_synthetic_population.R`](generate-synthetic-population.R) generates a synthetic population of individuals with demographic attributes, including:
+
+*   Gender: male, female
+*   Age: integer value
+*   Migration background: Dutch, Western, and non-Western
+*   Current education level: nothing/low/middle/high
+*   Education attainment: nothing/low/middle/high _(Note: Dutch education level based on_ [_CBS classification_](https://www.cbs.nl/nl-nl/nieuws/2019/33/verschil-levensverwachting-hoog-en-laagopgeleid-groeit/opleidingsniveau)_)_
+*   Children individuals living with at least one parent: true/false
+*   Car license ownership: true/false
+
+### 3\. Generating Households
+
+The script [`generate_households.R`](generate-households.R) groups agents of the synthetic population into households and generates the following household-level attributes:
+
+*   Standardized 10% income group
+*   Car ownership
+
+## Project Structure
+
+*   _**Root folder**_: Contains the main scripts to generate the synthetic population and group them into households.
+*   [`/src`](/src): Contains helper functions and utility scripts.
+    *   [`/format-datasets`](/src/format-datasets): Contains scripts to convert the raw datasets into processed datasets ready for use.
+*   `/data`:
+    *   `/raw`: CBS datasets to be processed by the scripts in [`/src`](/src)
+    *   `/processed`: Data sets ready-to-use, outputs of the scripts in [`/src/format-datasets`](/src/format-datasets)
+*   `/evaluation`: Contains scripts to aggregate data for plots and tools to plot different distributions and comparisons.
+
+## Contributors
+
+This project was made possible thanks to the hard work and contributions from the following individuals:
+
+*   Marco Pellegrino (Author)
+*   Jan de Mooij
+*   Tabea Sonnenschein
+*   Mehdi Dastani
+*   Dick Ettema
+*   Brian Logan
+*   Judith A. Verstegen
+
+## License
+
+This repository is licensed under the GNU General Public License v3.0 (GPL-3.0). For more details, see the [LICENSE](LICENSE) file.
+
+For more information about the data sets used in this project, refer to the [Data](README_data.md) section. For evaluation plots and maps, please check the [Evaluation Plots](README_plots.md) section.
