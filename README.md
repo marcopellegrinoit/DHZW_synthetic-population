@@ -2,7 +2,7 @@
 
 # Generating a Spatially Explicit Synthetic Population of Individuals and Households
 
-![Utrecht University, The Netherlands](https://www.uu.nl/sites/default/files/styles/image_290_193/public/campus%20madurodam.jpg)
+Utrecht University, The Netherlands
 
 ## Table of Contents
 
@@ -57,7 +57,7 @@ The script [`generate_households.R`](generate-households.R) groups agents of the
 *   `/data`:
     *   `/raw`: CBS datasets to be processed by the scripts in [`/src`](/src)
     *   `/processed`: Data sets ready-to-use, outputs of the scripts in [`/src/format-datasets`](/src/format-datasets)
-*   `/evaluation`: Contains scripts to aggregate data for plots and tools to plot different distributions and comparisons.
+*   [`/evaluation`](/evaluation): Contains scripts to aggregate data for plots and tools to plot different distributions and comparisons.
 
 ## Contributors
 
