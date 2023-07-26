@@ -37,6 +37,7 @@ The code makes use of the R library [GenSynthPop](https://github.com/TabeaSonnen
 -   `/data`:
     -   `/raw`: CBS data sets to be processed by the scripts in [`/src`](/src)
     -   `/processed`: data sets ready-to-use. Outputs of the scripts in [`/src/format-datasets`](/src/format-datasets)
+    -   `/evaluation`. It contains scripts to aggregate data for plots and tools to plot different distributions and their comparisons.
 
 ### Other resources
 
