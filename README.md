@@ -2,8 +2,6 @@
 
 # Generating a Spatially Explicit Synthetic Population of Individuals and Households
 
-Utrecht University, The Netherlands
-
 ## Table of Contents
 
 1.  [Description](#description)
