@@ -72,12 +72,4 @@ All the data sets for this case study are openly available from the Dutch statis
     -   Online source: [CBS](https://www.cbs.nl/nl-nl/maatwerk/2019/42/buurt-wijk-en-gemeente-2019-voor-postcode-huisnummer)
 -   **BAG Cadastre of residential buildings**.
     -   Residential buildings, together with their postcode PC6   
-    -   Online source: [Den Haag Open Data](https://denhaag.dataplatform.nl/#/data/5788bca4-e0e3-4c47-9107-5482d526880f)    
-    
- 
-
-\subsubsection*{n) Cadastre of residential buildings \cite{BAG_DHZW}}
-\begin{itemize}
-    \item Year: Current
-    \item It contains the residential buildings, together with postcode PC6.
-\end{itemize}
+    -   Online source: [Den Haag Open Data](https://denhaag.dataplatform.nl/#/data/5788bca4-e0e3-4c47-9107-5482d526880f)
