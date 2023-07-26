@@ -70,9 +70,9 @@ All the data sets for this case study are openly available from the Dutch statis
 -   **Number of households per postcode PC6 and neighbourhood**.
     -   Year:  2019
     -   Online source: [CBS](https://www.cbs.nl/nl-nl/maatwerk/2019/42/buurt-wijk-en-gemeente-2019-voor-postcode-huisnummer)
--   **Cadastre of residential buildings**.
-    Residential buildings, together with their postcode PC6   
-    
+-   **BAG Cadastre of residential buildings**.
+    -   Residential buildings, together with their postcode PC6   
+    -   Online source: [Den Haag Open Data](https://denhaag.dataplatform.nl/#/data/5788bca4-e0e3-4c47-9107-5482d526880f)    
     
  
 
